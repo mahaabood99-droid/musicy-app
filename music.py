@@ -87,7 +87,7 @@ class Review(db.Model):
   rating = db.Column(db.Float, nullable=False)
   comment = db.Column(db.Text, nullable=True)
   likes = db.Column(db.Integer, default=0)
-  time_ago = db.Column(db.String(50), default='Just now')
+  timestamp = db.Column(db.Float, default=time.time)
 
 
 class ReviewLike(db.Model):
@@ -227,7 +227,7 @@ def song_detail(spotify_id):
         'rating': r.rating,
         'comment': r.comment,
         'likes': r.likes,
-        'time_ago': r.time_ago,
+        'timestamp': r.timestamp if r.timestamp else time.time(),
         'avatar': avatar_url,
     })
 
@@ -337,7 +337,6 @@ def update_avatar_file():
     return jsonify({'success': False, 'message': 'اسم الملف فارغ'})
 
   if file and allowed_file(file.filename):
-    # استخدام secure_filename والتأكد من الامتداد الحقيقي لمنع الثغرات
     ext = file.filename.rsplit('.', 1)[1].lower()
     filename = secure_filename(f'{int(time.time())}_avatar.{ext}')
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -391,7 +390,7 @@ def add_review():
   except (TypeError, ValueError):
     return jsonify({'success': False, 'message': 'تقييم غير صالح'})
 
-  comment = str(data.get('comment', ''))[:1000]  # تحديد الحد الأقصى للتعليق
+  comment = str(data.get('comment', ''))[:1000]
   username = data.get('username')
 
   if not username:
@@ -419,10 +418,11 @@ def add_review():
       song_id=song.id, username=username
   ).first()
 
+  current_time = time.time()
   if existing_review:
     existing_review.rating = score
     existing_review.comment = comment
-    existing_review.time_ago = 'Just now (Updated)'
+    existing_review.timestamp = current_time
   else:
     new_rev = Review(
         song_id=song.id,
@@ -430,7 +430,7 @@ def add_review():
         rating=score,
         comment=comment,
         likes=0,
-        time_ago='Just now',
+        timestamp=current_time,
     )
     db.session.add(new_rev)
 
@@ -453,6 +453,7 @@ def add_review():
       'artist': song.artist,
       'img': song.img,
       'avatar': user_avatar,
+      'timestamp': current_time,
   })
 
 
@@ -728,6 +729,9 @@ background_styles = """
                 el.placeholder = translations[lang][key];
             }
         });
+        if(typeof updateAllTimes === 'function') {
+            updateAllTimes();
+        }
         if(typeof updateUserNav === 'function') {
             updateUserNav();
         }
@@ -1243,7 +1247,10 @@ song_detail_template = (
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <img src="{{ rev.avatar }}" class="w-10 h-10 rounded-full object-cover border border-[#1db954]/60 shadow-md">
-                                    <div><h4 class="font-bold text-xs text-white">{{ rev.username }}</h4><span class="text-[10px] text-gray-500">{{ rev.time_ago }}</span></div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-white">{{ rev.username }}</h4>
+                                        <span class="text-[10px] text-gray-500 time-ago-el" data-timestamp="{{ rev.timestamp }}"></span>
+                                    </div>
                                 </div>
                                 <div class="flex items-center space-x-1 text-[#1db954] text-xs font-bold"><i class="fa-solid fa-star text-[10px]"></i><span>{{ rev.rating }}/5</span></div>
                             </div>
@@ -1325,7 +1332,55 @@ song_detail_template = (
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
             checkUserReviewStatus();
+            updateAllTimes();
+            setInterval(updateAllTimes, 60000); // تحديث الوقت كل دقيقة تلقائياً
         });
+
+        function timeAgo(timestamp, lang) {
+            const now = Date.now() / 1000;
+            const elapsed = Math.floor(now - timestamp);
+
+            if (lang === 'ar') {
+                if (elapsed < 60) return 'الآن';
+                let minutes = Math.floor(elapsed / 60);
+                if (minutes < 60) return `منذ ${minutes} دقيقة`;
+                let hours = Math.floor(minutes / 60);
+                if (hours < 24) return `منذ ${hours} ساعة`;
+                let days = Math.floor(hours / 24);
+                if (days < 30) return `منذ ${days} يوم`;
+                let months = Math.floor(days / 30);
+                if (months < 12) return `منذ ${months} شهر`;
+                let years = Math.floor(months / 12);
+                return `منذ ${years} سنة`;
+            } else {
+                if (elapsed < 60) return 'Just now';
+                let minutes = Math.floor(elapsed / 60);
+                if (minutes === 1) return '1 minute ago';
+                if (minutes < 60) return `${minutes} minutes ago`;
+                let hours = Math.floor(minutes / 60);
+                if (hours === 1) return '1 hour ago';
+                if (hours < 24) return `${hours} hours ago`;
+                let days = Math.floor(hours / 24);
+                if (days === 1) return '1 day ago';
+                if (days < 30) return `${days} days ago`;
+                let months = Math.floor(days / 30);
+                if (months === 1) return '1 month ago';
+                if (months < 12) return `${months} months ago`;
+                let years = Math.floor(months / 12);
+                if (years === 1) return '1 year ago';
+                return `${years} years ago`;
+            }
+        }
+
+        function updateAllTimes() {
+            let lang = localStorage.getItem('musicy_lang') || 'en';
+            document.querySelectorAll('.time-ago-el').forEach(el => {
+                let ts = parseFloat(el.getAttribute('data-timestamp'));
+                if (!isNaN(ts)) {
+                    el.innerText = timeAgo(ts, lang);
+                }
+            });
+        }
 
         function checkUserReviewStatus() {
             let currentUser = localStorage.getItem('songdb_user');
