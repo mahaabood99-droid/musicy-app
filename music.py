@@ -25,13 +25,10 @@ except ImportError:
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'super_secret_key_musicy')
-# استخدام async_mode='threading' لضمان الاستقرار التام وسرعة الاستجابة بدون تعليق
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
-
-# قراءة الرابط من Render أو استخدام SQLite محلياً للتجربة
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')# قراءة الرابط من Render أو استخدام SQLite محلياً للتجربة
 database_url = os.getenv("DATABASE_URL", "sqlite:///site.db")
 
-if database_url.startswith("postgres://"):
+if database_url.startswith("postgres://?"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
@@ -61,9 +58,6 @@ db = SQLAlchemy(app)
 # بيانات توثيق Spotify الرسمية مسحوبة بأمان تام من متغيرات البيئة (Environment Variables)
 SPOTIFY_CLIENT_ID = os.environ.get('SPOTIFY_CLIENT_ID')
 SPOTIFY_CLIENT_SECRET = os.environ.get('SPOTIFY_CLIENT_SECRET')
-
-# عداد المستخدمين المتصلين حالياً (يتم تحديثه لحظياً وبأمان تام عبر SocketIO)
-online_users_count = 0
 
 
 class User(db.Model):
@@ -111,21 +105,6 @@ class ReviewLike(db.Model):
 
 with app.app_context():
   db.create_all()
-
-
-# أحداث الـ SocketIO الفورية والخفيفة جداً على الأداء (بدون حلقات تكرار نهائياً)
-@socketio.on('connect')
-def handle_connect():
-  global online_users_count
-  online_users_count += 1
-  emit('update_online_count', {'count': online_users_count}, broadcast=True)
-
-
-@socketio.on('disconnect')
-def handle_disconnect():
-  global online_users_count
-  online_users_count = max(0, online_users_count - 1)
-  emit('update_online_count', {'count': online_users_count}, broadcast=True)
 
 
 def get_spotify_token():
@@ -566,26 +545,6 @@ background_styles = """
         animation: heartbeat 1.6s infinite ease-in-out;
         font-size: 14px;
     }
-    .online-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(14, 28, 20, 0.9);
-        padding: 6px 12px;
-        border-radius: 9999px;
-        border: 1px solid rgba(29, 185, 84, 0.4);
-        font-size: 11px;
-        font-weight: 600;
-        color: #1db954;
-    }
-    .online-dot {
-        width: 8px;
-        height: 8px;
-        background-color: #1db954;
-        border-radius: 50%;
-        box-shadow: 0 0 10px #1db954;
-        animation: pulseGlow 2s infinite;
-    }
     body {
         background: linear-gradient(135deg, #020403, #060d08, #010201, #08120b);
         background-size: 400% 400%;
@@ -657,16 +616,7 @@ background_styles = """
 <div class="floating-orb" style="top: 85%; left: 20%; animation-delay: 3s;"></div>
 <div class="floating-orb" style="top: 25%; left: 80%; animation-delay: 4.5s;"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
 <script>
-    // استقبال تحديث العداد فوراً من السيرفر بدون أي طلبات تكرارية ترهق المتصفح أو السيرفر
-    const socket = io();
-    socket.on('update_online_count', function(data) {
-        document.querySelectorAll('.online-count-val').forEach(el => {
-            el.innerText = data.count;
-        });
-    });
-
     const translations = {
         en: {
             brandName: "Musicy",
@@ -715,8 +665,7 @@ background_styles = """
             saveAvatarBtn: "Upload & Save Avatar",
             storyModalTitle: "Luxury Instagram Story Preview",
             downloadStoryBtn: "Download Luxury Story",
-            closeStoryBtn: "Close & Continue",
-            onlineUsers: "Online Users:"
+            closeStoryBtn: "Close & Continue"
         },
         ar: {
             brandName: "Musicy",
@@ -765,8 +714,7 @@ background_styles = """
             saveAvatarBtn: "رفع وحفظ الصورة الشخصية",
             storyModalTitle: "معاينة ستوري انستقرام الخارقة الفخامة",
             downloadStoryBtn: "تحميل ستوري الفخامة",
-            closeStoryBtn: "إغلاق ومتابعة",
-            onlineUsers: "المتصلون الآن:"
+            closeStoryBtn: "إغلاق ومتابعة"
         }
     };
 
@@ -804,11 +752,6 @@ background_styles = """
 
 lang_switcher_html = """
 <div class="flex items-center space-x-3">
-    <div class="online-badge">
-        <span class="online-dot"></span>
-        <span data-i18n="onlineUsers">المتصلون الآن:</span>
-        <span class="online-count-val font-bold text-white">1</span>
-    </div>
     <div class="ammar-love-badge hidden sm:inline-flex items-center gap-2">
         <span>Made with</span>
         <i class="fa-solid fa-heart"></i>
@@ -1429,7 +1372,7 @@ song_detail_template = (
                 let months = Math.floor(days / 30);
                 if (months === 1) return '1 month ago';
                 if (months < 12) return `${months} months ago`;
-                let years = Math.floor(days / 365);
+                let years = Math.floor(months / 12);
                 if (years === 1) return '1 year ago';
                 return `${years} years ago`;
             }
@@ -1672,3 +1615,4 @@ song_detail_template = (
 
 if __name__ == '__main__':
   socketio.run(app, debug=True)
+```[cite: 1]
