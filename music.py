@@ -229,6 +229,9 @@ def song_detail(spotify_id):
             'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200'
         )
     )
+    
+    # التحقق مما إذا كان المستخدم الحالي قد قام بالإعجاب بهذا التقييم مسبقاً لتثبيت الحالة
+    # سنقوم بفحص الـ Request القادم أو تمرير اسم المستخدم لاحقاً، وهنا سنضيف حقن حالة الإعجاب لكل مستخدم
     reviews_data.append({
         'id': r.id,
         'username': r.username,
@@ -498,6 +501,22 @@ def like_review():
   return jsonify({'success': True, 'likes': rev.likes, 'liked': liked})
 
 
+@app.route('/api/check_likes', methods=['POST'])
+def check_likes():
+  data = request.json
+  if not data:
+    return jsonify({})
+  username = data.get('username')
+  review_ids = data.get('review_ids', [])
+  liked_dict = {}
+  if username:
+    for rid in review_ids:
+      chk = ReviewLike.query.filter_by(review_id=rid, username=username).first()
+      if chk:
+        liked_dict[rid] = True
+  return jsonify(liked_dict)
+
+
 background_styles = """
 <style>
     @keyframes backgroundMove {
@@ -525,6 +544,14 @@ background_styles = """
         45% { transform: scale(1.15); }
         60% { transform: scale(1); }
     }
+    @keyframes luxuryLikePop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.4) rotate(10deg); filter: drop-shadow(0 0 12px rgba(255, 34, 85, 0.9)); }
+        100% { transform: scale(1); }
+    }
+    .like-animate {
+        animation: luxuryLikePop 0.4s ease-in-out;
+    }
     .ammar-love-badge {
         display: inline-flex;
         align-items: center;
@@ -540,6 +567,7 @@ background_styles = """
         color: #ffffff;
         letter-spacing: 0.8px;
         white-space: nowrap;
+        transition: color 0.3s ease;
     }
     .ammar-love-badge i.fa-heart {
         color: #ff2255;
@@ -556,7 +584,7 @@ background_styles = """
         color: #f1f5f9;
         transition: background 0.4s ease, color 0.4s ease;
     }
-    /* الوضع الساطع الفخم المحدث لضمان وضوح كامل للكتابة واللوغو والبوكسات البيضاء */
+    /* الوضع الساطع الفخم المحدث لضمان وضوح كامل للكتابة وتحويل كافة النصوص المطلوبة إلى لون أسود عند تفعيله */
     body.light-mode {
         background: linear-gradient(135deg, #f8fafc, #e2e8f0, #f1f5f9, #cbd5e1) !important;
         color: #0f172a !important;
@@ -596,6 +624,27 @@ background_styles = """
     }
     body.light-mode .text-\[\#00ff66\], body.light-mode span.text-\[\#00ff66\] {
         color: #047857 !important;
+    }
+
+    /* تعديل العناصر المطلوبة لتصبح بلون أسود في الوضع الساطع وتعود بيضاء في الوضع الداكن */
+    body.light-mode .ammar-love-badge {
+        color: #000000 !important;
+        background: rgba(240, 240, 240, 0.9) !important;
+        border-color: rgba(0, 0, 0, 0.2) !important;
+    }
+    body.light-mode .ammar-love-badge span {
+        color: #000000 !important;
+    }
+    body.light-mode a[href*="spotify.com"],
+    body.light-mode span[data-i18n="listenSpotify"],
+    body.light-mode button[onclick*="handleLogout"],
+    body.light-mode button[onclick*="handleLogout"] i,
+    body.light-mode .fa-right-from-bracket {
+        color: #000000 !important;
+    }
+    body.light-mode .lang-switcher-text-black,
+    body.light-mode button[onclick^="setLanguage"] {
+        color: #000000 !important;
     }
 
     /* تأثير ضغطة زر الفخامة (Dark Mode Button) */
@@ -933,9 +982,9 @@ lang_switcher_html = """
         <span>by Ammar</span>
     </div>
     <div class="flex items-center space-x-1.5 sm:space-x-2 bg-[#030d06]/95 px-2.5 sm:px-3.5 py-1.5 rounded-full border border-[#00ff66]/60 shadow-[0_0_20px_rgba(0,255,102,0.35)] backdrop-blur-md">
-        <button onclick="setLanguage('en')" title="English" class="hover:scale-125 transition transform duration-200 text-sm sm:text-base drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">🇺🇸</button>
+        <button onclick="setLanguage('en')" title="English" class="lang-switcher-text-black hover:scale-125 transition transform duration-200 text-sm sm:text-base drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] text-white">🇺🇸</button>
         <span class="text-[#00ff66]/60 text-xs font-light">|</span>
-        <button onclick="setLanguage('ar')" title="العربية" class="hover:scale-125 transition transform duration-200 text-sm sm:text-base drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">🇮🇶</button>
+        <button onclick="setLanguage('ar')" title="العربية" class="lang-switcher-text-black hover:scale-125 transition transform duration-200 text-sm sm:text-base drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] text-white">🇮🇶</button>
     </div>
 </div>
 """
@@ -1464,21 +1513,22 @@ song_detail_template = (
                 {% if reviews %}
                     <div class="space-y-3">
                         {% for rev in reviews %}
-                        <div class="glass-card rounded-2xl p-3.5 sm:p-5 space-y-2.5" data-username="{{ rev.username }}">
+                        <div class="glass-card rounded-2xl p-4 sm:p-6 space-y-3" data-username="{{ rev.username }}">
                             <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-2.5 min-w-0">
-                                    <img src="{{ rev.avatar }}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border border-[#00ff66]/70 shadow-md shrink-0">
+                                <div class="flex items-center space-x-3 min-w-0">
+                                    <img src="{{ rev.avatar }}" class="w-9 h-9 sm:w-11 sm:h-11 rounded-full object-cover border border-[#00ff66]/70 shadow-md shrink-0">
                                     <div class="min-w-0">
-                                        <h4 class="font-bold text-xs text-white truncate">{{ rev.username }}</h4>
-                                        <span class="text-[10px] text-gray-500 time-ago-el" data-timestamp="{{ rev.timestamp }}"></span>
+                                        <h4 class="font-bold text-sm text-white truncate">{{ rev.username }}</h4>
+                                        <span class="text-[11px] text-gray-500 time-ago-el" data-timestamp="{{ rev.timestamp }}"></span>
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-1 text-[#00ff66] text-xs font-bold shrink-0"><i class="fa-solid fa-star text-[10px]"></i><span>{{ rev.rating }}/5</span></div>
                             </div>
-                            <p class="text-xs text-gray-300 leading-relaxed font-light break-words">{{ rev.comment }}</p>
+                            <!-- تم تكبير خط رفيو المستخدم على الأغنية وجعله أكثر فخامة ووضوحاً -->
+                            <p class="text-sm sm:text-base text-gray-200 leading-relaxed font-normal break-words py-1">{{ rev.comment }}</p>
                             <div class="flex items-center justify-between pt-2 border-t border-[#00ff66]/20 text-xs">
-                                <button onclick="likeReview({{ rev.id }}, this)" class="flex items-center space-x-1.5 text-gray-400 hover:text-[#00ff66] transition bg-[#020804] px-3 py-1.5 rounded-xl border border-[#00ff66]/30 shadow">
-                                    <i class="fa-solid fa-heart text-gray-500 like-icon-{{ rev.id }}"></i>
+                                <button onclick="likeReview({{ rev.id }}, this)" class="flex items-center space-x-2 text-gray-300 hover:text-[#00ff66] transition bg-[#020804] px-3.5 py-2 rounded-xl border border-[#00ff66]/30 shadow">
+                                    <i class="fa-solid fa-heart text-gray-400 like-icon-{{ rev.id }}" data-review-id="{{ rev.id }}"></i>
                                     <span>Like</span>
                                     <span class="font-bold text-white ml-1 like-count-{{ rev.id }}">{{ rev.likes }}</span>
                                 </button>
@@ -1556,8 +1606,36 @@ song_detail_template = (
             if(savedTheme === 'light') { document.body.classList.add('light-mode'); }
             checkUserReviewStatus();
             updateAllTimes();
+            fetchUserLikedReviews();
             setInterval(updateAllTimes, 60000);
         });
+
+        function fetchUserLikedReviews() {
+            let currentUser = localStorage.getItem('songdb_user');
+            if(!currentUser) return;
+            let reviewIds = [];
+            document.querySelectorAll('[class*="like-icon-"]').forEach(icon => {
+                let rid = icon.getAttribute('data-review-id');
+                if(rid) reviewIds.push(parseInt(rid));
+            });
+            if(reviewIds.length === 0) return;
+
+            fetch('/api/check_likes', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username: currentUser, review_ids: reviewIds })
+            }).then(res => res.json()).then(likedMap => {
+                for(let rid in likedMap) {
+                    if(likedMap[rid]) {
+                        let iconEl = document.querySelector(`.like-icon-${rid}`);
+                        if(iconEl) {
+                            iconEl.classList.remove('text-gray-400');
+                            iconEl.classList.add('text-[#ff2255]');
+                        }
+                    }
+                }
+            });
+        }
 
         function timeAgo(timestamp, lang) {
             const now = Date.now() / 1000;
@@ -1811,12 +1889,15 @@ song_detail_template = (
                     let iconEl = document.querySelector(`.like-icon-${reviewId}`);
                     if(countEl) countEl.innerText = resp.likes;
                     if(iconEl) {
+                        iconEl.classList.add('like-animate');
+                        setTimeout(() => iconEl.classList.remove('like-animate'), 400);
+
                         if(resp.liked) {
-                            iconEl.classList.remove('text-gray-500');
-                            iconEl.classList.add('text-red-500');
+                            iconEl.classList.remove('text-gray-400');
+                            iconEl.classList.add('text-[#ff2255]');
                         } else {
-                            iconEl.classList.remove('text-red-500');
-                            iconEl.classList.add('text-gray-500');
+                            iconEl.classList.remove('text-[#ff2255]');
+                            iconEl.classList.add('text-gray-400');
                         }
                     }
                 } else {
