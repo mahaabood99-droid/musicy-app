@@ -25,7 +25,10 @@ except ImportError:
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'super_secret_key_musicy')
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')# قراءة الرابط من Render أو استخدام SQLite محلياً للتجربة
+# استخدام async_mode='threading' لضمان الاستقرار التام وسرعة الاستجابة بدون تعليق
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
+
+# قراءة الرابط من Render أو استخدام SQLite محلياً للتجربة
 database_url = os.getenv("DATABASE_URL", "sqlite:///site.db")
 
 if database_url.startswith("postgres://"):
@@ -59,7 +62,7 @@ db = SQLAlchemy(app)
 SPOTIFY_CLIENT_ID = os.environ.get('SPOTIFY_CLIENT_ID')
 SPOTIFY_CLIENT_SECRET = os.environ.get('SPOTIFY_CLIENT_SECRET')
 
-# عداد المستخدمين المتصلين حالياً
+# عداد المستخدمين المتصلين حالياً (يتم تحديثه لحظياً وبأمان تام عبر SocketIO)
 online_users_count = 0
 
 
@@ -110,6 +113,7 @@ with app.app_context():
   db.create_all()
 
 
+# أحداث الـ SocketIO الفورية والخفيفة جداً على الأداء (بدون حلقات تكرار نهائياً)
 @socketio.on('connect')
 def handle_connect():
   global online_users_count
@@ -655,6 +659,7 @@ background_styles = """
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
 <script>
+    // استقبال تحديث العداد فوراً من السيرفر بدون أي طلبات تكرارية ترهق المتصفح أو السيرفر
     const socket = io();
     socket.on('update_online_count', function(data) {
         document.querySelectorAll('.online-count-val').forEach(el => {
@@ -1424,7 +1429,7 @@ song_detail_template = (
                 let months = Math.floor(days / 30);
                 if (months === 1) return '1 month ago';
                 if (months < 12) return `${months} months ago`;
-                let years = Math.floor(months / 12);
+                let years = Math.floor(days / 365);
                 if (years === 1) return '1 year ago';
                 return `${years} years ago`;
             }
