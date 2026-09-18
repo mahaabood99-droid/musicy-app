@@ -411,7 +411,7 @@ def add_review():
     return jsonify({'success': False, 'message': 'التقييم يجب أن يكون بين 1 و 5'})
 
   # فلتر الكلمات البذيئة والسب (يمكنك إضافة أي كلمات أخرى للقائمة)
-  ```python
+python
 import re
 import unicodedata
 from flask import Flask, request, jsonify
