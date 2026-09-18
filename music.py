@@ -506,17 +506,17 @@ background_styles = """
         100% { background-position: 0% 50%; }
     }
     @keyframes pulseGlow {
-        0%, 100% { opacity: 0.3; transform: scale(1) translateY(0); }
-        50% { opacity: 0.65; transform: scale(1.2) translateY(-25px); }
+        0%, 100% { opacity: 0.4; transform: scale(1) translateY(0); }
+        50% { opacity: 0.8; transform: scale(1.25) translateY(-30px); }
     }
     @keyframes floatParticle {
-        0% { transform: translateY(0px) rotate(0deg) scale(1); opacity: 0.3; }
-        50% { transform: translateY(-50px) rotate(180deg) scale(1.3); opacity: 0.8; }
-        100% { transform: translateY(0px) rotate(360deg) scale(1); opacity: 0.3; }
+        0% { transform: translateY(0px) rotate(0deg) scale(1); opacity: 0.4; }
+        50% { transform: translateY(-60px) rotate(180deg) scale(1.4); opacity: 0.9; }
+        100% { transform: translateY(0px) rotate(360deg) scale(1); opacity: 0.4; }
     }
     @keyframes neonPulse {
-        0%, 100% { box-shadow: 0 0 15px rgba(29, 185, 84, 0.4), inset 0 0 10px rgba(29, 185, 84, 0.2); }
-        50% { box-shadow: 0 0 35px rgba(29, 185, 84, 0.8), inset 0 0 20px rgba(29, 185, 84, 0.5); }
+        0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 102, 0.4), inset 0 0 15px rgba(0, 255, 102, 0.2); }
+        50% { box-shadow: 0 0 45px rgba(0, 255, 102, 0.9), inset 0 0 25px rgba(0, 255, 102, 0.6); }
     }
     @keyframes heartbeat {
         0%, 100% { transform: scale(1); }
@@ -529,98 +529,114 @@ background_styles = """
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: linear-gradient(135deg, rgba(14, 28, 20, 0.95), rgba(5, 15, 10, 0.95));
-        padding: 6px 12px;
+        background: linear-gradient(135deg, rgba(5, 15, 10, 0.95), rgba(0, 5, 2, 0.95));
+        padding: 6px 14px;
         border-radius: 9999px;
-        border: 1px solid rgba(29, 185, 84, 0.5);
-        box-shadow: 0 0 20px rgba(29, 185, 84, 0.35), inset 0 1px 0 rgba(29, 185, 84, 0.3);
+        border: 1px solid rgba(0, 255, 102, 0.6);
+        box-shadow: 0 0 25px rgba(0, 255, 102, 0.4), inset 0 1px 0 rgba(0, 255, 102, 0.4);
         backdrop-filter: blur(16px);
         font-size: 11px;
         font-weight: 700;
-        color: #f8fafc;
+        color: #ffffff;
         letter-spacing: 0.8px;
         white-space: nowrap;
     }
     .ammar-love-badge i.fa-heart {
-        color: #ef4444;
-        filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.9));
+        color: #ff2255;
+        filter: drop-shadow(0 0 10px rgba(255, 34, 85, 0.9));
         animation: heartbeat 1.6s infinite ease-in-out;
         font-size: 12px;
     }
     body {
-        background: linear-gradient(135deg, #020403, #060d08, #010201, #08120b);
+        background: linear-gradient(135deg, #000000, #030a05, #000000, #051408);
         background-size: 400% 400%;
-        animation: backgroundMove 20s ease infinite;
+        animation: backgroundMove 18s ease infinite;
         position: relative;
         overflow-x: hidden;
+        color: #f1f5f9;
+    }
+    /* مؤثر تتبع الماوس الفخم جداً */
+    #luxury-cursor-glow {
+        position: fixed;
+        width: 450px;
+        height: 450px;
+        background: radial-gradient(circle, rgba(0, 255, 102, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        transition: width 0.3s, height 0.3s;
+        border-radius: 50%;
+        filter: blur(40px);
     }
     .animated-bg-glow {
         position: fixed;
-        width: 600px;
-        height: 600px;
-        background: radial-gradient(circle, rgba(29, 185, 84, 0.18) 0%, rgba(0, 0, 0, 0) 70%);
+        width: 700px;
+        height: 700px;
+        background: radial-gradient(circle, rgba(0, 255, 102, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
         top: -200px;
         right: -150px;
         z-index: -1;
-        animation: pulseGlow 8s ease-in-out infinite;
-        pointer-events: none;
-        border-radius: 50%;
-        filter: blur(50px);
-    }
-    .animated-bg-glow-2 {
-        position: fixed;
-        width: 600px;
-        height: 600px;
-        background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
-        bottom: -200px;
-        left: -150px;
-        z-index: -1;
-        animation: pulseGlow 10s ease-in-out infinite alternate;
+        animation: pulseGlow 7s ease-in-out infinite;
         pointer-events: none;
         border-radius: 50%;
         filter: blur(60px);
     }
+    .animated-bg-glow-2 {
+        position: fixed;
+        width: 700px;
+        height: 700px;
+        background: radial-gradient(circle, rgba(0, 200, 80, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+        bottom: -200px;
+        left: -150px;
+        z-index: -1;
+        animation: pulseGlow 9s ease-in-out infinite alternate;
+        pointer-events: none;
+        border-radius: 50%;
+        filter: blur(70px);
+    }
     .floating-orb {
         position: fixed;
-        width: 6px;
-        height: 6px;
-        background: #1db954;
-        box-shadow: 0 0 16px #1db954, 0 0 30px #1db954;
+        width: 7px;
+        height: 7px;
+        background: #00ff66;
+        box-shadow: 0 0 20px #00ff66, 0 0 35px #00ff66;
         border-radius: 50%;
         z-index: -1;
         animation: floatParticle 6s ease-in-out infinite;
         pointer-events: none;
     }
     .glass-card {
-        background: rgba(10, 20, 14, 0.88);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(29, 185, 84, 0.3);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(29, 185, 84, 0.2);
+        background: rgba(5, 12, 8, 0.9);
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(0, 255, 102, 0.35);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(0, 255, 102, 0.25);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .glass-card:hover {
-        border-color: rgba(29, 185, 84, 0.7);
-        box-shadow: 0 15px 40px rgba(29, 185, 84, 0.25), inset 0 1px 0 rgba(29, 185, 84, 0.4);
-        transform: translateY(-2px);
+        border-color: rgba(0, 255, 102, 0.9);
+        box-shadow: 0 0 30px rgba(0, 255, 102, 0.4), inset 0 0 15px rgba(0, 255, 102, 0.3);
+        transform: translateY(-4px) scale(1.01);
     }
     .neon-border {
         animation: neonPulse 3s infinite;
     }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #030504; }
-    ::-webkit-scrollbar-thumb { background: #153822; border-radius: 3px; border: 1px solid rgba(29,185,84,0.3); }
-    ::-webkit-scrollbar-thumb:hover { background: #1db954; box-shadow: 0 0 8px #1db954; }
+    ::-webkit-scrollbar { width: 7px; }
+    ::-webkit-scrollbar-track { background: #000000; }
+    ::-webkit-scrollbar-thumb { background: #006622; border-radius: 4px; border: 1px solid rgba(0,255,102,0.4); }
+    ::-webkit-scrollbar-thumb:hover { background: #00ff66; box-shadow: 0 0 12px #00ff66; }
     
-    /* تحسينات فائقة للهواتف المحمولة لضمان ظهور كل شيء بشكل فخم جداً */
     @media (max-width: 768px) {
         body { font-size: 14px; }
-        input, select, textarea, button { font-size: 16px !important; } /* منع التكبير التلقائي في الآيفون */
+        input, select, textarea, button { font-size: 16px !important; }
         .mobile-stack { flex-direction: column !important; }
         .mobile-full { width: 100% !important; }
         .mobile-center { text-align: center !important; justify-content: center !important; }
         .mobile-p-3 { padding: 12px !important; }
     }
 </style>
+<div id="luxury-cursor-glow"></div>
 <div class="animated-bg-glow"></div>
 <div class="animated-bg-glow-2"></div>
 <div class="floating-orb" style="top: 15%; left: 8%; animation-delay: 0s;"></div>
@@ -629,6 +645,15 @@ background_styles = """
 <div class="floating-orb" style="top: 25%; left: 80%; animation-delay: 4.5s;"></div>
 
 <script>
+    // تتبع حركة الماوس لإعطاء الإضاءة الفخمة المتبعة
+    document.addEventListener('mousemove', (e) => {
+        const cursorGlow = document.getElementById('luxury-cursor-glow');
+        if (cursorGlow) {
+            cursorGlow.style.left = e.clientX + 'px';
+            cursorGlow.style.top = e.clientY + 'px';
+        }
+    });
+
     const translations = {
         en: {
             brandName: "Musicy",
@@ -769,10 +794,10 @@ lang_switcher_html = """
         <i class="fa-solid fa-heart"></i>
         <span>by Ammar</span>
     </div>
-    <div class="flex items-center space-x-1.5 sm:space-x-2 bg-[#0e1c14]/90 px-2.5 sm:px-3 py-1.5 rounded-full border border-[#1db954]/50 shadow-[0_0_15px_rgba(29,185,84,0.3)] backdrop-blur-md">
-        <button onclick="setLanguage('en')" title="English" class="hover:scale-125 transition transform duration-200 text-sm sm:text-base drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">🇺🇸</button>
-        <span class="text-[#1db954]/60 text-xs font-light">|</span>
-        <button onclick="setLanguage('ar')" title="العربية" class="hover:scale-125 transition transform duration-200 text-sm sm:text-base drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">🇮🇶</button>
+    <div class="flex items-center space-x-1.5 sm:space-x-2 bg-[#030d06]/95 px-2.5 sm:px-3.5 py-1.5 rounded-full border border-[#00ff66]/60 shadow-[0_0_20px_rgba(0,255,102,0.35)] backdrop-blur-md">
+        <button onclick="setLanguage('en')" title="English" class="hover:scale-125 transition transform duration-200 text-sm sm:text-base drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">🇺🇸</button>
+        <span class="text-[#00ff66]/60 text-xs font-light">|</span>
+        <button onclick="setLanguage('ar')" title="العربية" class="hover:scale-125 transition transform duration-200 text-sm sm:text-base drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">🇮🇶</button>
     </div>
 </div>
 """
@@ -791,27 +816,27 @@ html_template = (
     + """
 </head>
 <body class="text-gray-100 font-sans antialiased min-h-screen flex flex-col">
-    <!-- شريط التنقل العلوي المتجاوب والفاخر للهاتف والبيسي -->
-    <header class="border-b border-[#1db954]/30 bg-[#020403]/95 backdrop-blur-2xl sticky top-0 z-50 h-16 flex items-center px-3 sm:px-6 justify-between shadow-[0_4px_30px_rgba(0,0,0,0.8)] gap-2">
+    <!-- شريط التنقل العلوي الفخم باللون الأسود والأخضر المضوي -->
+    <header class="border-b border-[#00ff66]/40 bg-[#000000]/95 backdrop-blur-2xl sticky top-0 z-50 h-16 flex items-center px-3 sm:px-6 justify-between shadow-[0_4px_35px_rgba(0,0,0,0.9)] gap-2">
         <div class="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
-            <a href="/" class="flex items-center space-x-2 text-[#1db954] font-bold text-base sm:text-xl tracking-wider group shrink-0">
-                <i class="fa-solid fa-music text-[#1db954] group-hover:rotate-45 group-hover:scale-125 transition transform duration-500 drop-shadow-[0_0_10px_#1db954]"></i>
-                <span class="tracking-widest bg-gradient-to-r from-white via-gray-200 to-[#1db954] bg-clip-text text-transparent font-extrabold" data-i18n="brandName">Musicy</span>
+            <a href="/" class="flex items-center space-x-2 text-[#00ff66] font-bold text-base sm:text-xl tracking-wider group shrink-0">
+                <i class="fa-solid fa-music text-[#00ff66] group-hover:rotate-45 group-hover:scale-125 transition transform duration-500 drop-shadow-[0_0_15px_#00ff66]"></i>
+                <span class="tracking-widest bg-gradient-to-r from-white via-gray-200 to-[#00ff66] bg-clip-text text-transparent font-extrabold" data-i18n="brandName">Musicy</span>
             </a>
-            <!-- شريط البحث المطور ليناسب الهواتف بدقة -->
+            <!-- شريط البحث المطور الفخم -->
             <div class="relative flex-1 max-w-xs sm:max-w-md">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-[#1db954]"><i class="fa-solid fa-magnifying-glass text-xs"></i></span>
-                <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Search songs or artists on Spotify..." class="w-full bg-[#050b07] text-xs text-gray-200 pl-9 pr-3 py-2 sm:py-2.5 rounded-xl border border-[#1db954]/40 focus:outline-none focus:border-[#1db954] focus:ring-2 focus:ring-[#1db954]/30 transition shadow-inner">
-                <div id="searchResults" class="absolute left-0 right-0 mt-2 bg-[#050b07]/98 border border-[#1db954]/50 rounded-xl shadow-2xl hidden z-50 max-h-64 overflow-y-auto backdrop-blur-2xl"></div>
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-[#00ff66]"><i class="fa-solid fa-magnifying-glass text-xs"></i></span>
+                <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Search songs or artists on Spotify..." class="w-full bg-[#020804] text-xs text-gray-200 pl-9 pr-3 py-2 sm:py-2.5 rounded-xl border border-[#00ff66]/40 focus:outline-none focus:border-[#00ff66] focus:ring-2 focus:ring-[#00ff66]/40 transition shadow-inner">
+                <div id="searchResults" class="absolute left-0 right-0 mt-2 bg-[#020804]/98 border border-[#00ff66]/60 rounded-xl shadow-2xl hidden z-50 max-h-64 overflow-y-auto backdrop-blur-2xl"></div>
             </div>
         </div>
         <div class="flex items-center space-x-2 sm:space-x-4 text-xs font-medium text-gray-300 shrink-0">
             """
     + lang_switcher_html
     + """
-            <a href="/top-rated" class="lg:hidden w-8 h-8 rounded-full bg-[#050b07] border border-[#1db954]/40 text-[#1db954] flex items-center justify-center shadow hover:border-[#1db954] transition" title="Top Rated"><i class="fa-solid fa-star text-xs"></i></a>
+            <a href="/top-rated" class="lg:hidden w-8 h-8 rounded-full bg-[#020804] border border-[#00ff66]/40 text-[#00ff66] flex items-center justify-center shadow hover:border-[#00ff66] transition" title="Top Rated"><i class="fa-solid fa-star text-xs"></i></a>
             <div id="userProfileArea">
-                <a href="/login" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-[#1db954] to-[#1ed760] text-gray-950 font-extrabold border border-[#1db954]/70 flex items-center justify-center shadow-[0_0_15px_rgba(29,185,84,0.6)] hover:scale-110 transition transform duration-300">
+                <a href="/login" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-[#00ff66] to-[#00cc52] text-gray-950 font-extrabold border border-[#00ff66]/80 flex items-center justify-center shadow-[0_0_20px_rgba(0,255,102,0.7)] hover:scale-110 transition transform duration-300">
                     <i class="fa-solid fa-user text-xs"></i>
                 </a>
             </div>
@@ -819,48 +844,48 @@ html_template = (
     </header>
 
     <div class="flex flex-1">
-        <!-- القائمة الجانبية للشاشات الكبيرة فقط -->
-        <aside class="w-64 border-r border-[#1db954]/25 bg-[#020403]/80 p-4 hidden lg:flex flex-col justify-between shrink-0 backdrop-blur-2xl">
+        <!-- القائمة الجانبية الفخمة -->
+        <aside class="w-64 border-r border-[#00ff66]/30 bg-[#000000]/85 p-4 hidden lg:flex flex-col justify-between shrink-0 backdrop-blur-2xl">
             <div class="space-y-6">
                 <nav class="space-y-2 text-xs font-medium">
-                    <a href="/" class="flex items-center space-x-3 px-4 py-3 rounded-2xl bg-[#1db954]/25 text-[#1db954] font-semibold border-l-4 border-[#1db954] shadow-[0_0_15px_rgba(29,185,84,0.2)]"><i class="fa-solid fa-house w-4"></i><span data-i18n="home">Home</span></a>
-                    <a href="/top-rated" class="flex items-center space-x-3 px-4 py-3 rounded-2xl text-gray-400 hover:bg-[#1db954]/20 hover:text-white transition duration-300"><i class="fa-solid fa-star w-4 text-[#1db954]"></i><span data-i18n="topRated">Top Rated</span></a>
+                    <a href="/" class="flex items-center space-x-3 px-4 py-3 rounded-2xl bg-[#00ff66]/25 text-[#00ff66] font-semibold border-l-4 border-[#00ff66] shadow-[0_0_20px_rgba(0,255,102,0.3)]"><i class="fa-solid fa-house w-4"></i><span data-i18n="home">Home</span></a>
+                    <a href="/top-rated" class="flex items-center space-x-3 px-4 py-3 rounded-2xl text-gray-400 hover:bg-[#00ff66]/20 hover:text-white transition duration-300"><i class="fa-solid fa-star w-4 text-[#00ff66]"></i><span data-i18n="topRated">Top Rated</span></a>
                 </nav>
             </div>
         </aside>
 
-        <!-- المحتوى الرئيسي المتجاوب بالكامل وفخم على الموبايل والبيسي -->
+        <!-- المحتوى الرئيسي الفخم والمتجاوب -->
         <main class="flex-1 p-3 sm:p-6 md:p-10 space-y-6 sm:space-y-10 overflow-x-hidden">
-            <div class="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-r from-[#081a10] via-[#040e08] to-[#020403] border border-[#1db954]/50 p-5 sm:p-8 md:p-14 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex flex-col justify-between backdrop-blur-2xl group neon-border">
-                <div class="absolute -right-12 -bottom-12 w-48 sm:w-80 h-48 sm:h-80 bg-[#1db954]/20 rounded-full blur-3xl group-hover:scale-150 transition duration-1000 pointer-events-none"></div>
+            <div class="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-r from-[#031408] via-[#010803] to-[#000000] border border-[#00ff66]/60 p-5 sm:p-8 md:p-14 shadow-[0_20px_60px_rgba(0,0,0,0.9)] flex flex-col justify-between backdrop-blur-2xl group neon-border">
+                <div class="absolute -right-12 -bottom-12 w-48 sm:w-80 h-48 sm:h-80 bg-[#00ff66]/25 rounded-full blur-3xl group-hover:scale-150 transition duration-1000 pointer-events-none"></div>
                 <div class="relative z-10 space-y-3 sm:space-y-5 max-w-xl">
-                    <span class="text-[10px] sm:text-[11px] tracking-widest text-[#1db954] uppercase font-bold bg-[#1db954]/20 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#1db954]/40 shadow-sm" data-i18n="heroTag">Real fans. Real ratings.</span>
-                    <h1 class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight"><span data-i18n="heroTitle1">Discover. Rate.</span><br><span class="text-[#1db954] drop-shadow-[0_0_20px_rgba(29,185,84,0.6)]" data-i18n="heroTitle2">Share Music.</span></h1>
+                    <span class="text-[10px] sm:text-[11px] tracking-widest text-[#00ff66] uppercase font-bold bg-[#00ff66]/20 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#00ff66]/40 shadow-sm" data-i18n="heroTag">Real fans. Real ratings.</span>
+                    <h1 class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight"><span data-i18n="heroTitle1">Discover. Rate.</span><br><span class="text-[#00ff66] drop-shadow-[0_0_25px_rgba(0,255,102,0.8)]" data-i18n="heroTitle2">Share Music.</span></h1>
                     <p class="text-xs sm:text-sm text-gray-300 leading-relaxed font-light" data-i18n="heroDesc">Search any song from Spotify to view ratings</p>
                 </div>
             </div>
 
             <section class="space-y-4 sm:space-y-5">
                 <div class="flex items-center justify-between gap-2">
-                    <h2 class="text-xs sm:text-base font-bold text-white flex items-center space-x-2"><i class="fa-solid fa-fire text-[#1db954] text-xs animate-bounce"></i><span data-i18n="trendingTitle">Trending & Random Songs</span> <span class="text-[10px] sm:text-xs text-gray-400 font-normal">({{ songs|length }})</span></h2>
-                    <button onclick="location.reload()" class="text-[11px] sm:text-xs text-[#1db954] hover:text-white font-semibold flex items-center space-x-1.5 bg-[#050b07] border border-[#1db954]/40 px-3 sm:px-4 py-2 rounded-xl transition hover:border-[#1db954] shadow shrink-0">
+                    <h2 class="text-xs sm:text-base font-bold text-white flex items-center space-x-2"><i class="fa-solid fa-fire text-[#00ff66] text-xs animate-bounce"></i><span data-i18n="trendingTitle">Trending & Random Songs</span> <span class="text-[10px] sm:text-xs text-gray-400 font-normal">({{ songs|length }})</span></h2>
+                    <button onclick="location.reload()" class="text-[11px] sm:text-xs text-[#00ff66] hover:text-white font-semibold flex items-center space-x-1.5 bg-[#020804] border border-[#00ff66]/50 px-3 sm:px-4 py-2 rounded-xl transition hover:border-[#00ff66] shadow shrink-0">
                         <i class="fa-solid fa-rotate"></i> <span data-i18n="refreshSongs">Refresh Songs</span>
                     </button>
                 </div>
-                <!-- شبكة الأغاني (Grid) متجاوبة تماماً: عمودين في الموبايل لتبدو مذهلة ومنظمة، و6 أعمدة في البيسي -->
+                <!-- شبكة الأغاني الفخمة -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-5">
                     {% for song in songs %}
                     <div onclick="window.location.href='/song/{{ song.spotify_id }}'" class="glass-card rounded-xl sm:rounded-2xl p-2.5 sm:p-4 space-y-2 cursor-pointer group flex flex-col justify-between">
                         <div class="relative overflow-hidden rounded-lg sm:rounded-xl">
                             <img src="{{ song.img }}" class="w-full h-28 sm:h-36 object-cover group-hover:scale-115 transition duration-700">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
                         </div>
                         <div class="space-y-0.5">
-                            <h4 class="font-bold text-xs text-white truncate group-hover:text-[#1db954] transition">{{ song.title }}</h4>
+                            <h4 class="font-bold text-xs text-white truncate group-hover:text-[#00ff66] transition">{{ song.title }}</h4>
                             <p class="text-[10px] text-gray-400 truncate">{{ song.artist }}</p>
                         </div>
-                        <div class="flex items-center justify-between text-[10px] pt-2 border-t border-[#1db954]/20">
-                            <span class="text-[#1db954] font-bold flex items-center"><i class="fa-solid fa-star text-[9px] mr-1"></i> {{ song.rating }}</span>
+                        <div class="flex items-center justify-between text-[10px] pt-2 border-t border-[#00ff66]/20">
+                            <span class="text-[#00ff66] font-bold flex items-center"><i class="fa-solid fa-star text-[9px] mr-1"></i> {{ song.rating }}</span>
                             <span class="text-gray-500">({{ song.votes }} <span data-i18n="votesText">votes</span>)</span>
                         </div>
                     </div>
@@ -884,18 +909,18 @@ html_template = (
                 let logoutText = (localStorage.getItem('musicy_lang') === 'ar') ? 'تسجيل الخروج' : 'Logout';
                 area.innerHTML = `
                     <div class="flex items-center space-x-1.5 sm:space-x-3">
-                        <a href="/profile" class="flex items-center space-x-1.5 bg-[#050b07] px-2 sm:px-3 py-1.5 rounded-full border border-[#1db954]/50 shadow-[0_0_15px_rgba(29,185,84,0.3)] backdrop-blur-md hover:opacity-80 transition">
-                            <img src="${currentAvatar}" class="w-5 h-5 sm:w-7 sm:h-7 rounded-full object-cover border border-[#1db954]">
-                            <span class="text-[#1db954] font-bold text-[11px] sm:text-xs max-w-[65px] sm:max-w-none truncate">${currentUser}</span>
+                        <a href="/profile" class="flex items-center space-x-1.5 bg-[#020804] px-2 sm:px-3 py-1.5 rounded-full border border-[#00ff66]/60 shadow-[0_0_20px_rgba(0,255,102,0.35)] backdrop-blur-md hover:opacity-80 transition">
+                            <img src="${currentAvatar}" class="w-5 h-5 sm:w-7 sm:h-7 rounded-full object-cover border border-[#00ff66]">
+                            <span class="text-[#00ff66] font-bold text-[11px] sm:text-xs max-w-[65px] sm:max-w-none truncate">${currentUser}</span>
                         </a>
-                        <button onclick="handleLogout()" class="bg-[#050b07] text-gray-400 hover:text-red-400 w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-red-500/40 hover:border-red-500 flex items-center justify-center transition shadow-md shrink-0" title="${logoutText}">
+                        <button onclick="handleLogout()" class="bg-[#020804] text-gray-400 hover:text-red-400 w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-red-500/50 hover:border-red-500 flex items-center justify-center transition shadow-md shrink-0" title="${logoutText}">
                             <i class="fa-solid fa-right-from-bracket text-[10px] sm:text-xs"></i>
                         </button>
                     </div>
                 `;
             } else {
                 area.innerHTML = `
-                    <a href="/login" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-[#1db954] to-[#1ed760] text-gray-950 font-extrabold border border-[#1db954]/70 flex items-center justify-center shadow-[0_0_15px_rgba(29,185,84,0.6)] hover:scale-110 transition transform duration-300">
+                    <a href="/login" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-[#00ff66] to-[#00cc52] text-gray-950 font-extrabold border border-[#00ff66]/80 flex items-center justify-center shadow-[0_0_20px_rgba(0,255,102,0.7)] hover:scale-110 transition transform duration-300">
                         <i class="fa-solid fa-user text-xs"></i>
                     </a>
                 `;
@@ -920,8 +945,8 @@ html_template = (
                     else {
                         data.forEach(song => {
                             let div = document.createElement('div');
-                            div.className = 'flex items-center space-x-3 p-2.5 sm:p-3 hover:bg-[#1db954]/25 border-b border-[#1db954]/10 cursor-pointer transition';
-                            div.innerHTML = `<img src="${song.img}" class="w-9 h-9 sm:w-11 sm:h-11 object-cover rounded-xl border border-[#1db954]/30 shrink-0"><div><div class="text-xs font-bold text-white">${song.title}</div><div class="text-[10px] text-gray-400">${song.artist}</div></div>`;
+                            div.className = 'flex items-center space-x-3 p-2.5 sm:p-3 hover:bg-[#00ff66]/20 border-b border-[#00ff66]/10 cursor-pointer transition';
+                            div.innerHTML = `<img src="${song.img}" class="w-9 h-9 sm:w-11 sm:h-11 object-cover rounded-xl border border-[#00ff66]/40 shrink-0"><div><div class="text-xs font-bold text-white">${song.title}</div><div class="text-[10px] text-gray-400">${song.artist}</div></div>`;
                             div.addEventListener('click', () => { window.location.href = `/song/${song.spotify_id}`; });
                             searchResults.appendChild(div);
                         });
@@ -949,27 +974,27 @@ top_rated_html = (
     + """
 </head>
 <body class="text-gray-100 font-sans antialiased min-h-screen flex flex-col">
-    <header class="border-b border-[#1db954]/30 bg-[#020403]/95 backdrop-blur-2xl sticky top-0 z-50 h-16 flex items-center px-4 md:px-8 justify-between shadow-[0_4px_30px_rgba(0,0,0,0.8)]">
-        <div class="flex items-center space-x-12 w-full"><a href="/" class="flex items-center space-x-2 text-[#1db954] font-bold text-xl tracking-wider"><i class="fa-solid fa-music text-[#1db954]"></i><span class="tracking-widest" data-i18n="brandName">Musicy</span></a></div>
+    <header class="border-b border-[#00ff66]/40 bg-[#000000]/95 backdrop-blur-2xl sticky top-0 z-50 h-16 flex items-center px-4 md:px-8 justify-between shadow-[0_4px_35px_rgba(0,0,0,0.9)]">
+        <div class="flex items-center space-x-12 w-full"><a href="/" class="flex items-center space-x-2 text-[#00ff66] font-bold text-xl tracking-wider"><i class="fa-solid fa-music text-[#00ff66]"></i><span class="tracking-widest" data-i18n="brandName">Musicy</span></a></div>
         <div class="flex items-center space-x-4 text-xs font-medium text-gray-300">
             """
     + lang_switcher_html
     + """
-            <a href="/" class="flex items-center space-x-1.5 text-[#1db954] hover:text-white transition"><i class="fa-solid fa-house"></i> <span data-i18n="home">Home</span></a>
+            <a href="/" class="flex items-center space-x-1.5 text-[#00ff66] hover:text-white transition"><i class="fa-solid fa-house"></i> <span data-i18n="home">Home</span></a>
         </div>
     </header>
     <div class="flex flex-1">
-        <aside class="w-64 border-r border-[#1db954]/25 bg-[#020403]/80 p-4 hidden lg:flex flex-col justify-between shrink-0 backdrop-blur-2xl">
+        <aside class="w-64 border-r border-[#00ff66]/30 bg-[#000000]/85 p-4 hidden lg:flex flex-col justify-between shrink-0 backdrop-blur-2xl">
             <div class="space-y-6">
                 <nav class="space-y-2 text-xs font-medium">
-                    <a href="/" class="flex items-center space-x-3 px-4 py-3 rounded-2xl text-gray-400 hover:bg-[#1db954]/20 hover:text-white transition duration-300"><i class="fa-solid fa-house w-4 text-[#1db954]"></i><span data-i18n="home">Home</span></a>
-                    <a href="/top-rated" class="flex items-center space-x-3 px-4 py-3 rounded-2xl bg-[#1db954]/25 text-[#1db954] font-semibold border-l-4 border-[#1db954] shadow-[0_0_15px_rgba(29,185,84,0.2)]"><i class="fa-solid fa-star w-4"></i><span data-i18n="topRated">Top Rated</span></a>
+                    <a href="/" class="flex items-center space-x-3 px-4 py-3 rounded-2xl text-gray-400 hover:bg-[#00ff66]/20 hover:text-white transition duration-300"><i class="fa-solid fa-house w-4 text-[#00ff66]"></i><span data-i18n="home">Home</span></a>
+                    <a href="/top-rated" class="flex items-center space-x-3 px-4 py-3 rounded-2xl bg-[#00ff66]/25 text-[#00ff66] font-semibold border-l-4 border-[#00ff66] shadow-[0_0_20px_rgba(0,255,102,0.3)]"><i class="fa-solid fa-star w-4"></i><span data-i18n="topRated">Top Rated</span></a>
                 </nav>
             </div>
         </aside>
         <main class="flex-1 p-3 sm:p-6 md:p-10 space-y-6 sm:space-y-8 max-w-6xl mx-auto w-full">
             <div class="space-y-2">
-                <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-white flex items-center space-x-2 sm:space-x-3"><i class="fa-solid fa-star text-[#1db954] animate-spin"></i><span data-i18n="topRatedTitle">All Top Rated Songs</span></h1>
+                <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-white flex items-center space-x-2 sm:space-x-3"><i class="fa-solid fa-star text-[#00ff66] animate-spin"></i><span data-i18n="topRatedTitle">All Top Rated Songs</span></h1>
                 <p class="text-xs text-gray-400" data-i18n="topRatedDesc">Explore the highest-rated songs ranked by user reviews and votes on Musicy.</p>
             </div>
             <div class="space-y-3">
@@ -977,21 +1002,21 @@ top_rated_html = (
                 <div onclick="window.location.href='/song/{{ song.spotify_id }}'" class="glass-card rounded-2xl p-3 sm:p-4.5 flex items-center justify-between cursor-pointer group gap-2">
                     <div class="flex items-center space-x-2.5 sm:space-x-4 min-w-0">
                         <span class="text-xs font-bold text-gray-500 w-4 sm:w-6 text-center shrink-0">#{{ loop.index }}</span>
-                        <img src="{{ song.img }}" class="w-11 h-11 sm:w-14 sm:h-14 object-cover rounded-xl border border-[#1db954]/40 shadow-md shrink-0">
+                        <img src="{{ song.img }}" class="w-11 h-11 sm:w-14 sm:h-14 object-cover rounded-xl border border-[#00ff66]/50 shadow-md shrink-0">
                         <div class="min-w-0">
-                            <h3 class="font-bold text-xs sm:text-sm text-white group-hover:text-[#1db954] transition truncate">{{ song.title }}</h3>
+                            <h3 class="font-bold text-xs sm:text-sm text-white group-hover:text-[#00ff66] transition truncate">{{ song.title }}</h3>
                             <p class="text-[10px] sm:text-xs text-gray-400 truncate">{{ song.artist }} &bull; <span class="text-gray-500">{{ song.release_year }}</span></p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-3 text-right shrink-0">
                         <div>
-                            <div class="text-xs sm:text-sm font-extrabold text-[#1db954] flex items-center justify-end space-x-1">
+                            <div class="text-xs sm:text-sm font-extrabold text-[#00ff66] flex items-center justify-end space-x-1">
                                 <i class="fa-solid fa-star text-[10px]"></i>
                                 <span>{{ song.rating }}</span>
                             </div>
                             <div class="text-[10px] text-gray-500"><span class="font-bold">{{ song.votes }}</span> <span data-i18n="votesText">votes</span></div>
                         </div>
-                        <i class="fa-solid fa-chevron-right text-xs text-gray-600 group-hover:text-[#1db954] group-hover:translate-x-1 transition hidden sm:inline pr-2"></i>
+                        <i class="fa-solid fa-chevron-right text-xs text-gray-600 group-hover:text-[#00ff66] group-hover:translate-x-1 transition hidden sm:inline pr-2"></i>
                     </div>
                 </div>
                 {% else %}
@@ -1032,16 +1057,16 @@ login_html = (
     <div class="w-full max-w-md glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl space-y-5 relative neon-border">
         <a href="/" class="absolute top-5 left-5 text-gray-400 hover:text-white text-xs flex items-center space-x-1 transition"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="home">Home</span></a>
         <div class="text-center space-y-2 pt-3">
-            <div class="inline-flex w-14 h-14 rounded-2xl bg-[#1db954]/20 border border-[#1db954]/40 text-[#1db954] items-center justify-center text-xl shadow-inner"><i class="fa-solid fa-music"></i></div>
+            <div class="inline-flex w-14 h-14 rounded-2xl bg-[#00ff66]/20 border border-[#00ff66]/50 text-[#00ff66] items-center justify-center text-xl shadow-inner"><i class="fa-solid fa-music"></i></div>
             <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight" data-i18n="welcomeBack">Welcome Back</h1>
             <p class="text-xs text-gray-400" data-i18n="loginDesc">Sign in to rate songs and share your reviews on Musicy</p>
         </div>
         <div class="space-y-3.5 text-xs">
-            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="emailLabel">Email Address</label><input type="email" id="loginEmail" placeholder="name@example.com" class="w-full bg-[#050b07] text-gray-200 px-3.5 py-3 rounded-xl border border-[#1db954]/40 focus:outline-none focus:border-[#1db954] focus:ring-2 focus:ring-[#1db954]/30 transition shadow-inner"></div>
-            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="passwordLabel">Password</label><input type="password" id="loginPassword" placeholder="••••••••" class="w-full bg-[#050b07] text-gray-200 px-3.5 py-3 rounded-xl border border-[#1db954]/40 focus:outline-none focus:border-[#1db954] focus:ring-2 focus:ring-[#1db954]/30 transition shadow-inner"></div>
-            <button onclick="handleLogin()" class="w-full bg-gradient-to-r from-[#1db954] to-[#1ed760] hover:opacity-95 text-gray-950 font-bold py-3.5 rounded-xl transition shadow-[0_0_20px_rgba(29,185,84,0.4)] text-xs mt-1 hover:scale-[1.01] transform duration-300" data-i18n="signInBtn">Sign In</button>
+            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="emailLabel">Email Address</label><input type="email" id="loginEmail" placeholder="name@example.com" class="w-full bg-[#020804] text-gray-200 px-3.5 py-3 rounded-xl border border-[#00ff66]/40 focus:outline-none focus:border-[#00ff66] focus:ring-2 focus:ring-[#00ff66]/30 transition shadow-inner"></div>
+            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="passwordLabel">Password</label><input type="password" id="loginPassword" placeholder="••••••••" class="w-full bg-[#020804] text-gray-200 px-3.5 py-3 rounded-xl border border-[#00ff66]/40 focus:outline-none focus:border-[#00ff66] focus:ring-2 focus:ring-[#00ff66]/30 transition shadow-inner"></div>
+            <button onclick="handleLogin()" class="w-full bg-gradient-to-r from-[#00ff66] to-[#00cc52] hover:opacity-95 text-gray-950 font-bold py-3.5 rounded-xl transition shadow-[0_0_25px_rgba(0,255,102,0.5)] text-xs mt-1 hover:scale-[1.01] transform duration-300" data-i18n="signInBtn">Sign In</button>
         </div>
-        <div class="text-center text-xs text-gray-400 pt-1"><span data-i18n="noAccount">Don't have an account?</span> <a href="/register" class="text-[#1db954] font-bold hover:underline" data-i18n="createAccountLink">Create Account</a></div>
+        <div class="text-center text-xs text-gray-400 pt-1"><span data-i18n="noAccount">Don't have an account?</span> <a href="/register" class="text-[#00ff66] font-bold hover:underline" data-i18n="createAccountLink">Create Account</a></div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -1087,17 +1112,17 @@ register_html = (
     <div class="w-full max-w-md glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl space-y-5 relative neon-border">
         <a href="/" class="absolute top-5 left-5 text-gray-400 hover:text-white text-xs flex items-center space-x-1 transition"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="home">Home</span></a>
         <div class="text-center space-y-2 pt-3">
-            <div class="inline-flex w-14 h-14 rounded-2xl bg-[#1db954]/20 border border-[#1db954]/40 text-[#1db954] items-center justify-center text-xl shadow-inner"><i class="fa-solid fa-music"></i></div>
+            <div class="inline-flex w-14 h-14 rounded-2xl bg-[#00ff66]/20 border border-[#00ff66]/50 text-[#00ff66] items-center justify-center text-xl shadow-inner"><i class="fa-solid fa-music"></i></div>
             <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight" data-i18n="createAccountTitle">Create Account</h1>
             <p class="text-xs text-gray-400" data-i18n="createAccountDesc">Join Musicy community and start rating today</p>
         </div>
         <div class="space-y-3.5 text-xs">
-            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="usernameLabel">Username</label><input type="text" id="regUsername" placeholder="musiclover99" class="w-full bg-[#050b07] text-gray-200 px-3.5 py-3 rounded-xl border border-[#1db954]/40 focus:outline-none focus:border-[#1db954] focus:ring-2 focus:ring-[#1db954]/30 transition shadow-inner"></div>
-            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="emailLabel">Email Address</label><input type="email" id="regEmail" placeholder="name@example.com" class="w-full bg-[#050b07] text-gray-200 px-3.5 py-3 rounded-xl border border-[#1db954]/40 focus:outline-none focus:border-[#1db954] focus:ring-2 focus:ring-[#1db954]/30 transition shadow-inner"></div>
-            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="passwordLabel">Password</label><input type="password" id="regPassword" placeholder="••••••••" class="w-full bg-[#050b07] text-gray-200 px-3.5 py-3 rounded-xl border border-[#1db954]/40 focus:outline-none focus:border-[#1db954] focus:ring-2 focus:ring-[#1db954]/30 transition shadow-inner"></div>
-            <button onclick="handleRegister()" class="w-full bg-gradient-to-r from-[#1db954] to-[#1ed760] hover:opacity-95 text-gray-950 font-bold py-3.5 rounded-xl transition shadow-[0_0_20px_rgba(29,185,84,0.4)] text-xs mt-1 hover:scale-[1.01] transform duration-300" data-i18n="createAccountTitle">Create Account</button>
+            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="usernameLabel">Username</label><input type="text" id="regUsername" placeholder="musiclover99" class="w-full bg-[#020804] text-gray-200 px-3.5 py-3 rounded-xl border border-[#00ff66]/40 focus:outline-none focus:border-[#00ff66] focus:ring-2 focus:ring-[#00ff66]/30 transition shadow-inner"></div>
+            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="emailLabel">Email Address</label><input type="email" id="regEmail" placeholder="name@example.com" class="w-full bg-[#020804] text-gray-200 px-3.5 py-3 rounded-xl border border-[#00ff66]/40 focus:outline-none focus:border-[#00ff66] focus:ring-2 focus:ring-[#00ff66]/30 transition shadow-inner"></div>
+            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="passwordLabel">Password</label><input type="password" id="regPassword" placeholder="••••••••" class="w-full bg-[#020804] text-gray-200 px-3.5 py-3 rounded-xl border border-[#00ff66]/40 focus:outline-none focus:border-[#00ff66] focus:ring-2 focus:ring-[#00ff66]/30 transition shadow-inner"></div>
+            <button onclick="handleRegister()" class="w-full bg-gradient-to-r from-[#00ff66] to-[#00cc52] hover:opacity-95 text-gray-950 font-bold py-3.5 rounded-xl transition shadow-[0_0_25px_rgba(0,255,102,0.5)] text-xs mt-1 hover:scale-[1.01] transform duration-300" data-i18n="createAccountTitle">Create Account</button>
         </div>
-        <div class="text-center text-xs text-gray-400 pt-1"><span data-i18n="alreadyAccount">Already have an account?</span> <a href="/login" class="text-[#1db954] font-bold hover:underline" data-i18n="signInLink">Sign In</a></div>
+        <div class="text-center text-xs text-gray-400 pt-1"><span data-i18n="alreadyAccount">Already have an account?</span> <a href="/login" class="text-[#00ff66] font-bold hover:underline" data-i18n="signInLink">Sign In</a></div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -1145,7 +1170,7 @@ profile_html = (
         <a href="/" class="absolute top-5 left-5 text-gray-400 hover:text-white text-xs flex items-center space-x-1 transition"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="home">Home</span></a>
         <div class="text-center space-y-3 pt-3">
             <div class="relative w-20 h-20 sm:w-24 sm:h-24 mx-auto">
-                <img id="profileAvatarPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-[#1db954] shadow-xl">
+                <img id="profileAvatarPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-[#00ff66] shadow-xl">
             </div>
             <h1 class="text-lg sm:text-xl font-extrabold text-white tracking-tight" id="profileUsernameDisplay">Username</h1>
             <p class="text-xs text-gray-400" data-i18n="profileTitle">تعديل الصورة الشخصية</p>
@@ -1153,9 +1178,9 @@ profile_html = (
         <div class="space-y-4 text-xs">
             <div class="space-y-1.5">
                 <label class="text-gray-400 font-medium" data-i18n="avatarFileLabel">اختر صورة من جهازك (كمبيوتر أو هاتف):</label>
-                <input type="file" id="avatarFileInput" accept="image/*" class="w-full bg-[#050b07] text-gray-200 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#1db954] file:text-gray-950 hover:file:bg-[#1ed760] file:cursor-pointer p-2.5 rounded-xl border border-[#1db954]/40 focus:outline-none transition shadow-inner">
+                <input type="file" id="avatarFileInput" accept="image/*" class="w-full bg-[#020804] text-gray-200 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#00ff66] file:text-gray-950 hover:file:bg-[#00cc52] file:cursor-pointer p-2.5 rounded-xl border border-[#00ff66]/50 focus:outline-none transition shadow-inner">
             </div>
-            <button onclick="saveAvatarFile()" class="w-full bg-gradient-to-r from-[#1db954] to-[#1ed760] hover:opacity-95 text-gray-950 font-bold py-3.5 rounded-xl transition shadow-[0_0_20px_rgba(29,185,84,0.4)] text-xs mt-1 hover:scale-[1.01] transform duration-300" data-i18n="saveAvatarBtn">رفع وحفظ الصورة الشخصية</button>
+            <button onclick="saveAvatarFile()" class="w-full bg-gradient-to-r from-[#00ff66] to-[#00cc52] hover:opacity-95 text-gray-950 font-bold py-3.5 rounded-xl transition shadow-[0_0_25px_rgba(0,255,102,0.5)] text-xs mt-1 hover:scale-[1.01] transform duration-300" data-i18n="saveAvatarBtn">رفع وحفظ الصورة الشخصية</button>
         </div>
     </div>
     <script>
@@ -1224,21 +1249,21 @@ song_detail_template = (
     + """
 </head>
 <body class="text-gray-100 font-sans antialiased min-h-screen flex flex-col">
-    <header class="border-b border-[#1db954]/30 bg-[#020403]/95 backdrop-blur-2xl sticky top-0 z-50 h-16 flex items-center px-4 md:px-8 justify-between shadow-[0_4px_30px_rgba(0,0,0,0.8)]">
-        <div class="flex items-center space-x-12 w-full"><a href="/" class="flex items-center space-x-2 text-[#1db954] font-bold text-xl tracking-wider"><i class="fa-solid fa-music text-[#1db954]"></i><span class="tracking-widest" data-i18n="brandName">Musicy</span></a></div>
+    <header class="border-b border-[#00ff66]/40 bg-[#000000]/95 backdrop-blur-2xl sticky top-0 z-50 h-16 flex items-center px-4 md:px-8 justify-between shadow-[0_4px_35px_rgba(0,0,0,0.9)]">
+        <div class="flex items-center space-x-12 w-full"><a href="/" class="flex items-center space-x-2 text-[#00ff66] font-bold text-xl tracking-wider"><i class="fa-solid fa-music text-[#00ff66]"></i><span class="tracking-widest" data-i18n="brandName">Musicy</span></a></div>
         <div class="flex items-center space-x-4 text-xs font-medium text-gray-300">
             """
     + lang_switcher_html
     + """
-            <a href="/" class="flex items-center space-x-1.5 text-[#1db954] hover:text-white transition"><i class="fa-solid fa-house"></i> <span data-i18n="home">Home</span></a>
+            <a href="/" class="flex items-center space-x-1.5 text-[#00ff66] hover:text-white transition"><i class="fa-solid fa-house"></i> <span data-i18n="home">Home</span></a>
         </div>
     </header>
     <main class="flex-1 p-3 sm:p-6 md:p-10 space-y-6 sm:space-y-10 max-w-5xl mx-auto w-full">
-        <!-- قسم تفاصيل الأغنية متجاوب وفخم للغاية للموبايل والبيسي -->
-        <div class="bg-gradient-to-r from-[#081a10] via-[#040e08] to-[#020403] border border-[#1db954]/50 rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-10 flex flex-col md:flex-row items-center gap-5 sm:gap-8 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-2xl neon-border text-center md:text-left">
+        <!-- قسم تفاصيل الأغنية الفخم للغاية -->
+        <div class="bg-gradient-to-r from-[#031408] via-[#010803] to-[#000000] border border-[#00ff66]/60 rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-10 flex flex-col md:flex-row items-center gap-5 sm:gap-8 shadow-[0_20px_60px_rgba(0,0,0,0.9)] backdrop-blur-2xl neon-border text-center md:text-left">
             <div class="relative shrink-0 group">
-                <img id="songCoverImg" src="{{ song.img }}" crossorigin="anonymous" class="w-36 h-36 sm:w-52 sm:h-52 md:w-60 md:h-60 object-cover rounded-2xl shadow-2xl border border-[#1db954]/50 group-hover:scale-105 transition duration-700 mx-auto">
-                <div class="absolute inset-0 bg-[#1db954]/20 rounded-2xl filter blur-xl opacity-0 group-hover:opacity-100 transition duration-700 -z-10"></div>
+                <img id="songCoverImg" src="{{ song.img }}" crossorigin="anonymous" class="w-36 h-36 sm:w-52 sm:h-52 md:w-60 md:h-60 object-cover rounded-2xl shadow-2xl border border-[#00ff66]/60 group-hover:scale-105 transition duration-700 mx-auto">
+                <div class="absolute inset-0 bg-[#00ff66]/25 rounded-2xl filter blur-xl opacity-0 group-hover:opacity-100 transition duration-700 -z-10"></div>
             </div>
             <div class="flex-1 space-y-3 w-full min-w-0">
                 <div>
@@ -1247,16 +1272,16 @@ song_detail_template = (
                     <p class="text-[11px] sm:text-xs text-gray-400 mt-0.5">{{ song.release_year }} &bull; {{ song.genre }}</p>
                 </div>
                 <div class="flex items-center justify-center md:justify-start space-x-2.5">
-                    <div class="flex text-[#1db954] text-xs sm:text-sm"><i class="fa-solid fa-star"></i></div>
+                    <div class="flex text-[#00ff66] text-xs sm:text-sm"><i class="fa-solid fa-star"></i></div>
                     <span class="text-lg sm:text-xl font-bold text-white">{{ song.rating }} <span class="text-xs text-gray-400 font-normal">/5</span></span>
                     <span class="text-xs text-gray-400">({{ song.votes }} <span data-i18n="votesText">votes</span>)</span>
                 </div>
                 <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2.5 sm:gap-4 pt-1 w-full">
-                    <button id="mainRateBtn" onclick="openRateModal()" class="w-full sm:w-auto bg-gradient-to-r from-[#1db954] to-[#1ed760] hover:opacity-95 text-gray-950 font-bold px-5 sm:px-7 py-3 rounded-xl text-xs flex items-center justify-center space-x-2 transition shadow-[0_0_20px_rgba(29,185,84,0.4)] hover:scale-105 transform duration-300">
+                    <button id="mainRateBtn" onclick="openRateModal()" class="w-full sm:w-auto bg-gradient-to-r from-[#00ff66] to-[#00cc52] hover:opacity-95 text-gray-950 font-bold px-5 sm:px-7 py-3 rounded-xl text-xs flex items-center justify-center space-x-2 transition shadow-[0_0_25px_rgba(0,255,102,0.5)] hover:scale-105 transform duration-300">
                         <i class="fa-solid fa-star"></i>
                         <span id="mainRateBtnText" data-i18n="rateSongBtn">Rate This Song</span>
                     </button>
-                    <a href="https://open.spotify.com/track/{{ song.spotify_id }}" target="_blank" class="w-full sm:w-auto bg-[#050b07] border border-[#1db954]/50 hover:bg-[#1db954]/25 text-[#1db954] font-bold px-5 sm:px-7 py-3 rounded-xl text-xs flex items-center justify-center space-x-2 transition shadow-lg hover:scale-105 transform duration-300">
+                    <a href="https://open.spotify.com/track/{{ song.spotify_id }}" target="_blank" class="w-full sm:w-auto bg-[#020804] border border-[#00ff66]/50 hover:bg-[#00ff66]/25 text-[#00ff66] font-bold px-5 sm:px-7 py-3 rounded-xl text-xs flex items-center justify-center space-x-2 transition shadow-lg hover:scale-105 transform duration-300">
                         <i class="fa-brands fa-spotify text-sm"></i>
                         <span data-i18n="listenSpotify">Listen on Spotify</span>
                     </a>
@@ -1266,24 +1291,24 @@ song_detail_template = (
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 space-y-4 sm:space-y-6">
-                <div class="flex items-center justify-between"><h3 class="text-sm sm:text-base font-bold text-white" data-i18n="reviewsTitle">Reviews & Ratings</h3><button id="secRateBtn" onclick="openRateModal()" class="bg-[#050b07] hover:bg-[#1db954]/25 text-[#1db954] font-bold px-3 py-2 rounded-xl text-xs border border-[#1db954]/40 transition shadow" data-i18n="writeReviewBtn">Write Review</button></div>
+                <div class="flex items-center justify-between"><h3 class="text-sm sm:text-base font-bold text-white" data-i18n="reviewsTitle">Reviews & Ratings</h3><button id="secRateBtn" onclick="openRateModal()" class="bg-[#020804] hover:bg-[#00ff66]/25 text-[#00ff66] font-bold px-3 py-2 rounded-xl text-xs border border-[#00ff66]/50 transition shadow" data-i18n="writeReviewBtn">Write Review</button></div>
                 {% if reviews %}
                     <div class="space-y-3">
                         {% for rev in reviews %}
                         <div class="glass-card rounded-2xl p-3.5 sm:p-5 space-y-2.5" data-username="{{ rev.username }}">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-2.5 min-w-0">
-                                    <img src="{{ rev.avatar }}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border border-[#1db954]/60 shadow-md shrink-0">
+                                    <img src="{{ rev.avatar }}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border border-[#00ff66]/70 shadow-md shrink-0">
                                     <div class="min-w-0">
                                         <h4 class="font-bold text-xs text-white truncate">{{ rev.username }}</h4>
                                         <span class="text-[10px] text-gray-500 time-ago-el" data-timestamp="{{ rev.timestamp }}"></span>
                                     </div>
                                 </div>
-                                <div class="flex items-center space-x-1 text-[#1db954] text-xs font-bold shrink-0"><i class="fa-solid fa-star text-[10px]"></i><span>{{ rev.rating }}/5</span></div>
+                                <div class="flex items-center space-x-1 text-[#00ff66] text-xs font-bold shrink-0"><i class="fa-solid fa-star text-[10px]"></i><span>{{ rev.rating }}/5</span></div>
                             </div>
                             <p class="text-xs text-gray-300 leading-relaxed font-light break-words">{{ rev.comment }}</p>
-                            <div class="flex items-center justify-between pt-2 border-t border-[#1db954]/20 text-xs">
-                                <button onclick="likeReview({{ rev.id }}, this)" class="flex items-center space-x-1.5 text-gray-400 hover:text-[#1db954] transition bg-[#050b07] px-3 py-1.5 rounded-xl border border-[#1db954]/30 shadow">
+                            <div class="flex items-center justify-between pt-2 border-t border-[#00ff66]/20 text-xs">
+                                <button onclick="likeReview({{ rev.id }}, this)" class="flex items-center space-x-1.5 text-gray-400 hover:text-[#00ff66] transition bg-[#020804] px-3 py-1.5 rounded-xl border border-[#00ff66]/30 shadow">
                                     <i class="fa-solid fa-heart text-gray-500 like-icon-{{ rev.id }}"></i>
                                     <span>Like</span>
                                     <span class="font-bold text-white ml-1 like-count-{{ rev.id }}">{{ rev.likes }}</span>
@@ -1299,52 +1324,52 @@ song_detail_template = (
             <div class="glass-card rounded-2xl p-4 sm:p-6 space-y-3 h-fit">
                 <h4 class="font-bold text-xs text-white uppercase tracking-wider" data-i18n="ratingDetails">Rating Details</h4>
                 <div class="space-y-2.5 text-xs text-gray-400">
-                    <div class="flex items-center justify-between"><span data-i18n="overallRating">Overall Rating</span><span class="text-[#1db954] font-bold">{{ song.rating }} / 5</span></div>
+                    <div class="flex items-center justify-between"><span data-i18n="overallRating">Overall Rating</span><span class="text-[#00ff66] font-bold">{{ song.rating }} / 5</span></div>
                     <div class="flex items-center justify-between"><span data-i18n="totalVotes">Total Votes</span><span class="text-white font-bold">{{ song.votes }}</span></div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Modal Rate متجاوب وفخم جداً -->
+    <!-- نافذة التقييم الفخمة -->
     <div id="rateModal" class="fixed inset-0 bg-black/90 flex items-center justify-center hidden z-50 p-3 backdrop-blur-xl">
-        <div class="glass-card border border-[#1db954]/60 rounded-2xl sm:rounded-3xl p-5 sm:p-8 w-full max-w-md space-y-4 shadow-2xl">
+        <div class="glass-card border border-[#00ff66]/70 rounded-2xl sm:rounded-3xl p-5 sm:p-8 w-full max-w-md space-y-4 shadow-2xl">
             <h3 class="text-xs sm:text-base font-bold text-white truncate"><span data-i18n="rateModalTitle">Rate</span> "{{ song.title }}"</h3>
             <div class="space-y-3 text-xs">
                 <div>
                     <label class="text-gray-400 block mb-1.5 font-medium" data-i18n="ratingScoreLabel">اختر النجوم (من 1 إلى 5):</label>
                     <div class="flex items-center justify-between sm:justify-start sm:space-x-4 text-2xl sm:text-3xl text-gray-600 cursor-pointer" id="starContainer">
-                        <i class="fa-solid fa-star hover:text-[#1db954] transition transform hover:scale-125 p-1" onclick="setStarRating(1)" data-value="1"></i>
-                        <i class="fa-solid fa-star hover:text-[#1db954] transition transform hover:scale-125 p-1" onclick="setStarRating(2)" data-value="2"></i>
-                        <i class="fa-solid fa-star hover:text-[#1db954] transition transform hover:scale-125 p-1" onclick="setStarRating(3)" data-value="3"></i>
-                        <i class="fa-solid fa-star hover:text-[#1db954] transition transform hover:scale-125 p-1" onclick="setStarRating(4)" data-value="4"></i>
-                        <i class="fa-solid fa-star hover:text-[#1db954] transition transform hover:scale-125 p-1" onclick="setStarRating(5)" data-value="5"></i>
-                        <span id="starValueText" class="text-sm font-extrabold text-[#1db954] ml-2">5/5</span>
+                        <i class="fa-solid fa-star hover:text-[#00ff66] transition transform hover:scale-125 p-1" onclick="setStarRating(1)" data-value="1"></i>
+                        <i class="fa-solid fa-star hover:text-[#00ff66] transition transform hover:scale-125 p-1" onclick="setStarRating(2)" data-value="2"></i>
+                        <i class="fa-solid fa-star hover:text-[#00ff66] transition transform hover:scale-125 p-1" onclick="setStarRating(3)" data-value="3"></i>
+                        <i class="fa-solid fa-star hover:text-[#00ff66] transition transform hover:scale-125 p-1" onclick="setStarRating(4)" data-value="4"></i>
+                        <i class="fa-solid fa-star hover:text-[#00ff66] transition transform hover:scale-125 p-1" onclick="setStarRating(5)" data-value="5"></i>
+                        <span id="starValueText" class="text-sm font-extrabold text-[#00ff66] ml-2">5/5</span>
                     </div>
                     <input type="hidden" id="hiddenRating" value="5">
                 </div>
-                <div><label class="text-gray-400 block mb-1.5 font-medium" data-i18n="commentLabel">Your Review / Comment:</label><textarea id="commentInput" rows="3" placeholder="This song is amazing..." class="w-full bg-[#050b07] text-gray-200 p-3 rounded-xl border border-[#1db954]/40 focus:outline-none focus:border-[#1db954] focus:ring-2 focus:ring-[#1db954]/30 shadow-inner"></textarea></div>
+                <div><label class="text-gray-400 block mb-1.5 font-medium" data-i18n="commentLabel">Your Review / Comment:</label><textarea id="commentInput" rows="3" placeholder="This song is amazing..." class="w-full bg-[#020804] text-gray-200 p-3 rounded-xl border border-[#00ff66]/40 focus:outline-none focus:border-[#00ff66] focus:ring-2 focus:ring-[#00ff66]/30 shadow-inner"></textarea></div>
             </div>
             <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-1">
-                <button onclick="submitRating()" class="w-full sm:flex-1 bg-gradient-to-r from-[#1db954] to-[#1ed760] hover:opacity-95 text-gray-950 font-bold py-3 rounded-xl text-xs transition shadow-[0_0_20px_rgba(29,185,84,0.4)]" data-i18n="submitRatingBtn">Submit Rating & Generate Story</button>
-                <button onclick="closeRateModal()" class="w-full sm:flex-1 bg-[#050b07] hover:bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-3 rounded-xl text-xs transition" data-i18n="cancelBtn">Cancel</button>
+                <button onclick="submitRating()" class="w-full sm:flex-1 bg-gradient-to-r from-[#00ff66] to-[#00cc52] hover:opacity-95 text-gray-950 font-bold py-3 rounded-xl text-xs transition shadow-[0_0_25px_rgba(0,255,102,0.5)]" data-i18n="submitRatingBtn">Submit Rating & Generate Story</button>
+                <button onclick="closeRateModal()" class="w-full sm:flex-1 bg-[#020804] hover:bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-3 rounded-xl text-xs transition" data-i18n="cancelBtn">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Instagram Story Preview متجاوب -->
+    <!-- نافذة معاينة الستوري الفخمة -->
     <div id="storyModal" class="fixed inset-0 bg-black/95 flex items-center justify-center hidden z-50 p-3 backdrop-blur-2xl">
-        <div class="glass-card border border-[#1db954]/70 rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-full max-w-sm space-y-4 shadow-2xl text-center">
+        <div class="glass-card border border-[#00ff66]/80 rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-full max-w-sm space-y-4 shadow-2xl text-center">
             <h3 class="text-xs sm:text-sm font-bold text-white" data-i18n="storyModalTitle">معاينة ستوري انستقرام الخارقة الفخامة</h3>
             <div class="relative flex justify-center">
-                <canvas id="storyCanvas" width="1080" height="1920" class="w-full max-h-[350px] sm:max-h-[420px] object-contain rounded-xl border border-[#1db954]/40 shadow-2xl"></canvas>
+                <canvas id="storyCanvas" width="1080" height="1920" class="w-full max-h-[350px] sm:max-h-[420px] object-contain rounded-xl border border-[#00ff66]/50 shadow-2xl"></canvas>
             </div>
             <div class="space-y-2">
-                <button onclick="downloadStory()" class="w-full bg-gradient-to-r from-[#1db954] to-[#1ed760] hover:opacity-95 text-gray-950 font-bold py-3 rounded-xl text-xs transition shadow-[0_0_20px_rgba(29,185,84,0.5)] flex items-center justify-center space-x-2">
+                <button onclick="downloadStory()" class="w-full bg-gradient-to-r from-[#00ff66] to-[#00cc52] hover:opacity-95 text-gray-950 font-bold py-3 rounded-xl text-xs transition shadow-[0_0_25px_rgba(0,255,102,0.6)] flex items-center justify-center space-x-2">
                     <i class="fa-solid fa-download"></i>
                     <span data-i18n="downloadStoryBtn">تحميل ستوري الفخامة</span>
                 </button>
-                <button onclick="closeStoryModal()" class="w-full bg-[#050b07] hover:bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-2.5 rounded-xl text-xs transition" data-i18n="closeStoryBtn">إغلاق ومتابعة</button>
+                <button onclick="closeStoryModal()" class="w-full bg-[#020804] hover:bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-2.5 rounded-xl text-xs transition" data-i18n="closeStoryBtn">إغلاق ومتابعة</button>
             </div>
         </div>
     </div>
@@ -1437,10 +1462,10 @@ song_detail_template = (
             let stars = document.querySelectorAll('#starContainer i');
             stars.forEach((star, index) => {
                 if(index < val) {
-                    star.classList.add('text-[#1db954]', 'drop-shadow-[0_0_10px_#1db954]');
+                    star.classList.add('text-[#00ff66]', 'drop-shadow-[0_0_12px_#00ff66]');
                     star.classList.remove('text-gray-600');
                 } else {
-                    star.classList.remove('text-[#1db954]', 'drop-shadow-[0_0_10px_#1db954]');
+                    star.classList.remove('text-[#00ff66]', 'drop-shadow-[0_0_12px_#00ff66]');
                     star.classList.add('text-gray-600');
                 }
             });
@@ -1504,25 +1529,25 @@ song_detail_template = (
             const ctx = canvas.getContext('2d');
             
             const bgGrad = ctx.createLinearGradient(0, 0, 0, 1920);
-            bgGrad.addColorStop(0, '#010502');
-            bgGrad.addColorStop(0.3, '#040d07');
+            bgGrad.addColorStop(0, '#000000');
+            bgGrad.addColorStop(0.3, '#020d05');
             bgGrad.addColorStop(1, '#000000');
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, 1080, 1920);
 
             ctx.save();
-            ctx.shadowColor = 'rgba(29, 185, 84, 0.4)';
-            ctx.shadowBlur = 80;
-            ctx.fillStyle = 'rgba(10, 20, 14, 0.9)';
+            ctx.shadowColor = 'rgba(0, 255, 102, 0.5)';
+            ctx.shadowBlur = 90;
+            ctx.fillStyle = 'rgba(3, 12, 6, 0.95)';
             ctx.beginPath();
             ctx.roundRect(80, 120, 920, 1680, 60);
             ctx.fill();
-            ctx.strokeStyle = 'rgba(29, 185, 84, 0.5)';
-            ctx.lineWidth = 4;
+            ctx.strokeStyle = 'rgba(0, 255, 102, 0.7)';
+            ctx.lineWidth = 5;
             ctx.stroke();
             ctx.restore();
 
-            ctx.fillStyle = '#1db954';
+            ctx.fillStyle = '#00ff66';
             ctx.font = 'bold 36px sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText('MUSICY REVIEW & RATING', 540, 220);
@@ -1532,9 +1557,9 @@ song_detail_template = (
             img.src = data.img;
             img.onload = function() {
                 ctx.save();
-                ctx.shadowColor = 'rgba(0,0,0,0.8)';
-                ctx.shadowBlur = 50;
-                ctx.shadowOffsetY = 25;
+                ctx.shadowColor = 'rgba(0,0,0,0.9)';
+                ctx.shadowBlur = 60;
+                ctx.shadowOffsetY = 30;
                 ctx.beginPath();
                 ctx.roundRect(190, 280, 700, 700, 40);
                 ctx.closePath();
@@ -1543,7 +1568,7 @@ song_detail_template = (
                 ctx.restore();
 
                 ctx.save();
-                ctx.strokeStyle = 'rgba(29, 185, 84, 0.6)';
+                ctx.strokeStyle = 'rgba(0, 255, 102, 0.8)';
                 ctx.lineWidth = 6;
                 ctx.beginPath();
                 ctx.roundRect(190, 280, 700, 700, 40);
@@ -1560,7 +1585,7 @@ song_detail_template = (
                 ctx.fillText(data.artist, 540, 1130, 850);
 
                 let starStr = '★'.repeat(data.rating) + '☆'.repeat(5 - Math.floor(data.rating));
-                ctx.fillStyle = '#1db954';
+                ctx.fillStyle = '#00ff66';
                 ctx.font = 'bold 50px sans-serif';
                 ctx.fillText(starStr + ` (${data.rating}/5)`, 540, 1240);
 
@@ -1570,7 +1595,7 @@ song_detail_template = (
                     wrapText(ctx, `"${data.comment}"`, 540, 1340, 800, 50);
                 }
 
-                ctx.fillStyle = '#1db954';
+                ctx.fillStyle = '#00ff66';
                 ctx.font = 'bold 28px sans-serif';
                 ctx.fillText(`Reviewed by @${data.username} on Musicy`, 540, 1680);
             };
