@@ -506,13 +506,13 @@ background_styles = """
         100% { background-position: 0% 50%; }
     }
     @keyframes pulseGlow {
-        0%, 100% { opacity: 0.4; transform: scale(1) translateY(0); }
-        50% { opacity: 0.8; transform: scale(1.25) translateY(-30px); }
+        0%, 100% { opacity: 0.3; transform: scale(1) translateY(0); }
+        50% { opacity: 0.6; transform: scale(1.15) translateY(-20px); }
     }
     @keyframes floatParticle {
-        0% { transform: translateY(0px) rotate(0deg) scale(1); opacity: 0.4; }
-        50% { transform: translateY(-60px) rotate(180deg) scale(1.4); opacity: 0.9; }
-        100% { transform: translateY(0px) rotate(360deg) scale(1); opacity: 0.4; }
+        0% { transform: translateY(0px) rotate(0deg) scale(1); opacity: 0.3; }
+        50% { transform: translateY(-50px) rotate(180deg) scale(1.3); opacity: 0.7; }
+        100% { transform: translateY(0px) rotate(360deg) scale(1); opacity: 0.3; }
     }
     @keyframes neonPulse {
         0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 102, 0.4), inset 0 0 15px rgba(0, 255, 102, 0.2); }
@@ -555,26 +555,37 @@ background_styles = """
         overflow-x: hidden;
         color: #f1f5f9;
     }
-    /* مؤثر تتبع الماوس الفخم جداً */
+    /* خلفية ضبابية مع تأثيرات العمق */
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        z-index: -2;
+        pointer-events: none;
+    }
+    /* كرة الإضاءة المتطورة مع الماوس (صغيرة وفخمة) */
     #luxury-cursor-glow {
         position: fixed;
-        width: 450px;
-        height: 450px;
-        background: radial-gradient(circle, rgba(0, 255, 102, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+        width: 180px;
+        height: 180px;
+        background: radial-gradient(circle, rgba(0, 255, 102, 0.4) 0%, rgba(0, 255, 102, 0.05) 50%, rgba(0, 0, 0, 0) 80%);
         top: 0;
         left: 0;
         pointer-events: none;
         transform: translate(-50%, -50%);
         z-index: 9999;
-        transition: width 0.3s, height 0.3s;
         border-radius: 50%;
-        filter: blur(40px);
+        filter: blur(15px);
+        box-shadow: 0 0 30px rgba(0, 255, 102, 0.3);
+        transition: transform 0.05s ease-out;
     }
     .animated-bg-glow {
         position: fixed;
-        width: 700px;
-        height: 700px;
-        background: radial-gradient(circle, rgba(0, 255, 102, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(0, 255, 102, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
         top: -200px;
         right: -150px;
         z-index: -1;
@@ -585,9 +596,9 @@ background_styles = """
     }
     .animated-bg-glow-2 {
         position: fixed;
-        width: 700px;
-        height: 700px;
-        background: radial-gradient(circle, rgba(0, 200, 80, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(0, 200, 80, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
         bottom: -200px;
         left: -150px;
         z-index: -1;
@@ -596,20 +607,31 @@ background_styles = """
         border-radius: 50%;
         filter: blur(70px);
     }
+    /* علامات موسيقية تتفاعل مع حركة الماوس */
+    .musical-note {
+        position: fixed;
+        color: rgba(0, 255, 102, 0.35);
+        font-size: 18px;
+        pointer-events: none;
+        z-index: -1;
+        transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), color 0.3s;
+        text-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+    }
     .floating-orb {
         position: fixed;
-        width: 7px;
-        height: 7px;
+        width: 6px;
+        height: 6px;
         background: #00ff66;
-        box-shadow: 0 0 20px #00ff66, 0 0 35px #00ff66;
+        box-shadow: 0 0 15px #00ff66, 0 0 25px #00ff66;
         border-radius: 50%;
         z-index: -1;
         animation: floatParticle 6s ease-in-out infinite;
         pointer-events: none;
     }
     .glass-card {
-        background: rgba(5, 12, 8, 0.9);
-        backdrop-filter: blur(25px);
+        background: rgba(5, 12, 8, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(0, 255, 102, 0.35);
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(0, 255, 102, 0.25);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -644,14 +666,44 @@ background_styles = """
 <div class="floating-orb" style="top: 85%; left: 20%; animation-delay: 3s;"></div>
 <div class="floating-orb" style="top: 25%; left: 80%; animation-delay: 4.5s;"></div>
 
+<!-- علامات موسيقية خلفية متفاعلة مع الماوس -->
+<div class="musical-note" style="top: 20%; left: 15%;" data-speed="0.02"><i class="fa-solid fa-music"></i></div>
+<div class="musical-note" style="top: 40%; left: 75%;" data-speed="0.04"><i class="fa-solid fa-compact-disc"></i></div>
+<div class="musical-note" style="top: 70%; left: 30%;" data-speed="0.03"><i class="fa-solid fa-microphone-lines"></i></div>
+<div class="musical-note" style="top: 80%; left: 85%;" data-speed="0.05"><i class="fa-solid fa-music"></i></div>
+<div class="musical-note" style="top: 30%; left: 45%;" data-speed="0.025"><i class="fa-solid fa-radio"></i></div>
+
 <script>
-    // تتبع حركة الماوس لإعطاء الإضاءة الفخمة المتبعة
+    // تتبع حركة الماوس لتحريك كرة الإضاءة والعلامات الموسيقية بدقة وفخامة
     document.addEventListener('mousemove', (e) => {
         const cursorGlow = document.getElementById('luxury-cursor-glow');
         if (cursorGlow) {
             cursorGlow.style.left = e.clientX + 'px';
             cursorGlow.style.top = e.clientY + 'px';
         }
+
+        // تفاعل العلامات الموسيقية مع حركة الماوس
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+        document.querySelectorAll('.musical-note').forEach(note => {
+            const speed = parseFloat(note.getAttribute('data-speed')) || 0.03;
+            const rect = note.getBoundingClientRect();
+            const noteX = rect.left + rect.width / 2;
+            const noteY = rect.top + rect.height / 2;
+            
+            const offsetX = (mouseX - noteX) * speed;
+            const offsetY = (mouseY - noteY) * speed;
+            
+            note.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(1.15)`;
+            note.style.color = 'rgba(0, 255, 102, 0.8)';
+        });
+    });
+
+    document.addEventListener('mouseleave', () => {
+        document.querySelectorAll('.musical-note').forEach(note => {
+            note.style.transform = 'translate(0px, 0px) scale(1)';
+            note.style.color = 'rgba(0, 255, 102, 0.35)';
+        });
     });
 
     const translations = {
