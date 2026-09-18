@@ -556,33 +556,46 @@ background_styles = """
         color: #f1f5f9;
         transition: background 0.4s ease, color 0.4s ease;
     }
-    /* الوضع الساطع الفخم */
+    /* الوضع الساطع الفخم المحدث لضمان وضوح كامل للكتابة واللوغو والبوكسات البيضاء */
     body.light-mode {
         background: linear-gradient(135deg, #f8fafc, #e2e8f0, #f1f5f9, #cbd5e1) !important;
         color: #0f172a !important;
     }
     body.light-mode header {
-        background: rgba(255, 255, 102, 0.95) !important;
         background: rgba(255, 255, 255, 0.95) !important;
-        border-bottom-color: rgba(0, 200, 80, 0.3) !important;
+        border-bottom-color: rgba(0, 180, 70, 0.4) !important;
+    }
+    body.light-mode header span[data-i18n="brandName"], 
+    body.light-mode header a, 
+    body.light-mode header .fa-music {
+        color: #059669 !important;
+        -webkit-text-fill-color: #059669 !important;
     }
     body.light-mode aside {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-right-color: rgba(0, 200, 80, 0.2) !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        border-right-color: rgba(0, 180, 70, 0.3) !important;
     }
-    body.light-mode .glass-card {
-        background: rgba(255, 255, 255, 0.85) !important;
-        border: 1px solid rgba(0, 200, 80, 0.3) !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+    body.light-mode .glass-card,
+    body.light-mode div.bg-gradient-to-r.from-\[\#031408\] {
+        background: #ffffff !important;
+        background-image: none !important;
+        border: 1px solid rgba(0, 180, 70, 0.4) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
         color: #0f172a !important;
     }
     body.light-mode input, body.light-mode textarea {
-        background: #f1f5f9 !important;
+        background: #ffffff !important;
         color: #0f172a !important;
-        border-color: rgba(0, 200, 80, 0.4) !important;
+        border-color: rgba(0, 180, 70, 0.5) !important;
     }
-    body.light-mode h1, body.light-mode h2, body.light-mode h3, body.light-mode h4 {
+    body.light-mode h1, body.light-mode h2, body.light-mode h3, body.light-mode h4, body.light-mode p, body.light-mode span {
         color: #0f172a !important;
+    }
+    body.light-mode .text-gray-300, body.light-mode .text-gray-400, body.light-mode .text-gray-500 {
+        color: #334155 !important;
+    }
+    body.light-mode .text-\[\#00ff66\], body.light-mode span.text-\[\#00ff66\] {
+        color: #047857 !important;
     }
 
     /* تأثير ضغطة زر الفخامة (Dark Mode Button) */
