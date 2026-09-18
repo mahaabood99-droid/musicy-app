@@ -230,8 +230,6 @@ def song_detail(spotify_id):
         )
     )
     
-    # التحقق مما إذا كان المستخدم الحالي قد قام بالإعجاب بهذا التقييم مسبقاً لتثبيت الحالة
-    # سنقوم بفحص الـ Request القادم أو تمرير اسم المستخدم لاحقاً، وهنا سنضيف حقن حالة الإعجاب لكل مستخدم
     reviews_data.append({
         'id': r.id,
         'username': r.username,
@@ -626,25 +624,23 @@ background_styles = """
         color: #047857 !important;
     }
 
-    /* تعديل العناصر المطلوبة لتصبح بلون أسود في الوضع الساطع وتعود بيضاء في الوضع الداكن */
-    body.light-mode .ammar-love-badge {
-        color: #000000 !important;
-        background: rgba(240, 240, 240, 0.9) !important;
-        border-color: rgba(0, 0, 0, 0.2) !important;
-    }
-    body.light-mode .ammar-love-badge span {
-        color: #000000 !important;
-    }
+    /* تعديل العناصر المطلوبة (ميد وذ لوف، بلاي اون سبوتفاي، تسجيل الخروج، وتحويل اللغة) لتصبح بيضاء في الداكن وسوداء في الساطع */
+    body.light-mode .ammar-love-badge,
+    body.light-mode .ammar-love-badge span,
     body.light-mode a[href*="spotify.com"],
     body.light-mode span[data-i18n="listenSpotify"],
+    body.light-mode a[href*="spotify.com"] i,
     body.light-mode button[onclick*="handleLogout"],
     body.light-mode button[onclick*="handleLogout"] i,
-    body.light-mode .fa-right-from-bracket {
-        color: #000000 !important;
-    }
+    body.light-mode .fa-right-from-bracket,
     body.light-mode .lang-switcher-text-black,
     body.light-mode button[onclick^="setLanguage"] {
         color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+    }
+    body.light-mode .ammar-love-badge {
+        background: rgba(240, 240, 240, 0.9) !important;
+        border-color: rgba(0, 0, 0, 0.2) !important;
     }
 
     /* تأثير ضغطة زر الفخامة (Dark Mode Button) */
