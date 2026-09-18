@@ -22,10 +22,19 @@ try:
 except ImportError:
   pass
 
+import os
+from flask import Flask
+
 app = Flask(__name__)
-# استخدام مسار آمن لقاعدة البيانات وتفعيل إعدادات الأمان
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///songdb.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# قراءة الرابط من Render أو استخدام SQLite محلياً للتجربة[cite: 1]
+database_url = os.getenv("DATABASE_URL", "sqlite:///site.db")
+
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # حماية إضافية للتحكم بحجم الملفات المرفوعة (حد أقصى 2 ميجابايت لمنع هجمات DoS عبر الرفع)
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
