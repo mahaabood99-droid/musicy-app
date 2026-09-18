@@ -554,7 +554,66 @@ background_styles = """
         position: relative;
         overflow-x: hidden;
         color: #f1f5f9;
+        transition: background 0.4s ease, color 0.4s ease;
     }
+    /* الوضع الساطع الفخم */
+    body.light-mode {
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0, #f1f5f9, #cbd5e1) !important;
+        color: #0f172a !important;
+    }
+    body.light-mode header {
+        background: rgba(255, 255, 102, 0.95) !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        border-bottom-color: rgba(0, 200, 80, 0.3) !important;
+    }
+    body.light-mode aside {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-right-color: rgba(0, 200, 80, 0.2) !important;
+    }
+    body.light-mode .glass-card {
+        background: rgba(255, 255, 255, 0.85) !important;
+        border: 1px solid rgba(0, 200, 80, 0.3) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+        color: #0f172a !important;
+    }
+    body.light-mode input, body.light-mode textarea {
+        background: #f1f5f9 !important;
+        color: #0f172a !important;
+        border-color: rgba(0, 200, 80, 0.4) !important;
+    }
+    body.light-mode h1, body.light-mode h2, body.light-mode h3, body.light-mode h4 {
+        color: #0f172a !important;
+    }
+
+    /* تأثير ضغطة زر الفخامة (Dark Mode Button) */
+    .luxury-dark-btn {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .luxury-dark-btn:active {
+        transform: scale(0.92);
+        box-shadow: 0 0 10px rgba(0, 255, 102, 0.8), inset 0 0 15px rgba(0, 255, 102, 0.5);
+    }
+    .luxury-dark-btn::after {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 5px; height: 5px;
+        background: rgba(255, 255, 255, 0.6);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1, 1) translate(-50%, -50%);
+        transform-origin: 50% 50%;
+    }
+    .luxury-dark-btn:active::after {
+        animation: rippleEffect 0.5s ease-out;
+    }
+    @keyframes rippleEffect {
+        0% { transform: scale(0, 0) translate(-50%, -50%); opacity: 0.8; }
+        100% { transform: scale(40, 40) translate(-50%, -50%); opacity: 0; }
+    }
+
     /* خلفية ضبابية مع تأثيرات العمق */
     body::before {
         content: "";
@@ -564,22 +623,6 @@ background_styles = """
         -webkit-backdrop-filter: blur(12px);
         z-index: -2;
         pointer-events: none;
-    }
-    /* كرة الإضاءة المتطورة مع الماوس (صغيرة وفخمة) */
-    #luxury-cursor-glow {
-        position: fixed;
-        width: 180px;
-        height: 180px;
-        background: radial-gradient(circle, rgba(0, 255, 102, 0.4) 0%, rgba(0, 255, 102, 0.05) 50%, rgba(0, 0, 0, 0) 80%);
-        top: 0;
-        left: 0;
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-        z-index: 9999;
-        border-radius: 50%;
-        filter: blur(15px);
-        box-shadow: 0 0 30px rgba(0, 255, 102, 0.3);
-        transition: transform 0.05s ease-out;
     }
     .animated-bg-glow {
         position: fixed;
@@ -658,7 +701,6 @@ background_styles = """
         .mobile-p-3 { padding: 12px !important; }
     }
 </style>
-<div id="luxury-cursor-glow"></div>
 <div class="animated-bg-glow"></div>
 <div class="animated-bg-glow-2"></div>
 <div class="floating-orb" style="top: 15%; left: 8%; animation-delay: 0s;"></div>
@@ -674,15 +716,8 @@ background_styles = """
 <div class="musical-note" style="top: 30%; left: 45%;" data-speed="0.025"><i class="fa-solid fa-radio"></i></div>
 
 <script>
-    // تتبع حركة الماوس لتحريك كرة الإضاءة والعلامات الموسيقية بدقة وفخامة
+    // تفاعل العلامات الموسيقية مع حركة الماوس بدون كيرسر مزعج
     document.addEventListener('mousemove', (e) => {
-        const cursorGlow = document.getElementById('luxury-cursor-glow');
-        if (cursorGlow) {
-            cursorGlow.style.left = e.clientX + 'px';
-            cursorGlow.style.top = e.clientY + 'px';
-        }
-
-        // تفاعل العلامات الموسيقية مع حركة الماوس
         const mouseX = e.clientX;
         const mouseY = e.clientY;
         document.querySelectorAll('.musical-note').forEach(note => {
@@ -706,12 +741,40 @@ background_styles = """
         });
     });
 
+    // دالة تفعيل وتغيير وضع الدارك مود والساطع
+    function toggleDarkMode() {
+        document.body.classList.toggle('light-mode');
+        let isLight = document.body.classList.contains('light-mode');
+        localStorage.setItem('musicy_theme', isLight ? 'light' : 'dark');
+        let icon = document.getElementById('darkModeIcon');
+        let text = document.getElementById('darkModeText');
+        if(isLight) {
+            if(icon) icon.className = 'fa-solid fa-sun w-4 text-amber-500';
+            if(text) text.innerText = (localStorage.getItem('musicy_lang') === 'ar') ? 'الوضع الساطع' : 'Light Mode';
+        } else {
+            if(icon) icon.className = 'fa-solid fa-moon w-4 text-[#00ff66]';
+            if(text) text.innerText = (localStorage.getItem('musicy_lang') === 'ar') ? 'الوضع الداكن' : 'Dark Mode';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        let savedTheme = localStorage.getItem('musicy_theme');
+        if(savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            let icon = document.getElementById('darkModeIcon');
+            let text = document.getElementById('darkModeText');
+            if(icon) icon.className = 'fa-solid fa-sun w-4 text-amber-500';
+            if(text) text.innerText = (localStorage.getItem('musicy_lang') === 'ar') ? 'الوضع الساطع' : 'Light Mode';
+        }
+    });
+
     const translations = {
         en: {
             brandName: "Musicy",
             searchPlaceholder: "Search songs or artists on Spotify...",
             home: "Home",
             topRated: "Top Rated",
+            darkMode: "Dark Mode",
             heroTag: "Real fans. Real ratings.",
             heroTitle1: "Discover Rate",
             heroTitle2: "Share Music.",
@@ -761,6 +824,7 @@ background_styles = """
             searchPlaceholder: "ابحث عن الأغاني أو الفنانين في سبوتيفاي...",
             home: "الرئيسية",
             topRated: "الأعلى تقييماً",
+            darkMode: "الوضع الداكن",
             heroTag: "معجبون حقيقيون. تقييمات حقيقية.",
             heroTitle1: "اكتشف. تقييم.",
             heroTitle2: "شارك الموسيقى.",
@@ -824,6 +888,15 @@ background_styles = """
                 el.placeholder = translations[lang][key];
             }
         });
+        let isLight = document.body.classList.contains('light-mode');
+        let text = document.getElementById('darkModeText');
+        if(text) {
+            if(isLight) {
+                text.innerText = (lang === 'ar') ? 'الوضع الساطع' : 'Light Mode';
+            } else {
+                text.innerText = (lang === 'ar') ? 'الوضع الداكن' : 'Dark Mode';
+            }
+        }
         if(typeof updateAllTimes === 'function') {
             updateAllTimes();
         }
@@ -896,12 +969,17 @@ html_template = (
     </header>
 
     <div class="flex flex-1">
-        <!-- القائمة الجانبية الفخمة -->
+        <!-- القائمة الجانبية الفخمة مع زر دارك مود تحت توب ريتد تماماً -->
         <aside class="w-64 border-r border-[#00ff66]/30 bg-[#000000]/85 p-4 hidden lg:flex flex-col justify-between shrink-0 backdrop-blur-2xl">
-            <div class="space-y-6">
+            <div class="space-y-6 w-full">
                 <nav class="space-y-2 text-xs font-medium">
                     <a href="/" class="flex items-center space-x-3 px-4 py-3 rounded-2xl bg-[#00ff66]/25 text-[#00ff66] font-semibold border-l-4 border-[#00ff66] shadow-[0_0_20px_rgba(0,255,102,0.3)]"><i class="fa-solid fa-house w-4"></i><span data-i18n="home">Home</span></a>
                     <a href="/top-rated" class="flex items-center space-x-3 px-4 py-3 rounded-2xl text-gray-400 hover:bg-[#00ff66]/20 hover:text-white transition duration-300"><i class="fa-solid fa-star w-4 text-[#00ff66]"></i><span data-i18n="topRated">Top Rated</span></a>
+                    <!-- زر الدارك مود الفخم المضاف خصيصاً تحت توب ريتد -->
+                    <button onclick="toggleDarkMode()" class="luxury-dark-btn w-full flex items-center space-x-3 px-4 py-3 rounded-2xl bg-[#020804] border border-[#00ff66]/50 text-gray-200 hover:text-[#00ff66] hover:border-[#00ff66] transition duration-300 shadow-[0_0_15px_rgba(0,255,102,0.2)] text-left">
+                        <i id="darkModeIcon" class="fa-solid fa-moon w-4 text-[#00ff66]"></i>
+                        <span data-i18n="darkMode" id="darkModeText">Dark Mode</span>
+                    </button>
                 </nav>
             </div>
         </aside>
@@ -952,6 +1030,14 @@ html_template = (
             updateUserNav();
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
+            let savedTheme = localStorage.getItem('musicy_theme');
+            if(savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                let icon = document.getElementById('darkModeIcon');
+                let text = document.getElementById('darkModeText');
+                if(icon) icon.className = 'fa-solid fa-sun w-4 text-amber-500';
+                if(text) text.innerText = (savedLang === 'ar') ? 'الوضع الساطع' : 'Light Mode';
+            }
         });
         function updateUserNav() {
             let currentUser = localStorage.getItem('songdb_user');
@@ -1037,10 +1123,14 @@ top_rated_html = (
     </header>
     <div class="flex flex-1">
         <aside class="w-64 border-r border-[#00ff66]/30 bg-[#000000]/85 p-4 hidden lg:flex flex-col justify-between shrink-0 backdrop-blur-2xl">
-            <div class="space-y-6">
+            <div class="space-y-6 w-full">
                 <nav class="space-y-2 text-xs font-medium">
                     <a href="/" class="flex items-center space-x-3 px-4 py-3 rounded-2xl text-gray-400 hover:bg-[#00ff66]/20 hover:text-white transition duration-300"><i class="fa-solid fa-house w-4 text-[#00ff66]"></i><span data-i18n="home">Home</span></a>
                     <a href="/top-rated" class="flex items-center space-x-3 px-4 py-3 rounded-2xl bg-[#00ff66]/25 text-[#00ff66] font-semibold border-l-4 border-[#00ff66] shadow-[0_0_20px_rgba(0,255,102,0.3)]"><i class="fa-solid fa-star w-4"></i><span data-i18n="topRated">Top Rated</span></a>
+                    <button onclick="toggleDarkMode()" class="luxury-dark-btn w-full flex items-center space-x-3 px-4 py-3 rounded-2xl bg-[#020804] border border-[#00ff66]/50 text-gray-200 hover:text-[#00ff66] hover:border-[#00ff66] transition duration-300 shadow-[0_0_15px_rgba(0,255,102,0.2)] text-left">
+                        <i id="darkModeIcon" class="fa-solid fa-moon w-4 text-[#00ff66]"></i>
+                        <span data-i18n="darkMode" id="darkModeText">Dark Mode</span>
+                    </button>
                 </nav>
             </div>
         </aside>
@@ -1081,6 +1171,14 @@ top_rated_html = (
         document.addEventListener('DOMContentLoaded', () => {
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
+            let savedTheme = localStorage.getItem('musicy_theme');
+            if(savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                let icon = document.getElementById('darkModeIcon');
+                let text = document.getElementById('darkModeText');
+                if(icon) icon.className = 'fa-solid fa-sun w-4 text-amber-500';
+                if(text) text.innerText = (savedLang === 'ar') ? 'الوضع الساطع' : 'Light Mode';
+            }
         });
     </script>
 </body>
@@ -1124,6 +1222,8 @@ login_html = (
         document.addEventListener('DOMContentLoaded', () => {
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
+            let savedTheme = localStorage.getItem('musicy_theme');
+            if(savedTheme === 'light') { document.body.classList.add('light-mode'); }
         });
         function handleLogin() {
             let email = document.getElementById('loginEmail').value;
@@ -1180,6 +1280,8 @@ register_html = (
         document.addEventListener('DOMContentLoaded', () => {
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
+            let savedTheme = localStorage.getItem('musicy_theme');
+            if(savedTheme === 'light') { document.body.classList.add('light-mode'); }
         });
         function handleRegister() {
             let username = document.getElementById('regUsername').value;
@@ -1239,6 +1341,8 @@ profile_html = (
         document.addEventListener('DOMContentLoaded', () => {
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
+            let savedTheme = localStorage.getItem('musicy_theme');
+            if(savedTheme === 'light') { document.body.classList.add('light-mode'); }
 
             let currentUser = localStorage.getItem('songdb_user');
             if(!currentUser) { window.location.href = '/login'; return; }
@@ -1435,6 +1539,8 @@ song_detail_template = (
         document.addEventListener('DOMContentLoaded', () => {
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
+            let savedTheme = localStorage.getItem('musicy_theme');
+            if(savedTheme === 'light') { document.body.classList.add('light-mode'); }
             checkUserReviewStatus();
             updateAllTimes();
             setInterval(updateAllTimes, 60000);
