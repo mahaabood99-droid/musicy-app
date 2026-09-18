@@ -25,8 +25,7 @@ except ImportError:
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'super_secret_key_musicy')
-socketio = SocketIO(app, cors_allowed_origins="*")
-
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 # قراءة الرابط من Render أو استخدام SQLite محلياً للتجربة
 database_url = os.getenv("DATABASE_URL", "sqlite:///site.db")
 
