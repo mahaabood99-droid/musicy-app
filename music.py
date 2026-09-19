@@ -630,8 +630,8 @@ background_styles = """
     body.light-mode a[href*="spotify.com"],
     body.light-mode span[data-i18n="listenSpotify"],
     body.light-mode a[href*="spotify.com"] i,
-    body.light-mode button[onclick*="confirmLogout"],
-    body.light-mode button[onclick*="confirmLogout"] i,
+    body.light-mode button[onclick*="handleLogout"],
+    body.light-mode button[onclick*="handleLogout"] i,
     body.light-mode .fa-right-from-bracket,
     body.light-mode .lang-switcher-text-black,
     body.light-mode button[onclick^="setLanguage"] {
@@ -875,11 +875,7 @@ background_styles = """
             saveAvatarBtn: "Upload & Save Avatar",
             storyModalTitle: "Luxury Instagram Story Preview",
             downloadStoryBtn: "Download Luxury Story",
-            closeStoryBtn: "Close & Continue",
-            logoutModalTitle: "Logout Warning",
-            logoutModalDesc: "Are you sure you want to sign out from your Musicy account?",
-            logoutConfirmBtn: "Yes, Logout",
-            logoutCancelBtn: "Cancel"
+            closeStoryBtn: "Close & Continue"
         },
         ar: {
             brandName: "Musicy",
@@ -929,11 +925,7 @@ background_styles = """
             saveAvatarBtn: "رفع وحفظ الصورة الشخصية",
             storyModalTitle: "معاينة ستوري انستقرام الخارقة الفخامة",
             downloadStoryBtn: "تحميل ستوري الفخامة",
-            closeStoryBtn: "إغلاق ومتابعة",
-            logoutModalTitle: "تحذير تسجيل الخروج",
-            logoutModalDesc: "هل أنت متأكد تماماً أنك تريد تسجيل الخروج من حسابك في Musicy؟",
-            logoutConfirmBtn: "نعم، تسجيل الخروج",
-            logoutCancelBtn: "إلغاء"
+            closeStoryBtn: "إغلاق ومتابعة"
         }
     };
 
@@ -991,42 +983,6 @@ lang_switcher_html = """
         <button onclick="setLanguage('ar')" title="العربية" class="lang-switcher-text-black hover:scale-125 transition transform duration-200 text-sm sm:text-base drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] text-white">🇮🇶</button>
     </div>
 </div>
-"""
-
-# نظام نافذة تحذير تسجيل الخروج الفخمة المشتركة عبر القوالب
-logout_warning_modal = """
-    <!-- نافذة تحذير وتأكيد تسجيل الخروج الفخمة جداً -->
-    <div id="logoutWarningModal" class="fixed inset-0 bg-black/90 flex items-center justify-center hidden z-50 p-4 backdrop-blur-xl">
-        <div class="glass-card border border-red-500/60 rounded-3xl p-6 sm:p-8 w-full max-w-sm space-y-5 shadow-[0_0_50px_rgba(255,34,85,0.3)] text-center relative overflow-hidden">
-            <div class="absolute -top-12 -right-12 w-32 h-32 bg-red-500/20 rounded-full blur-2xl pointer-events-none"></div>
-            <div class="w-16 h-16 mx-auto rounded-2xl bg-red-500/20 border border-red-500/60 text-red-400 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(255,34,85,0.4)] animate-pulse">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <div class="space-y-2">
-                <h3 class="text-lg sm:text-xl font-extrabold text-white" data-i18n="logoutModalTitle">Logout Warning</h3>
-                <p class="text-xs sm:text-sm text-gray-300 leading-relaxed font-light" data-i18n="logoutModalDesc">Are you sure you want to sign out from your Musicy account?</p>
-            </div>
-            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
-                <button onclick="executeLogout()" class="w-full sm:flex-1 bg-gradient-to-r from-red-600 to-rose-500 hover:opacity-95 text-white font-bold py-3.5 rounded-xl text-xs transition shadow-[0_0_25px_rgba(255,34,85,0.6)] hover:scale-[1.02] transform duration-300" data-i18n="logoutConfirmBtn">Yes, Logout</button>
-                <button onclick="closeLogoutModal()" class="w-full sm:flex-1 bg-[#020804] hover:bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-3.5 rounded-xl text-xs transition" data-i18n="logoutCancelBtn">Cancel</button>
-            </div>
-        </div>
-    </div>
-    <script>
-        function confirmLogout() {
-            let modal = document.getElementById('logoutWarningModal');
-            if(modal) modal.classList.remove('hidden');
-        }
-        function closeLogoutModal() {
-            let modal = document.getElementById('logoutWarningModal');
-            if(modal) modal.classList.add('hidden');
-        }
-        function executeLogout() {
-            localStorage.removeItem('songdb_user'); 
-            localStorage.removeItem('songdb_avatar'); 
-            location.reload(); 
-        }
-    </script>
 """
 
 html_template = (
@@ -1127,9 +1083,23 @@ html_template = (
         </main>
     </div>
 
-    """
-    + logout_warning_modal
-    + """
+    <!-- نافذة تحذير تسجيل الخروج الفخمة الجديدة -->
+    <div id="logoutConfirmModal" class="fixed inset-0 bg-black/90 flex items-center justify-center hidden z-50 p-3 backdrop-blur-xl">
+        <div class="glass-card border border-[#00ff66]/70 rounded-2xl sm:rounded-3xl p-6 sm:p-8 w-full max-w-sm space-y-5 shadow-2xl text-center">
+            <div class="w-16 h-16 mx-auto rounded-full bg-red-500/20 border border-red-500/50 flex items-center justify-center text-red-500 text-2xl shadow-[0_0_20px_rgba(255,34,85,0.4)] animate-pulse">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-lg font-extrabold text-white">تنبيه تسجيل الخروج</h3>
+                <p class="text-xs text-gray-300 leading-relaxed">أنت على وشك تسجيل الخروج من حسابك، هل أنت متأكد من رغبتك في ذلك؟</p>
+            </div>
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
+                <button onclick="confirmLogoutAction()" class="w-full sm:flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:opacity-95 text-white font-bold py-3 rounded-xl text-xs transition shadow-[0_0_20px_rgba(255,34,85,0.5)]">تأكيد الخروج</button>
+                <button onclick="closeLogoutModal()" class="w-full sm:flex-1 bg-[#020804] hover:bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-3 rounded-xl text-xs transition">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => { 
             updateUserNav();
@@ -1156,7 +1126,7 @@ html_template = (
                             <img src="${currentAvatar}" class="w-5 h-5 sm:w-7 sm:h-7 rounded-full object-cover border border-[#00ff66]">
                             <span class="text-[#00ff66] font-bold text-[11px] sm:text-xs max-w-[65px] sm:max-w-none truncate">${currentUser}</span>
                         </a>
-                        <button onclick="confirmLogout()" class="bg-[#020804] text-gray-400 hover:text-red-400 w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-red-500/50 hover:border-red-500 flex items-center justify-center transition shadow-md shrink-0" title="${logoutText}">
+                        <button onclick="handleLogout()" class="bg-[#020804] text-gray-400 hover:text-red-400 w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-red-500/50 hover:border-red-500 flex items-center justify-center transition shadow-md shrink-0" title="${logoutText}">
                             <i class="fa-solid fa-right-from-bracket text-[10px] sm:text-xs"></i>
                         </button>
                     </div>
@@ -1168,6 +1138,19 @@ html_template = (
                     </a>
                 `;
             }
+        }
+        function handleLogout() { 
+            let modal = document.getElementById('logoutConfirmModal');
+            if(modal) modal.classList.remove('hidden');
+        }
+        function closeLogoutModal() {
+            let modal = document.getElementById('logoutConfirmModal');
+            if(modal) modal.classList.add('hidden');
+        }
+        function confirmLogoutAction() {
+            localStorage.removeItem('songdb_user'); 
+            localStorage.removeItem('songdb_avatar'); 
+            location.reload(); 
         }
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
@@ -1267,9 +1250,6 @@ top_rated_html = (
             </div>
         </main>
     </div>
-    """
-    + logout_warning_modal
-    + """
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
@@ -1634,9 +1614,23 @@ song_detail_template = (
         </div>
     </div>
 
-    """
-    + logout_warning_modal
-    + """
+    <!-- نافذة تحذير تسجيل الخروج الفخمة الجديدة -->
+    <div id="logoutConfirmModal" class="fixed inset-0 bg-black/90 flex items-center justify-center hidden z-50 p-3 backdrop-blur-xl">
+        <div class="glass-card border border-[#00ff66]/70 rounded-2xl sm:rounded-3xl p-6 sm:p-8 w-full max-w-sm space-y-5 shadow-2xl text-center">
+            <div class="w-16 h-16 mx-auto rounded-full bg-red-500/20 border border-red-500/50 flex items-center justify-center text-red-500 text-2xl shadow-[0_0_20px_rgba(255,34,85,0.4)] animate-pulse">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-lg font-extrabold text-white">تنبيه تسجيل الخروج</h3>
+                <p class="text-xs text-gray-300 leading-relaxed">أنت على وشك تسجيل الخروج من حسابك، هل أنت متأكد من رغبتك في ذلك؟</p>
+            </div>
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
+                <button onclick="confirmLogoutAction()" class="w-full sm:flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:opacity-95 text-white font-bold py-3 rounded-xl text-xs transition shadow-[0_0_20px_rgba(255,34,85,0.5)]">تأكيد الخروج</button>
+                <button onclick="closeLogoutModal()" class="w-full sm:flex-1 bg-[#020804] hover:bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-3 rounded-xl text-xs transition">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentRatingVal = 5;
         let userHasReviewed = false;
@@ -1766,11 +1760,12 @@ song_detail_template = (
 
         function openRateModal() {
             let currentUser = localStorage.getItem('songdb_user');
-            if(!currentUser) {
-                window.location.href = '/login';
-                return;
+            if (!currentUser) { 
+                alert('Please login first to rate songs!'); 
+                window.location.href = '/login'; 
+                return; 
             }
-            if(userHasReviewed) {
+            if(userHasReviewed && userExistingComment) {
                 document.getElementById('commentInput').value = userExistingComment;
             }
             document.getElementById('rateModal').classList.remove('hidden');
@@ -1784,25 +1779,131 @@ song_detail_template = (
             let currentUser = localStorage.getItem('songdb_user');
             let rating = document.getElementById('hiddenRating').value;
             let comment = document.getElementById('commentInput').value;
-            let spotifyId = "{{ song.spotify_id }}";
 
             fetch('/api/rate', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ spotify_id: spotifyId, rating: rating, comment: comment, username: currentUser })
+                body: JSON.stringify({
+                    spotify_id: "{{ song.spotify_id }}",
+                    rating: rating,
+                    comment: comment,
+                    username: currentUser
+                })
             }).then(res => res.json()).then(data => {
                 if(data.success) {
+                    lastRatedData = data;
                     closeRateModal();
-                    location.reload();
+                    generateStoryCanvas(data);
+                    document.getElementById('storyModal').classList.remove('hidden');
                 } else {
-                    alert(data.message || 'Error submitting review');
+                    alert(data.message || 'Error submitting rating');
                 }
             });
+        }
+
+        function closeStoryModal() {
+            document.getElementById('storyModal').classList.add('hidden');
+            location.reload();
+        }
+
+        function downloadStory() {
+            let canvas = document.getElementById('storyCanvas');
+            let link = document.createElement('a');
+            link.download = 'musicy-story.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function generateStoryCanvas(data) {
+            let canvas = document.getElementById('storyCanvas');
+            let ctx = canvas.getContext('2d');
+
+            let bgGrad = ctx.createLinearGradient(0, 0, 0, 1920);
+            bgGrad.addColorStop(0, '#000000');
+            bgGrad.addColorStop(0.5, '#031408');
+            bgGrad.addColorStop(1, '#000000');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, 1080, 1920);
+
+            ctx.strokeStyle = 'rgba(0, 255, 102, 0.4)';
+            ctx.lineWidth = 15;
+            ctx.strokeRect(40, 40, 1000, 1840);
+
+            ctx.shadowColor = '#00ff66';
+            ctx.shadowBlur = 40;
+            ctx.fillStyle = '#00ff66';
+            ctx.font = 'bold 55px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('MUSICY REVIEW', 540, 180);
+            ctx.shadowBlur = 0;
+
+            let albumImg = new Image();
+            albumImg.crossOrigin = 'anonymous';
+            albumImg.src = data.img;
+            albumImg.onload = function() {
+                ctx.save();
+                ctx.beginPath();
+                ctx.roundRect(240, 260, 600, 600, 40);
+                ctx.closePath();
+                ctx.clip();
+                ctx.drawImage(albumImg, 240, 260, 600, 600);
+                ctx.restore();
+
+                ctx.strokeStyle = 'rgba(0, 255, 102, 0.8)';
+                ctx.lineWidth = 8;
+                ctx.beginPath();
+                ctx.roundRect(240, 260, 600, 600, 40);
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 50px sans-serif';
+                ctx.fillText(data.song_title, 540, 940, 900);
+
+                ctx.fillStyle = '#9ca3af';
+                ctx.font = '36px sans-serif';
+                ctx.fillText(data.artist, 540, 1010, 900);
+
+                ctx.fillStyle = '#00ff66';
+                ctx.font = 'bold 70px sans-serif';
+                ctx.fillText(`★ ${data.new_rating} / 5`, 540, 1150);
+
+                ctx.fillStyle = '#d1d5db';
+                ctx.font = '30px sans-serif';
+                ctx.fillText(`Total Votes: ${data.votes}`, 540, 1220);
+
+                let userAvatar = new Image();
+                userAvatar.crossOrigin = 'anonymous';
+                userAvatar.src = data.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200';
+                userAvatar.onload = function() {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(540, 1420, 70, 0, Math.PI * 2, true);
+                    ctx.closePath();
+                    ctx.clip();
+                    ctx.drawImage(userAvatar, 470, 1350, 140, 140);
+                    ctx.restore();
+
+                    ctx.strokeStyle = '#00ff66';
+                    ctx.lineWidth = 5;
+                    ctx.beginPath();
+                    ctx.arc(540, 1420, 70, 0, Math.PI * 2, true);
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 36px sans-serif';
+                    ctx.fillText('@' + localStorage.getItem('songdb_user'), 540, 1550);
+
+                    ctx.fillStyle = 'rgba(0, 255, 102, 0.7)';
+                    ctx.font = '28px sans-serif';
+                    ctx.fillText('Shared via Musicy Community', 540, 1750);
+                };
+            };
         }
 
         function likeReview(reviewId, btnEl) {
             let currentUser = localStorage.getItem('songdb_user');
             if(!currentUser) {
+                alert('Please login to like reviews');
                 window.location.href = '/login';
                 return;
             }
@@ -1813,21 +1914,34 @@ song_detail_template = (
                 body: JSON.stringify({ review_id: reviewId, username: currentUser })
             }).then(res => res.json()).then(data => {
                 if(data.success) {
-                    let countSpan = btnEl.querySelector(`.like-count-${reviewId}`);
-                    if(countSpan) countSpan.innerText = data.likes;
-                    let iconEl = btnEl.querySelector(`.like-icon-${reviewId}`);
+                    let countEl = document.querySelector(`.like-count-${reviewId}`);
+                    let iconEl = document.querySelector(`.like-icon-${reviewId}`);
+                    if(countEl) countEl.innerText = data.likes;
                     if(iconEl) {
                         if(data.liked) {
                             iconEl.classList.remove('text-gray-400');
                             iconEl.classList.add('text-[#ff2255]', 'like-animate');
                             setTimeout(() => iconEl.classList.remove('like-animate'), 400);
                         } else {
-                            iconEl.classList.remove('text-[#ff2255]', 'like-animate');
+                            iconEl.classList.remove('text-[#ff2255]');
                             iconEl.classList.add('text-gray-400');
                         }
                     }
                 }
             });
+        }
+        function handleLogout() { 
+            let modal = document.getElementById('logoutConfirmModal');
+            if(modal) modal.classList.remove('hidden');
+        }
+        function closeLogoutModal() {
+            let modal = document.getElementById('logoutConfirmModal');
+            if(modal) modal.classList.add('hidden');
+        }
+        function confirmLogoutAction() {
+            localStorage.removeItem('songdb_user'); 
+            localStorage.removeItem('songdb_avatar'); 
+            location.reload(); 
         }
     </script>
 </body>
@@ -1835,9 +1949,5 @@ song_detail_template = (
 )
 
 if __name__ == '__main__':
-  socketio.run(
-      app,
-      host='0.0.0.0',
-      port=int(os.environ.get('PORT', 5000)),
-      debug=False,
-  )
+  socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+```[cite: 2]
