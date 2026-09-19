@@ -630,8 +630,8 @@ background_styles = """
     body.light-mode a[href*="spotify.com"],
     body.light-mode span[data-i18n="listenSpotify"],
     body.light-mode a[href*="spotify.com"] i,
-    body.light-mode button[onclick*="handleLogout"],
-    body.light-mode button[onclick*="handleLogout"] i,
+    body.light-mode button[onclick*="confirmLogout"],
+    body.light-mode button[onclick*="confirmLogout"] i,
     body.light-mode .fa-right-from-bracket,
     body.light-mode .lang-switcher-text-black,
     body.light-mode button[onclick^="setLanguage"] {
@@ -875,7 +875,11 @@ background_styles = """
             saveAvatarBtn: "Upload & Save Avatar",
             storyModalTitle: "Luxury Instagram Story Preview",
             downloadStoryBtn: "Download Luxury Story",
-            closeStoryBtn: "Close & Continue"
+            closeStoryBtn: "Close & Continue",
+            logoutModalTitle: "Logout Warning",
+            logoutModalDesc: "Are you sure you want to sign out from your Musicy account?",
+            logoutConfirmBtn: "Yes, Logout",
+            logoutCancelBtn: "Cancel"
         },
         ar: {
             brandName: "Musicy",
@@ -925,7 +929,11 @@ background_styles = """
             saveAvatarBtn: "رفع وحفظ الصورة الشخصية",
             storyModalTitle: "معاينة ستوري انستقرام الخارقة الفخامة",
             downloadStoryBtn: "تحميل ستوري الفخامة",
-            closeStoryBtn: "إغلاق ومتابعة"
+            closeStoryBtn: "إغلاق ومتابعة",
+            logoutModalTitle: "تحذير تسجيل الخروج",
+            logoutModalDesc: "هل أنت متأكد تماماً أنك تريد تسجيل الخروج من حسابك في Musicy؟",
+            logoutConfirmBtn: "نعم، تسجيل الخروج",
+            logoutCancelBtn: "إلغاء"
         }
     };
 
@@ -983,6 +991,42 @@ lang_switcher_html = """
         <button onclick="setLanguage('ar')" title="العربية" class="lang-switcher-text-black hover:scale-125 transition transform duration-200 text-sm sm:text-base drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] text-white">🇮🇶</button>
     </div>
 </div>
+"""
+
+# نظام نافذة تحذير تسجيل الخروج الفخمة المشتركة عبر القوالب
+logout_warning_modal = """
+    <!-- نافذة تحذير وتأكيد تسجيل الخروج الفخمة جداً -->
+    <div id="logoutWarningModal" class="fixed inset-0 bg-black/90 flex items-center justify-center hidden z-50 p-4 backdrop-blur-xl">
+        <div class="glass-card border border-red-500/60 rounded-3xl p-6 sm:p-8 w-full max-w-sm space-y-5 shadow-[0_0_50px_rgba(255,34,85,0.3)] text-center relative overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-red-500/20 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-red-500/20 border border-red-500/60 text-red-400 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(255,34,85,0.4)] animate-pulse">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-lg sm:text-xl font-extrabold text-white" data-i18n="logoutModalTitle">Logout Warning</h3>
+                <p class="text-xs sm:text-sm text-gray-300 leading-relaxed font-light" data-i18n="logoutModalDesc">Are you sure you want to sign out from your Musicy account?</p>
+            </div>
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
+                <button onclick="executeLogout()" class="w-full sm:flex-1 bg-gradient-to-r from-red-600 to-rose-500 hover:opacity-95 text-white font-bold py-3.5 rounded-xl text-xs transition shadow-[0_0_25px_rgba(255,34,85,0.6)] hover:scale-[1.02] transform duration-300" data-i18n="logoutConfirmBtn">Yes, Logout</button>
+                <button onclick="closeLogoutModal()" class="w-full sm:flex-1 bg-[#020804] hover:bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-3.5 rounded-xl text-xs transition" data-i18n="logoutCancelBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function confirmLogout() {
+            let modal = document.getElementById('logoutWarningModal');
+            if(modal) modal.classList.remove('hidden');
+        }
+        function closeLogoutModal() {
+            let modal = document.getElementById('logoutWarningModal');
+            if(modal) modal.classList.add('hidden');
+        }
+        function executeLogout() {
+            localStorage.removeItem('songdb_user'); 
+            localStorage.removeItem('songdb_avatar'); 
+            location.reload(); 
+        }
+    </script>
 """
 
 html_template = (
@@ -1083,6 +1127,9 @@ html_template = (
         </main>
     </div>
 
+    """
+    + logout_warning_modal
+    + """
     <script>
         document.addEventListener('DOMContentLoaded', () => { 
             updateUserNav();
@@ -1109,7 +1156,7 @@ html_template = (
                             <img src="${currentAvatar}" class="w-5 h-5 sm:w-7 sm:h-7 rounded-full object-cover border border-[#00ff66]">
                             <span class="text-[#00ff66] font-bold text-[11px] sm:text-xs max-w-[65px] sm:max-w-none truncate">${currentUser}</span>
                         </a>
-                        <button onclick="handleLogout()" class="bg-[#020804] text-gray-400 hover:text-red-400 w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-red-500/50 hover:border-red-500 flex items-center justify-center transition shadow-md shrink-0" title="${logoutText}">
+                        <button onclick="confirmLogout()" class="bg-[#020804] text-gray-400 hover:text-red-400 w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-red-500/50 hover:border-red-500 flex items-center justify-center transition shadow-md shrink-0" title="${logoutText}">
                             <i class="fa-solid fa-right-from-bracket text-[10px] sm:text-xs"></i>
                         </button>
                     </div>
@@ -1121,11 +1168,6 @@ html_template = (
                     </a>
                 `;
             }
-        }
-        function handleLogout() { 
-            localStorage.removeItem('songdb_user'); 
-            localStorage.removeItem('songdb_avatar'); 
-            location.reload(); 
         }
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
@@ -1225,6 +1267,9 @@ top_rated_html = (
             </div>
         </main>
     </div>
+    """
+    + logout_warning_modal
+    + """
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
@@ -1589,6 +1634,9 @@ song_detail_template = (
         </div>
     </div>
 
+    """
+    + logout_warning_modal
+    + """
     <script>
         let currentRatingVal = 5;
         let userHasReviewed = false;
@@ -1718,194 +1766,78 @@ song_detail_template = (
 
         function openRateModal() {
             let currentUser = localStorage.getItem('songdb_user');
-            if (!currentUser) { 
-                alert('Please login first to rate songs!'); 
-                window.location.href = '/login'; 
-                return; 
-            }
-            if(userHasReviewed && userExistingComment) {
-                document.getElementById('commentInput').value = userExistingComment;
-            }
-            setStarRating(currentRatingVal);
-            document.getElementById('rateModal').classList.remove('hidden');
-        }
-
-        function closeRateModal() { document.getElementById('rateModal').classList.add('hidden'); }
-        function closeStoryModal() { document.getElementById('storyModal').classList.add('hidden'); location.reload(); }
-
-        function submitRating() {
-            let currentUser = localStorage.getItem('songdb_user');
-            if (!currentUser) {
-                alert('Please login first!');
+            if(!currentUser) {
                 window.location.href = '/login';
                 return;
             }
-            let rating = parseFloat(document.getElementById('hiddenRating').value);
+            if(userHasReviewed) {
+                document.getElementById('commentInput').value = userExistingComment;
+            }
+            document.getElementById('rateModal').classList.remove('hidden');
+        }
+
+        function closeRateModal() {
+            document.getElementById('rateModal').classList.add('hidden');
+        }
+
+        function submitRating() {
+            let currentUser = localStorage.getItem('songdb_user');
+            let rating = document.getElementById('hiddenRating').value;
             let comment = document.getElementById('commentInput').value;
-            if (isNaN(rating) || rating < 1 || rating > 5) { alert('Please select a rating between 1 and 5 stars.'); return; }
-            
+            let spotifyId = "{{ song.spotify_id }}";
+
             fetch('/api/rate', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ spotify_id: '{{ song.spotify_id }}', rating: rating, username: currentUser, comment: comment })
-            }).then(res => res.json()).then(resp => {
-                if (resp.success) {
+                body: JSON.stringify({ spotify_id: spotifyId, rating: rating, comment: comment, username: currentUser })
+            }).then(res => res.json()).then(data => {
+                if(data.success) {
                     closeRateModal();
-                    let currentAvatar = localStorage.getItem('songdb_avatar') || resp.avatar;
-                    lastRatedData = {
-                        username: currentUser,
-                        avatar: currentAvatar,
-                        rating: rating,
-                        comment: comment,
-                        title: '{{ song.title }}',
-                        artist: '{{ song.artist }}',
-                        img: '{{ song.img }}'
-                    };
-                    generateInstagramStory(lastRatedData);
-                    document.getElementById('storyModal').classList.remove('hidden');
+                    location.reload();
                 } else {
-                    alert(resp.message || 'Error submitting rating.');
+                    alert(data.message || 'Error submitting review');
                 }
             });
         }
 
-        function generateInstagramStory(data) {
-            const canvas = document.getElementById('storyCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            const bgGrad = ctx.createLinearGradient(0, 0, 0, 1920);
-            bgGrad.addColorStop(0, '#000000');
-            bgGrad.addColorStop(0.3, '#020d05');
-            bgGrad.addColorStop(1, '#000000');
-            ctx.fillStyle = bgGrad;
-            ctx.fillRect(0, 0, 1080, 1920);
-
-            ctx.save();
-            ctx.shadowColor = 'rgba(0, 255, 102, 0.5)';
-            ctx.shadowBlur = 90;
-            ctx.fillStyle = 'rgba(3, 12, 6, 0.95)';
-            ctx.beginPath();
-            ctx.roundRect(80, 120, 920, 1680, 60);
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(0, 255, 102, 0.7)';
-            ctx.lineWidth = 5;
-            ctx.stroke();
-            ctx.restore();
-
-            ctx.fillStyle = '#00ff66';
-            ctx.font = 'bold 36px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('MUSICY REVIEW & RATING', 540, 220);
-
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.src = data.img;
-            img.onload = function() {
-                ctx.save();
-                ctx.shadowColor = 'rgba(0,0,0,0.9)';
-                ctx.shadowBlur = 60;
-                ctx.shadowOffsetY = 30;
-                ctx.beginPath();
-                ctx.roundRect(190, 280, 700, 700, 40);
-                ctx.closePath();
-                ctx.clip();
-                ctx.drawImage(img, 190, 280, 700, 700);
-                ctx.restore();
-
-                ctx.save();
-                ctx.strokeStyle = 'rgba(0, 255, 102, 0.8)';
-                ctx.lineWidth = 6;
-                ctx.beginPath();
-                ctx.roundRect(190, 280, 700, 700, 40);
-                ctx.stroke();
-                ctx.restore();
-
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 52px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(data.title, 540, 1060, 850);
-
-                ctx.fillStyle = '#9ca3af';
-                ctx.font = '36px sans-serif';
-                ctx.fillText(data.artist, 540, 1130, 850);
-
-                let starStr = '★'.repeat(data.rating) + '☆'.repeat(5 - Math.floor(data.rating));
-                ctx.fillStyle = '#00ff66';
-                ctx.font = 'bold 50px sans-serif';
-                ctx.fillText(starStr + ` (${data.rating}/5)`, 540, 1240);
-
-                if(data.comment) {
-                    ctx.fillStyle = '#d1d5db';
-                    ctx.font = 'italic 34px sans-serif';
-                    wrapText(ctx, `"${data.comment}"`, 540, 1340, 800, 50);
-                }
-
-                ctx.fillStyle = '#00ff66';
-                ctx.font = 'bold 28px sans-serif';
-                ctx.fillText(`Reviewed by @${data.username} on Musicy`, 540, 1680);
-            };
-        }
-
-        function wrapText(context, text, x, y, maxWidth, lineHeight) {
-            let words = text.split(' ');
-            let line = '';
-            for(let n = 0; n < words.length; n++) {
-                let testLine = line + words[n] + ' ';
-                let metrics = context.measureText(testLine);
-                let testWidth = metrics.width;
-                if (testWidth > maxWidth && n > 0) {
-                    context.fillText(line, x, y);
-                    line = words[n] + ' ';
-                    y += lineHeight;
-                } else {
-                    line = testLine;
-                }
-            }
-            context.fillText(line, x, y);
-        }
-
-        function downloadStory() {
-            const canvas = document.getElementById('storyCanvas');
-            let link = document.createElement('a');
-            link.download = 'Musicy_Story.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        }
-
-        function likeReview(reviewId, btn) {
+        function likeReview(reviewId, btnEl) {
             let currentUser = localStorage.getItem('songdb_user');
-            if(!currentUser) { alert('Please login first to like reviews!'); window.location.href = '/login'; return; }
+            if(!currentUser) {
+                window.location.href = '/login';
+                return;
+            }
+
             fetch('/api/like_review', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ review_id: reviewId, username: currentUser })
-            }).then(res => res.json()).then(resp => {
-                if(resp.success) {
-                    let countEl = document.querySelector(`.like-count-${reviewId}`);
-                    let iconEl = document.querySelector(`.like-icon-${reviewId}`);
-                    if(countEl) countEl.innerText = resp.likes;
+            }).then(res => res.json()).then(data => {
+                if(data.success) {
+                    let countSpan = btnEl.querySelector(`.like-count-${reviewId}`);
+                    if(countSpan) countSpan.innerText = data.likes;
+                    let iconEl = btnEl.querySelector(`.like-icon-${reviewId}`);
                     if(iconEl) {
-                        iconEl.classList.add('like-animate');
-                        setTimeout(() => iconEl.classList.remove('like-animate'), 400);
-
-                        if(resp.liked) {
+                        if(data.liked) {
                             iconEl.classList.remove('text-gray-400');
-                            iconEl.classList.add('text-[#ff2255]');
+                            iconEl.classList.add('text-[#ff2255]', 'like-animate');
+                            setTimeout(() => iconEl.classList.remove('like-animate'), 400);
                         } else {
-                            iconEl.classList.remove('text-[#ff2255]');
+                            iconEl.classList.remove('text-[#ff2255]', 'like-animate');
                             iconEl.classList.add('text-gray-400');
                         }
                     }
-                } else {
-                    alert(resp.message || 'Error liking review');
                 }
             });
         }
     </script>
 </body>
-</html>
-"""
+</html>"""
 )
 
 if __name__ == '__main__':
-  socketio.run(app, debug=True)
+  socketio.run(
+      app,
+      host='0.0.0.0',
+      port=int(os.environ.get('PORT', 5000)),
+      debug=False,
+  )
