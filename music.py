@@ -2,8 +2,6 @@ import base64
 import os
 import time
 import requests
-import re
-import unicodedata
 from flask import (
     Flask,
     jsonify,
@@ -389,393 +387,6 @@ def get_user_info():
   return jsonify({'success': False})
 
 
-# =========================================================
-# الكلمات البذيئة والمسبات
-# =========================================================
-
-bad_words = [
-
-    # ==================== العربية ====================
-    'سب', 'شتم', 'أنتحار', 'قذر', 'انتحار',
-    'كلب', 'كلبة', 'حمار', 'حمارة',
-    'غبي', 'غبية', 'أحمق', 'حمقاء',
-    'حقير', 'حقيرة', 'سافل', 'سافلة',
-    'تافه', 'تافهة', 'وسخ', 'وسخة',
-    'نجس', 'نجسة', 'خسيس', 'خسيسة',
-    'وضيع', 'وضيعة', 'ملعون', 'ملعونة',
-    'لعنة', 'تبا', 'تباً', 'تبًا',
-    'يا غبي', 'يا حمار', 'يا كلب',
-    'ابن الكلب', 'ابن الحمار',
-    'قحبة', 'قحاب', 'شرموط', 'شرموطة',
-    'عرص', 'عرصة', 'عاهرة', 'زانية',
-    'ديوث', 'قواد', 'قوادة',
-    'منيك', 'منايك', 'كس', 'زب',
-    'طيز', 'خرا', 'خراء',
-    'نيك', 'ينك', 'نايك',
-    'متناك', 'متناكة',
-    'بضان', 'خنيث', 'خول',
-    'فاجر', 'فاجرة', 'مخنث',
-    'وسخ', 'زبالة', 'نذل', 'نذلة',
-
-    # ==================== العراقي ====================
-    'جلب', 'جلبه', 'جلبك',
-    'ابن الجلب', 'ابن الكلب',
-    'قندرة', 'قندره', 'ابن القندرة', 'ابن القندره',
-    'طيزك', 'طيزج',
-    'كسمك', 'كسمج',
-    'زبي', 'زبيك',
-    'خرا عليك',
-    'يا خرا', 'يا زبالة',
-    'يا جلب', 'يا قندرة',
-    'يا قندره', 'يا وسخ',
-    'يا قذر', 'يا نذل',
-    'يا سافل', 'يا واطي',
-    'واطي', 'واطية',
-    'بطران', 'طرطور',
-    'اهبل', 'أهبل', 'هبلة',
-    'معتوه', 'مخبول',
-    'فاشل', 'فاشلة',
-    'عديم الشرف', 'عديم الاخلاق',
-    'عديم الأدب', 'بلا شرف',
-    'بلا اخلاق', 'بلا أدب',
-    'يا حيوان', 'يا حمار',
-    'يا كلب', 'يا غبي',
-
-    # ==================== English ====================
-    'damn', 'dammit',
-    'shit', 'fuck', 'fucking', 'fucker',
-    'motherfucker', 'bitch', 'bitches',
-    'asshole', 'assholes',
-    'bastard', 'bastards',
-    'dick', 'dickhead',
-    'cock', 'pussy', 'cunt',
-    'whore', 'slut',
-    'crap', 'bullshit',
-    'dumbass', 'jackass',
-    'idiot', 'idiots',
-    'stupid', 'moron',
-    'loser', 'jerk',
-    'scumbag', 'shithead',
-    'fuckhead', 'prick',
-    'son of a bitch',
-    'piece of shit',
-
-    # ==================== French ====================
-    'merde', 'putain', 'pute',
-    'salope', 'connard', 'connasse',
-    'enculé', 'encule',
-    'bordel', 'con', 'conne',
-    'idiot', 'idiote',
-    'imbécile', 'batard', 'batarde',
-    'nique', 'nique ta mère',
-
-    # ==================== Spanish ====================
-    'mierda', 'puta', 'puto',
-    'putas', 'putos',
-    'cabron', 'cabrón', 'cabrona',
-    'coño', 'joder',
-    'gilipollas',
-    'idiota',
-    'pendejo', 'pendeja',
-    'maricon', 'maricón', 'marica',
-    'zorra',
-    'imbecil', 'imbécil',
-    'hijo de puta',
-    'hijos de puta',
-
-    # ==================== German ====================
-    'scheisse', 'scheiße',
-    'fick', 'ficken', 'ficker',
-    'arsch', 'arschloch',
-    'wichser', 'hure',
-    'hurensohn', 'fotze',
-    'schlampe',
-    'idiot', 'dummkopf',
-    'blödmann', 'mistkerl',
-
-    # ==================== Italian ====================
-    'merda', 'cazzo', 'cazzi',
-    'stronzo', 'stronza',
-    'puttana', 'troia',
-    'bastardo', 'bastarda',
-    'coglione', 'coglioni',
-    'vaffanculo', 'minchia',
-    'cretino', 'cretina',
-    'idiota',
-
-    # ==================== Portuguese ====================
-    'merda', 'porra', 'caralho',
-    'puta', 'puto',
-    'filho da puta',
-    'viado', 'veado', 'bicha',
-    'idiota', 'imbecil',
-    'otário', 'otaria',
-    'babaca', 'arrombado',
-
-    # ==================== Turkish ====================
-    'siktir', 'sik', 'sikik',
-    'sikerim', 'orospu',
-    'orospu çocuğu',
-    'piç', 'yarrak',
-    'amcık',
-    'salak', 'aptal',
-    'şerefsiz', 'gerizekalı',
-    'hıyar', 'ibne', 'göt',
-
-    # ==================== Persian ====================
-    'احمق', 'ابله', 'کثیف',
-    'آشغال', 'عوضی',
-    'بی شعور', 'بی‌شعور',
-    'حرامزاده', 'فاحشه',
-    'کسکش', 'کونی',
-    'دیوث', 'بی ناموس',
-    'بی‌ناموس', 'گوه', 'کیر',
-    'کس', 'مادرجنده',
-
-    # ==================== Hindi ====================
-    'बेवकूफ', 'गधा', 'गधे',
-    'हरामी', 'कमीना', 'कमीनी',
-    'चूतिया', 'गांडू',
-    'कुत्ता', 'कुत्ती',
-    'नालायक', 'पागल', 'बكواس',
-
-    # ==================== Urdu ====================
-    'احمق', 'بےوقوف', 'بے وقوف',
-    'گدھا', 'گدھی',
-    'حرامی', 'کمینہ', 'کمینی',
-    'کُتا', 'کُتیا',
-    'بے غیرت', 'بےغیرت',
-    'چوتیا', 'گاندو',
-
-    # ==================== Russian ====================
-    'дурак', 'дура', 'идиот',
-    'дебил', 'тупой', 'тупица',
-    'сука', 'блядь', 'бля',
-    'хуй', 'пизда', 'ебать',
-    'ебаный', 'мудак',
-    'козёл', 'ублюдок',
-    'сволочь',
-
-    # ==================== Dutch ====================
-    'godverdomme', 'klootzak',
-    'kut', 'lul', 'hoer',
-    'tyfus', 'tering',
-    'eikel', 'idioot', 'sukkel',
-
-    # ==================== Polish ====================
-    'kurwa', 'cholera',
-    'pierdol', 'pierdolony',
-    'chuj', 'cipa',
-    'dupek', 'idiota',
-    'debil', 'skurwysyn',
-    'suka',
-
-    # ==================== Greek ====================
-    'malaka', 'malakas',
-    'γαμώ', 'μαλάκας',
-    'μαλακα', 'πούστης',
-    'πουτάνα', 'ηλίθιος',
-
-    # ==================== Indonesian ====================
-    'anjing', 'babi', 'bangsat',
-    'brengsek', 'tolol', 'bodoh',
-    'kontol', 'memek',
-    'sialan', 'kampret',
-    'bajingan', 'asu',
-
-    # ==================== Filipino ====================
-    'putangina', 'gago', 'tanga',
-    'bobo', 'tarantado',
-    'ulol', 'leche', 'lintik',
-    'peste', 'hayop',
-
-    # ==================== Japanese ====================
-    'ばか', 'バカ', '馬鹿',
-    'あほ', 'アホ',
-    'くそ', 'クソ',
-    '死ね', 'しね',
-    'きもい', 'うざい',
-    'まぬけ',
-
-    # ==================== Korean ====================
-    '씨발', '시발',
-    '개새끼', '새끼',
-    '병신', '미친놈',
-    '미친년', '좆',
-    '존나', '지랄',
-    '꺼져', '븅신',
-
-    # ==================== Chinese ====================
-    '傻逼', '傻子', '笨蛋',
-    '混蛋', '王八蛋',
-    '操', '艹',
-    '妈的', '他妈的',
-    '草泥马',
-    '贱人', '垃圾',
-    '废物', '滚蛋',
-]
-
-
-# =========================================================
-# عبارات عالية الخطورة
-# =========================================================
-
-legal_risk_patterns = [
-
-    # تهديدات
-    'راح اقتلك',
-    'راح أقتلك',
-    'سوف اقتلك',
-    'سوف أقتلك',
-    'سوف اقتله',
-    'راح اذبحك',
-    'راح أذبحك',
-    'راح اضربك',
-    'راح أضربك',
-    'راح احرقك',
-    'راح أحرقك',
-    'سوف احرقك',
-    'سوف أحرقك',
-    'سوف اذبحك',
-    'سوف أذبحك',
-    'i will kill you',
-    'i am going to kill you',
-    'i will hurt you',
-    'i will attack you',
-
-    # ابتزاز
-    'ادفع لي',
-    'ادفع وإلا',
-    'ادفع والا',
-    'اذا ما تدفع',
-    'إذا ما تدفع',
-    'سوف انشر صورك',
-    'سوف أنشر صورك',
-    'راح انشر صورك',
-    'راح أنشر صورك',
-    'راح افضحك',
-    'راح أفضحك',
-    'سوف افضحك',
-    'سوف أفضحك',
-    'pay me or',
-    'pay me or i will',
-
-    # نشر معلومات شخصية
-    'راح انشر رقمك',
-    'راح أنشر رقمك',
-    'سوف انشر رقمك',
-    'سوف أنشر رقمك',
-    'راح انشر عنوانك',
-    'راح أنشر عنوانك',
-    'سوف انشر عنوانك',
-    'سوف أنشر عنوانك',
-    'راح انشر معلوماتك',
-    'راح أنشر معلوماتك',
-
-    # انتحال صفة
-    'انا من الشرطة',
-    'أنا من الشرطة',
-    'انا من الحكومة',
-    'أنا من الحكومة',
-    'انا موظف حكومي',
-    'أنا موظف حكومي',
-]
-
-
-# =========================================================
-# تطبيع النص
-# =========================================================
-
-def normalize_text(text):
-
-    # Unicode normalization
-    text = unicodedata.normalize('NFKC', text)
-
-    # lowercase
-    text = text.lower()
-
-    # إزالة التشكيل العربي
-    text = re.sub(
-        r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]',
-        '',
-        text
-    )
-
-    # توحيد بعض الحروف العربية
-    arabic_map = str.maketrans({
-        'أ': 'ا',
-        'إ': 'ا',
-        'آ': 'ا',
-        'ٱ': 'ا',
-        'ى': 'ي',
-        'ة': 'ه',
-    })
-
-    text = text.translate(arabic_map)
-
-    return text
-
-
-# =========================================================
-# إزالة الرموز والمسافات لمحاربة التحايل
-# =========================================================
-
-def compact_text(text):
-
-    text = normalize_text(text)
-
-    # إزالة كل ما ليس حرفًا أو رقمًا
-    return re.sub(r'[^\w]', '', text, flags=re.UNICODE)
-
-
-# =========================================================
-# فحص التعليق
-# =========================================================
-
-def contains_bad_word(comment):
-
-    normal_text = normalize_text(comment)
-    compact = compact_text(comment)
-
-    for word in bad_words:
-
-        normal_word = normalize_text(word)
-        compact_word = compact_text(word)
-
-        # البحث بالشكل الطبيعي
-        if normal_word in normal_text:
-            return True
-
-        # البحث بعد إزالة المسافات والرموز
-        if compact_word and compact_word in compact:
-            return True
-
-    return False
-
-
-# =========================================================
-# فحص المحتوى عالي الخطورة
-# =========================================================
-
-def contains_legal_risk(comment):
-
-    normal_text = normalize_text(comment)
-    compact = compact_text(comment)
-
-    for pattern in legal_risk_patterns:
-
-        normal_pattern = normalize_text(pattern)
-        compact_pattern = compact_text(pattern)
-
-        if normal_pattern in normal_text:
-            return True
-
-        if compact_pattern and compact_pattern in compact:
-            return True
-
-    return False
-
-
 @app.route('/api/rate', methods=['POST'])
 def add_review():
   data = request.json
@@ -799,7 +410,307 @@ def add_review():
   if score < 1 or score > 5:
     return jsonify({'success': False, 'message': 'التقييم يجب أن يكون بين 1 و 5'})
 
+  # فلتر الكلمات البذيئة والسب (يمكنك إضافة أي كلمات أخرى للقائمة)
+python
+import re
+import unicodedata
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+
   # فلتر الكلمات البذيئة والسب
+  import re
+  import unicodedata
+
+  bad_words = [
+      # ==================== العربية ====================
+      'سب', 'شتم', 'أنتحار', 'قذر', 'انتحار',
+      'كلب', 'كلبة', 'حمار', 'حمارة',
+      'غبي', 'غبية', 'أحمق', 'حمقاء',
+      'حقير', 'حقيرة', 'سافل', 'سافلة',
+      'تافه', 'تافهة', 'وسخ', 'وسخة',
+      'نجس', 'نجسة', 'خسيس', 'خسيسة',
+      'وضيع', 'وضيعة', 'ملعون', 'ملعونة',
+      'لعنة', 'تبا', 'تباً', 'تبًا',
+      'يا غبي', 'يا حمار', 'يا كلب',
+      'ابن الكلب', 'ابن الحمار',
+      'قحبة', 'قحاب', 'شرموط', 'شرموطة',
+      'عرص', 'عرصة', 'عاهرة', 'زانية',
+      'ديوث', 'قواد', 'قوادة',
+      'منيك', 'منايك', 'كس', 'زب',
+      'طيز', 'خرا', 'خراء',
+      'نيك', 'ينك', 'نايك',
+      'متناك', 'متناكة',
+      'بضان', 'خنيث', 'خول',
+      'فاجر', 'فاجرة', 'مخنث',
+      'وسخ', 'زبالة', 'نذل', 'نذلة',
+
+      # ==================== العراقي ====================
+      'جلب', 'جلبه', 'جلبك',
+      'ابن الجلب', 'ابن الكلب',
+      'قندرة', 'قندره', 'ابن القندرة', 'ابن القندره',
+      'طيزك', 'طيزج',
+      'كسمك', 'كسمج',
+      'زبي', 'زبيك',
+      'خرا عليك',
+      'يا خرا', 'يا زبالة',
+      'يا جلب', 'يا قندرة',
+      'يا قندره', 'يا وسخ',
+      'يا قذر', 'يا نذل',
+      'يا سافل', 'يا واطي',
+      'واطي', 'واطية',
+      'بطران', 'طرطور',
+      'اهبل', 'أهبل', 'هبلة',
+      'معتوه', 'مخبول',
+      'فاشل', 'فاشلة',
+      'عديم الشرف', 'عديم الاخلاق',
+      'عديم الأدب', 'بلا شرف',
+      'بلا اخلاق', 'بلا أدب',
+      'يا حيوان', 'يا حمار',
+      'يا كلب', 'يا غبي',
+
+      # ==================== English ====================
+      'damn', 'dammit',
+      'shit', 'fuck', 'fucking', 'fucker',
+      'motherfucker', 'bitch', 'bitches',
+      'asshole', 'assholes',
+      'bastard', 'bastards',
+      'dick', 'dickhead',
+      'cock', 'pussy', 'cunt',
+      'whore', 'slut',
+      'crap', 'bullshit',
+      'dumbass', 'jackass',
+      'idiot', 'idiots',
+      'stupid', 'moron',
+      'loser', 'jerk',
+      'scumbag', 'shithead',
+      'fuckhead', 'prick',
+      'son of a bitch',
+      'piece of shit',
+
+      # ==================== French ====================
+      'merde', 'putain', 'pute',
+      'salope', 'connard', 'connasse',
+      'enculé', 'encule',
+      'bordel', 'con', 'conne',
+      'idiot', 'idiote',
+      'imbécile', 'batard', 'batarde',
+      'nique', 'nique ta mère',
+
+      # ==================== Spanish ====================
+      'mierda', 'puta', 'puto',
+      'putas', 'putos',
+      'cabron', 'cabrón', 'cabrona',
+      'coño', 'joder',
+      'gilipollas',
+      'idiota',
+      'pendejo', 'pendeja',
+      'maricon', 'maricón', 'marica',
+      'zorra',
+      'imbecil', 'imbécil',
+      'hijo de puta',
+      'hijos de puta',
+
+      # ==================== German ====================
+      'scheisse', 'scheiße',
+      'fick', 'ficken', 'ficker',
+      'arsch', 'arschloch',
+      'wichser', 'hure',
+      'hurensohn', 'fotze',
+      'schlampe',
+      'idiot', 'dummkopf',
+      'blödmann', 'mistkerl',
+
+      # ==================== Italian ====================
+      'merda', 'cazzo', 'cazzi',
+      'stronzo', 'stronza',
+      'puttana', 'troia',
+      'bastardo', 'bastarda',
+      'coglione', 'coglioni',
+      'vaffanculo', 'minchia',
+      'cretino', 'cretina',
+      'idiota',
+
+      # ==================== Portuguese ====================
+      'merda', 'porra', 'caralho',
+      'puta', 'puto',
+      'filho da puta',
+      'viado', 'veado', 'bicha',
+      'idiota', 'imbecil',
+      'otário', 'otaria',
+      'babaca', 'arrombado',
+
+      # ==================== Turkish ====================
+      'siktir', 'sik', 'sikik',
+      'sikerim', 'orospu',
+      'orospu çocuğu',
+      'piç', 'yarrak',
+      'amcık',
+      'salak', 'aptal',
+      'şerefsiz', 'gerizekalı',
+      'hıyar', 'ibne', 'göt',
+
+      # ==================== Persian ====================
+      'احمق', 'ابله', 'کثیف',
+      'آشغال', 'عوضی',
+      'بی شعور', 'بی‌شعور',
+      'حرامزاده', 'فاحشه',
+      'کسکش', 'کونی',
+      'دیوث', 'بی ناموس',
+      'بی‌ناموس', 'گوه', 'کیر',
+      'کس', 'مادرجنده',
+
+      # ==================== Hindi ====================
+      'बेवकूफ', 'गधा', 'गधे',
+      'हरामी', 'कमीना', 'कमीनी',
+      'चूतिया', 'गांडू',
+      'कुत्ता', 'कुत्ती',
+      'नालायक', 'पागल', 'बكواس',
+
+      # ==================== Urdu ====================
+      'احمق', 'بےوقوف', 'بے وقوف',
+      'گدھا', 'گدھی',
+      'حرامی', 'کمینہ', 'کمینی',
+      'کُتا', 'کُتیا',
+      'بے غیرت', 'بےغیرت',
+      'چوتیا', 'گاندو',
+
+      # ==================== Russian ====================
+      'дурак', 'дура', 'идиот',
+      'дебил', 'тупой', 'тупица',
+      'сука', 'блядь', 'бля',
+      'хуй', 'пизда', 'ебать',
+      'ебаный', 'мудак',
+      'козёл', 'ублюдок',
+      'сволочь',
+
+      # ==================== Dutch ====================
+      'godverdomme', 'klootzak',
+      'kut', 'lul', 'hoer',
+      'tyfus', 'tering',
+      'eikel', 'idioot', 'sukkel',
+
+      # ==================== Polish ====================
+      'kurwa', 'cholera',
+      'pierdol', 'pierdolony',
+      'chuj', 'cipa',
+      'dupek', 'idiota',
+      'debil', 'skurwysyn',
+      'suka',
+
+      # ==================== Greek ====================
+      'malaka', 'malakas',
+      'γαμώ', 'μαλάκας',
+      'μαλακα', 'πούστης',
+      'πουτάνα', 'ηλίθιος',
+
+      # ==================== Indonesian ====================
+      'anjing', 'babi', 'bangsat',
+      'brengsek', 'tolol', 'bodoh',
+      'kontol', 'memek',
+      'sialan', 'kampret',
+      'bajingan', 'asu',
+
+      # ==================== Filipino ====================
+      'putangina', 'gago', 'tanga',
+      'bobo', 'tarantado',
+      'ulol', 'leche', 'lintik',
+      'peste', 'hayop',
+
+      # ==================== Japanese ====================
+      'ばか', 'バカ', '馬鹿',
+      'あほ', 'アホ',
+      'くそ', 'クソ',
+      '死ね', 'しね',
+      'きもい', 'うざい',
+      'まぬけ',
+
+      # ==================== Korean ====================
+      '씨발', '시발',
+      '개새끼', '새끼',
+      '병신', '미친놈',
+      '미친년', '좆',
+      '존나', '지랄',
+      '꺼져', '븅신',
+
+      # ==================== Chinese ====================
+      '傻逼', '傻子', '笨蛋',
+      '混蛋', '王八蛋',
+      '操', '艹',
+      '妈的', '他妈的',
+      '草泥马',
+      '贱人', '垃圾',
+      '废物', '滚蛋',
+  ]
+
+  legal_risk_patterns = [
+      # تهديدات
+      'راح اقتلك', 'راح أقتلك', 'سوف اقتلك', 'سوف أقتلك', 'سوف اقتله',
+      'راح اذبحك', 'راح أذبحك', 'راح اضربك', 'راح أضربك', 'راح احرقك',
+      'راح أحرقك', 'سوف احرقك', 'سوف أحرقك', 'سوف اذبحك', 'سوف أذبحك',
+      'i will kill you', 'i am going to kill you', 'i will hurt you', 'i will attack you',
+      # ابتزاز
+      'ادفع لي', 'ادفع وإلا', 'ادفع والا', 'اذا ما تدفع', 'إذا ما تدفع',
+      'سوف انشر صورك', 'سوف أنشر صورك', 'راح انشر صورك', 'راح أنشر صورك',
+      'راح افضحك', 'راح أفضحك', 'سوف افضحك', 'سوف أفضحك',
+      'pay me or', 'pay me or i will',
+      # نشر معلومات شخصية
+      'راح انشر رقمك', 'راح أنشر رقمك', 'سوف انشر رقمك', 'سوف أنشر رقمك',
+      'راح انشر عنوانك', 'راح أنشر عنوانك', 'سوف انشر عنوانك', 'سوف أنشر عنوانك',
+      'راح انشر معلوماتك', 'راح أنشر معلوماتك',
+      # انتحال صفة
+      'انا من الشرطة', 'أنا من الشرطة', 'انا من الحكومة', 'أنا من الحكومة',
+      'انا موظف حكومي', 'أنا موظف حكومي',
+  ]
+
+  def normalize_text(text):
+    text = unicodedata.normalize('NFKC', text)
+    text = text.lower()
+    text = re.sub(
+        r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]',
+        '',
+        text
+    )
+    arabic_map = str.maketrans({
+        'أ': 'ا',
+        'إ': 'ا',
+        'آ': 'ا',
+        'ٱ': 'ا',
+        'ى': 'ي',
+        'ة': 'ه',
+    })
+    text = text.translate(arabic_map)
+    return text
+
+  def compact_text(text):
+    text = normalize_text(text)
+    return re.sub(r'[^\w]', '', text, flags=re.UNICODE)
+
+  def contains_bad_word(text_to_check):
+    normal_text = normalize_text(text_to_check)
+    compact = compact_text(text_to_check)
+    for word in bad_words:
+      normal_word = normalize_text(word)
+      compact_word = compact_text(word)
+      if normal_word in normal_text:
+        return True
+      if compact_word and compact_word in compact:
+        return True
+    return False
+
+  def contains_legal_risk(text_to_check):
+    normal_text = normalize_text(text_to_check)
+    compact = compact_text(text_to_check)
+    for pattern in legal_risk_patterns:
+      normal_pattern = normalize_text(pattern)
+      compact_pattern = compact_text(pattern)
+      if normal_pattern in normal_text:
+        return True
+      if compact_pattern and compact_pattern in compact:
+        return True
+    return False
+
   if contains_bad_word(comment):
     return jsonify({
         'success': False,
@@ -811,6 +722,22 @@ def add_review():
         'success': False,
         'message': 'عذراً، لا يمكن نشر هذا التعليق لأنه قد يخالف قواعد الموقع.'
     }), 400
+    # =====================================================
+    # إذا وصلنا هنا فالتعليق اجتاز الفلتر
+    # =====================================================
+
+    # ضع هنا كود حفظ التعليق في قاعدة البيانات
+
+    return jsonify({
+        'success': True,
+        'message': 'تم نشر التعليق بنجاح!'
+    }), 200
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
 
   song = Song.query.filter_by(spotify_id=spotify_id).first()
   if not song:
@@ -1508,6 +1435,7 @@ html_template = (
             }
         }
         
+        // تعديل دالة تسجيل الخروج لتطلب التأكيد
         function handleLogout() {
             let lang = localStorage.getItem('musicy_lang') || 'en';
             let msg = (lang === 'ar') ? 'أنت على وشك تسجيل الخروج، هل أنت متأكد؟' : 'You are about to log out, are you sure?';
@@ -1792,32 +1720,47 @@ profile_html = (
             setLanguage(savedLang);
             let savedTheme = localStorage.getItem('musicy_theme');
             if(savedTheme === 'light') { document.body.classList.add('light-mode'); }
+
             let currentUser = localStorage.getItem('songdb_user');
             if(!currentUser) { window.location.href = '/login'; return; }
-            document.getElementById('profileUsernameDisplay').innerText = currentUser;
+            document.getElementById('profileUsernameDisplay').innerText = '@' + currentUser;
+            
             let currentAvatar = localStorage.getItem('songdb_avatar');
-            if(currentAvatar) { document.getElementById('profileAvatarPreview').src = currentAvatar; }
+            if(currentAvatar) {
+                document.getElementById('profileAvatarPreview').src = currentAvatar;
+            }
+
+            fetch(`/api/get_user_info?username=${encodeURIComponent(currentUser)}`).then(res => res.json()).then(data => {
+                if(data.success && data.avatar) {
+                    document.getElementById('profileAvatarPreview').src = data.avatar;
+                    localStorage.setItem('songdb_avatar', data.avatar);
+                }
+            });
         });
 
         function saveAvatarFile() {
-            let fileInput = document.getElementById('avatarFileInput');
-            if(fileInput.files.length === 0) { alert('Please select an image file first'); return; }
             let currentUser = localStorage.getItem('songdb_user');
+            let fileInput = document.getElementById('avatarFileInput');
+            if(fileInput.files.length === 0) {
+                alert('Please select an image file first');
+                return;
+            }
+
             let formData = new FormData();
             formData.append('username', currentUser);
             formData.append('avatar_file', fileInput.files[0]);
 
-            fetch('/api/update_avatar_file', { method: 'POST', body: formData }).then(res => res.json()).then(data => {
+            fetch('/api/update_avatar_file', {
+                method: 'POST',
+                body: formData
+            }).then(res => res.json()).then(data => {
                 if(data.success) {
                     localStorage.setItem('songdb_avatar', data.avatar);
-                    document.getElementById('profileAvatarPreview').src = data.avatar;
-                    alert('Avatar updated successfully!');
+                    alert('Avatar uploaded and updated successfully!');
                     window.location.href = '/';
                 } else {
-                    alert(data.message || 'Error updating avatar');
+                    alert(data.message || 'Error uploading avatar');
                 }
-            }).catch(err => {
-                alert('An error occurred while uploading.');
             });
         }
     </script>
@@ -1825,7 +1768,8 @@ profile_html = (
 </html>"""
 )
 
-song_detail_template = """<!DOCTYPE html>
+song_detail_template = (
+    """<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -1833,203 +1777,450 @@ song_detail_template = """<!DOCTYPE html>
     <title>{{ song.title }} - Musicy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    """ + background_styles + """
+    """
+    + background_styles
+    + """
 </head>
-<body class="text-gray-100 font-sans min-h-screen flex flex-col">
+<body class="text-gray-100 font-sans antialiased min-h-screen flex flex-col">
     <header class="border-b border-[#00ff66]/40 bg-[#000000]/95 backdrop-blur-2xl sticky top-0 z-50 h-16 flex items-center px-4 md:px-8 justify-between shadow-[0_4px_35px_rgba(0,0,0,0.9)]">
-        <a href="/" class="flex items-center space-x-2 text-[#00ff66] font-bold text-xl tracking-wider"><i class="fa-solid fa-music"></i><span data-i18n="brandName">Musicy</span></a>
-        <div class="flex items-center space-x-4">
-            """ + lang_switcher_html + """
-            <a href="/" class="text-xs text-[#00ff66] hover:text-white transition"><i class="fa-solid fa-house mr-1"></i> <span data-i18n="home">Home</span></a>
+        <div class="flex items-center space-x-12 w-full"><a href="/" class="flex items-center space-x-2 text-[#00ff66] font-bold text-xl tracking-wider"><i class="fa-solid fa-music text-[#00ff66]"></i><span class="tracking-widest" data-i18n="brandName">Musicy</span></a></div>
+        <div class="flex items-center space-x-4 text-xs font-medium text-gray-300">
+            """
+    + lang_switcher_html
+    + """
+            <a href="/" class="flex items-center space-x-1.5 text-[#00ff66] hover:text-white transition"><i class="fa-solid fa-house"></i> <span data-i18n="home">Home</span></a>
         </div>
     </header>
-    <main class="flex-1 max-w-4xl mx-auto w-full p-4 md:p-8 space-y-8">
-        <div class="glass-card rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 neon-border">
-            <img src="{{ song.img }}" class="w-44 h-44 md:w-56 md:h-56 object-cover rounded-2xl border-2 border-[#00ff66]/60 shadow-2xl shrink-0">
-            <div class="space-y-3 text-center md:text-left flex-1">
-                <span class="text-[11px] bg-[#00ff66]/20 text-[#00ff66] px-3 py-1 rounded-full border border-[#00ff66]/40 font-semibold">{{ song.genre }} &bull; {{ song.release_year }}</span>
-                <h1 class="text-2xl md:text-4xl font-extrabold text-white">{{ song.title }}</h1>
-                <p class="text-sm md:text-base text-gray-300">{{ song.artist }}</p>
-                <div class="flex items-center justify-center md:justify-start space-x-4 pt-2">
-                    <div class="flex items-center space-x-1.5 bg-[#020804] px-4 py-2 rounded-xl border border-[#00ff66]/40">
-                        <i class="fa-solid fa-star text-[#00ff66]"></i>
-                        <span class="font-extrabold text-white text-base" id="songOverallRating">{{ song.rating }}</span>
-                        <span class="text-xs text-gray-400">/5</span>
-                    </div>
-                    <div class="text-xs text-gray-400"><span class="font-bold text-white" id="songTotalVotes">{{ song.votes }}</span> <span data-i18n="votesText">votes</span></div>
+    <main class="flex-1 p-3 sm:p-6 md:p-10 space-y-6 sm:space-y-10 max-w-5xl mx-auto w-full">
+        <div class="bg-gradient-to-r from-[#031408] via-[#010803] to-[#000000] border border-[#00ff66]/60 rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-10 flex flex-col md:flex-row items-center gap-5 sm:gap-8 shadow-[0_20px_60px_rgba(0,0,0,0.9)] backdrop-blur-2xl neon-border text-center md:text-left">
+            <div class="relative shrink-0 group">
+                <img id="songCoverImg" src="{{ song.img }}" crossorigin="anonymous" class="w-36 h-36 sm:w-52 sm:h-52 md:w-60 md:h-60 object-cover rounded-2xl shadow-2xl border border-[#00ff66]/60 group-hover:scale-105 transition duration-700 mx-auto">
+                <div class="absolute inset-0 bg-[#00ff66]/25 rounded-2xl filter blur-xl opacity-0 group-hover:opacity-100 transition duration-700 -z-10"></div>
+            </div>
+            <div class="flex-1 space-y-3 w-full min-w-0">
+                <div>
+                    <h1 class="text-xl sm:text-3xl md:text-4xl font-extrabold text-white truncate">{{ song.title }}</h1>
+                    <p class="text-sm sm:text-lg text-gray-300 font-medium truncate">{{ song.artist }}</p>
+                    <p class="text-[11px] sm:text-xs text-gray-400 mt-0.5">{{ song.release_year }} &bull; {{ song.genre }}</p>
                 </div>
-                <div class="pt-2 flex flex-wrap gap-3 justify-center md:justify-start">
-                    <a href="https://open.spotify.com/track/{{ song.spotify_id }}" target="_blank" class="bg-[#1DB954] hover:bg-[#1aa34a] text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center space-x-2 transition shadow-lg">
-                        <i class="fa-brands fa-spotify text-base"></i>
+                <div class="flex items-center justify-center md:justify-start space-x-2.5">
+                    <div class="flex text-[#00ff66] text-xs sm:text-sm"><i class="fa-solid fa-star"></i></div>
+                    <span class="text-lg sm:text-xl font-bold text-white">{{ song.rating }} <span class="text-xs text-gray-400 font-normal">/5</span></span>
+                    <span class="text-xs text-gray-400">({{ song.votes }} <span data-i18n="votesText">votes</span>)</span>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2.5 sm:gap-4 pt-1 w-full">
+                    <button id="mainRateBtn" onclick="openRateModal()" class="w-full sm:w-auto bg-gradient-to-r from-[#00ff66] to-[#00cc52] hover:opacity-95 text-gray-950 font-bold px-5 sm:px-7 py-3 rounded-xl text-xs flex items-center justify-center space-x-2 transition shadow-[0_0_25px_rgba(0,255,102,0.5)] hover:scale-105 transform duration-300">
+                        <i class="fa-solid fa-star"></i>
+                        <span id="mainRateBtnText" data-i18n="rateSongBtn">Rate This Song</span>
+                    </button>
+                    <a href="https://open.spotify.com/track/{{ song.spotify_id }}" target="_blank" class="w-full sm:w-auto bg-[#020804] border border-[#00ff66]/50 hover:bg-[#00ff66]/25 text-[#00ff66] font-bold px-5 sm:px-7 py-3 rounded-xl text-xs flex items-center justify-center space-x-2 transition shadow-lg hover:scale-105 transform duration-300">
+                        <i class="fa-brands fa-spotify text-sm"></i>
                         <span data-i18n="listenSpotify">Listen on Spotify</span>
                     </a>
-                    <button onclick="openRateModal()" class="bg-gradient-to-r from-[#00ff66] to-[#00cc52] text-gray-950 font-bold px-5 py-2.5 rounded-xl text-xs flex items-center space-x-2 transition shadow-[0_0_20px_rgba(0,255,102,0.5)]">
-                        <i class="fa-solid fa-star"></i>
-                        <span data-i18n="rateSongBtn">Rate This Song</span>
-                    </button>
                 </div>
             </div>
         </div>
 
-        <div class="space-y-4">
-            <h2 class="text-lg font-bold text-white flex items-center space-x-2"><i class="fa-solid fa-comments text-[#00ff66]"></i><span data-i18n="reviewsTitle">Reviews & Ratings</span></h2>
-            <div id="reviewsList" class="space-y-4">
-                {% for r in reviews %}
-                <div class="glass-card rounded-2xl p-4 space-y-2">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <img src="{{ r.avatar }}" class="w-9 h-9 rounded-full object-cover border border-[#00ff66]/50">
-                            <div>
-                                <h4 class="font-bold text-xs text-white">{{ r.username }}</h4>
-                                <div class="text-[10px] text-gray-400 review-time" data-timestamp="{{ r.timestamp }}"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-4 sm:space-y-6">
+                <div class="flex items-center justify-between"><h3 class="text-sm sm:text-base font-bold text-white" data-i18n="reviewsTitle">Reviews & Ratings</h3><button id="secRateBtn" onclick="openRateModal()" class="bg-[#020804] hover:bg-[#00ff66]/25 text-[#00ff66] font-bold px-3 py-2 rounded-xl text-xs border border-[#00ff66]/50 transition shadow" data-i18n="writeReviewBtn">Write Review</button></div>
+                {% if reviews %}
+                    <div class="space-y-3">
+                        {% for rev in reviews %}
+                        <div class="glass-card rounded-2xl p-4 sm:p-6 space-y-3" data-username="{{ rev.username }}">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3 min-w-0">
+                                    <img src="{{ rev.avatar }}" class="w-9 h-9 sm:w-11 sm:h-11 rounded-full object-cover border border-[#00ff66]/70 shadow-md shrink-0">
+                                    <div class="min-w-0">
+                                        <h4 class="font-bold text-sm text-white truncate">{{ rev.username }}</h4>
+                                        <span class="text-[11px] text-gray-500 time-ago-el" data-timestamp="{{ rev.timestamp }}"></span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-1 text-[#00ff66] text-xs font-bold shrink-0"><i class="fa-solid fa-star text-[10px]"></i><span>{{ rev.rating }}/5</span></div>
+                            </div>
+                            <p class="text-sm sm:text-base text-gray-200 leading-relaxed font-normal break-words py-1">{{ rev.comment }}</p>
+                            <div class="flex items-center justify-between pt-2 border-t border-[#00ff66]/20 text-xs">
+                                <button onclick="likeReview({{ rev.id }}, this)" class="flex items-center space-x-2 text-gray-300 hover:text-[#00ff66] transition bg-[#020804] px-3.5 py-2 rounded-xl border border-[#00ff66]/30 shadow">
+                                    <i class="fa-solid fa-heart text-gray-400 like-icon-{{ rev.id }}" data-review-id="{{ rev.id }}"></i>
+                                    <span>Like</span>
+                                    <span class="font-bold text-white ml-1 like-count-{{ rev.id }}">{{ rev.likes }}</span>
+                                </button>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-1 text-[#00ff66] bg-[#020804] px-2.5 py-1 rounded-lg border border-[#00ff66]/30 text-xs font-bold">
-                            <i class="fa-solid fa-star text-[10px]"></i>
-                            <span>{{ r.rating }}</span>
-                        </div>
+                        {% endfor %}
                     </div>
-                    {% if r.comment %}
-                    <p class="text-xs text-gray-300 leading-relaxed pt-1">{{ r.comment }}</p>
-                    {% endif %}
-                    <div class="flex items-center justify-end pt-2 border-t border-[#00ff66]/10">
-                        <button onclick="likeReview({{ r.id }})" id="like-btn-{{ r.id }}" class="flex items-center space-x-1.5 text-xs text-gray-400 hover:text-red-400 transition bg-[#020804] px-3 py-1 rounded-lg border border-[#00ff66]/30">
-                            <i class="fa-solid fa-heart text-red-500" id="like-icon-{{ r.id }}"></i>
-                            <span id="likes-count-{{ r.id }}">{{ r.likes }}</span>
-                        </button>
-                    </div>
-                </div>
                 {% else %}
-                <div class="glass-card rounded-2xl p-8 text-center text-gray-400 text-xs" data-i18n="noReviews">No reviews yet. Be the first to review this song!</div>
-                {% endfor %}
+                    <div class="glass-card rounded-2xl p-6 text-center text-gray-400 text-xs" data-i18n="noReviews">No reviews yet. Be the first to review this song!</div>
+                {% endif %}
+            </div>
+            <div class="glass-card rounded-2xl p-4 sm:p-6 space-y-3 h-fit">
+                <h4 class="font-bold text-xs text-white uppercase tracking-wider" data-i18n="ratingDetails">Rating Details</h4>
+                <div class="space-y-2.5 text-xs text-gray-400">
+                    <div class="flex items-center justify-between"><span data-i18n="overallRating">Overall Rating</span><span class="text-[#00ff66] font-bold">{{ song.rating }} / 5</span></div>
+                    <div class="flex items-center justify-between"><span data-i18n="totalVotes">Total Votes</span><span class="text-white font-bold">{{ song.votes }}</span></div>
+                </div>
             </div>
         </div>
     </main>
 
-    <div id="rateModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
-        <div class="w-full max-w-md glass-card rounded-3xl p-6 space-y-4 neon-border">
-            <h3 class="text-base font-bold text-white flex items-center space-x-2"><i class="fa-solid fa-star text-[#00ff66]"></i><span data-i18n="rateModalTitle">Rate</span> {{ song.title }}</h3>
+    <div id="rateModal" class="fixed inset-0 bg-black/90 flex items-center justify-center hidden z-50 p-3 backdrop-blur-xl">
+        <div class="glass-card border border-[#00ff66]/70 rounded-2xl sm:rounded-3xl p-5 sm:p-8 w-full max-w-md space-y-4 shadow-2xl">
+            <h3 class="text-xs sm:text-base font-bold text-white truncate"><span data-i18n="rateModalTitle">Rate</span> "{{ song.title }}"</h3>
             <div class="space-y-3 text-xs">
                 <div>
-                    <label class="text-gray-400 font-medium block mb-1.5" data-i18n="ratingScoreLabel">Rating Stars (1 to 5):</label>
-                    <select id="modalRatingScore" class="w-full bg-[#020804] text-gray-200 px-3 py-2.5 rounded-xl border border-[#00ff66]/50 focus:outline-none">
-                        <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
-                        <option value="4">⭐⭐⭐⭐ (4/5)</option>
-                        <option value="3">⭐⭐⭐ (3/5)</option>
-                        <option value="2">⭐⭐ (2/5)</option>
-                        <option value="1">⭐ (1/5)</option>
-                    </select>
+                    <label class="text-gray-400 block mb-1.5 font-medium" data-i18n="ratingScoreLabel">اختر النجوم (من 1 إلى 5):</label>
+                    <div class="flex items-center justify-between sm:justify-start sm:space-x-4 text-2xl sm:text-3xl text-gray-600 cursor-pointer" id="starContainer">
+                        <i class="fa-solid fa-star hover:text-[#00ff66] transition transform hover:scale-125 p-1" onclick="setStarRating(1)" data-value="1"></i>
+                        <i class="fa-solid fa-star hover:text-[#00ff66] transition transform hover:scale-125 p-1" onclick="setStarRating(2)" data-value="2"></i>
+                        <i class="fa-solid fa-star hover:text-[#00ff66] transition transform hover:scale-125 p-1" onclick="setStarRating(3)" data-value="3"></i>
+                        <i class="fa-solid fa-star hover:text-[#00ff66] transition transform hover:scale-125 p-1" onclick="setStarRating(4)" data-value="4"></i>
+                        <i class="fa-solid fa-star hover:text-[#00ff66] transition transform hover:scale-125 p-1" onclick="setStarRating(5)" data-value="5"></i>
+                        <span id="starValueText" class="text-sm font-extrabold text-[#00ff66] ml-2">5/5</span>
+                    </div>
+                    <input type="hidden" id="hiddenRating" value="5">
                 </div>
-                <div>
-                    <label class="text-gray-400 font-medium block mb-1.5" data-i18n="commentLabel">Your Review / Comment:</label>
-                    <textarea id="modalRatingComment" rows="3" placeholder="Write your thoughts..." class="w-full bg-[#020804] text-gray-200 p-3 rounded-xl border border-[#00ff66]/50 focus:outline-none"></textarea>
-                </div>
-                <div class="flex space-x-3 pt-2">
-                    <button onclick="submitReview()" class="flex-1 bg-gradient-to-r from-[#00ff66] to-[#00cc52] text-gray-950 font-bold py-3 rounded-xl transition shadow-[0_0_20px_rgba(0,255,102,0.5)]" data-i18n="submitRatingBtn">Submit Rating</button>
-                    <button onclick="closeRateModal()" class="flex-1 bg-[#020804] text-gray-300 hover:text-white py-3 rounded-xl border border-[#00ff66]/40 transition" data-i18n="cancelBtn">Cancel</button>
-                </div>
+                <div><label class="text-gray-400 block mb-1.5 font-medium" data-i18n="commentLabel">Your Review / Comment:</label><textarea id="commentInput" rows="3" placeholder="This song is amazing..." class="w-full bg-[#020804] text-gray-200 p-3 rounded-xl border border-[#00ff66]/40 focus:outline-none focus:border-[#00ff66] focus:ring-2 focus:ring-[#00ff66]/30 shadow-inner"></textarea></div>
+            </div>
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-1">
+                <button onclick="submitRating()" class="w-full sm:flex-1 bg-gradient-to-r from-[#00ff66] to-[#00cc52] hover:opacity-95 text-gray-950 font-bold py-3 rounded-xl text-xs transition shadow-[0_0_25px_rgba(0,255,102,0.5)]" data-i18n="submitRatingBtn">Submit Rating & Generate Story</button>
+                <button onclick="closeRateModal()" class="w-full sm:flex-1 bg-[#020804] hover:bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-3 rounded-xl text-xs transition" data-i18n="cancelBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="storyModal" class="fixed inset-0 bg-black/95 flex items-center justify-center hidden z-50 p-3 backdrop-blur-2xl">
+        <div class="glass-card border border-[#00ff66]/80 rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-full max-w-sm space-y-4 shadow-2xl text-center">
+            <h3 class="text-xs sm:text-sm font-bold text-white" data-i18n="storyModalTitle">معاينة ستوري انستقرام الخارقة الفخامة</h3>
+            <div class="relative flex justify-center">
+                <canvas id="storyCanvas" width="1080" height="1920" class="w-full max-h-[350px] sm:max-h-[420px] object-contain rounded-xl border border-[#00ff66]/50 shadow-2xl"></canvas>
+            </div>
+            <div class="space-y-2">
+                <button onclick="downloadStory()" class="w-full bg-gradient-to-r from-[#00ff66] to-[#00cc52] hover:opacity-95 text-gray-950 font-bold py-3 rounded-xl text-xs transition shadow-[0_0_25px_rgba(0,255,102,0.6)] flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-download"></i>
+                    <span data-i18n="downloadStoryBtn">تحميل ستوري الفخامة</span>
+                </button>
+                <button onclick="closeStoryModal()" class="w-full bg-[#020804] hover:bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-2.5 rounded-xl text-xs transition" data-i18n="closeStoryBtn">إغلاق ومتابعة</button>
             </div>
         </div>
     </div>
 
     <script>
+        let currentRatingVal = 5;
+        let userHasReviewed = false;
+        let userExistingComment = "";
+        let lastRatedData = null;
+
         document.addEventListener('DOMContentLoaded', () => {
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
+            let savedTheme = localStorage.getItem('musicy_theme');
+            if(savedTheme === 'light') { document.body.classList.add('light-mode'); }
+            checkUserReviewStatus();
             updateAllTimes();
-            checkUserLikes();
+            fetchUserLikedReviews();
+            setInterval(updateAllTimes, 60000);
         });
+
+        function fetchUserLikedReviews() {
+            let currentUser = localStorage.getItem('songdb_user');
+            if(!currentUser) return;
+            let reviewIds = [];
+            document.querySelectorAll('[class*="like-icon-"]').forEach(icon => {
+                let rid = icon.getAttribute('data-review-id');
+                if(rid) reviewIds.push(parseInt(rid));
+            });
+            if(reviewIds.length === 0) return;
+
+            fetch('/api/check_likes', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username: currentUser, review_ids: reviewIds })
+            }).then(res => res.json()).then(likedMap => {
+                for(let rid in likedMap) {
+                    if(likedMap[rid]) {
+                        let iconEl = document.querySelector(`.like-icon-${rid}`);
+                        if(iconEl) {
+                            iconEl.classList.remove('text-gray-400');
+                            iconEl.classList.add('text-[#ff2255]');
+                        }
+                    }
+                }
+            });
+        }
+
+        function timeAgo(timestamp, lang) {
+            const now = Date.now() / 1000;
+            const elapsed = Math.floor(now - timestamp);
+
+            if (lang === 'ar') {
+                if (elapsed < 60) return 'الآن';
+                let minutes = Math.floor(elapsed / 60);
+                if (minutes < 60) return `منذ ${minutes} دقيقة`;
+                let hours = Math.floor(minutes / 60);
+                if (hours < 24) return `منذ ${hours} ساعة`;
+                let days = Math.floor(hours / 24);
+                if (days < 30) return `منذ ${days} يوم`;
+                let months = Math.floor(days / 30);
+                if (months < 12) return `منذ ${months} شهر`;
+                let years = Math.floor(months / 12);
+                return `منذ ${years} سنة`;
+            } else {
+                if (elapsed < 60) return 'Just now';
+                let minutes = Math.floor(elapsed / 60);
+                if (minutes === 1) return '1 minute ago';
+                if (minutes < 60) return `${minutes} minutes ago`;
+                let hours = Math.floor(minutes / 60);
+                if (hours === 1) return '1 hour ago';
+                if (hours < 24) return `${hours} hours ago`;
+                let days = Math.floor(hours / 24);
+                if (days === 1) return '1 day ago';
+                if (days < 30) return `${days} days ago`;
+                let months = Math.floor(days / 30);
+                if (months === 1) return '1 month ago';
+                if (months < 12) return `${months} months ago`;
+                let years = Math.floor(months / 12);
+                if (years === 1) return '1 year ago';
+                return `${years} years ago`;
+            }
+        }
 
         function updateAllTimes() {
             let lang = localStorage.getItem('musicy_lang') || 'en';
-            document.querySelectorAll('.review-time').forEach(el => {
+            document.querySelectorAll('.time-ago-el').forEach(el => {
                 let ts = parseFloat(el.getAttribute('data-timestamp'));
-                if(ts) {
-                    let d = new Date(ts * 1000);
-                    el.innerText = d.toLocaleDateString(lang === 'ar' ? 'ar-IQ' : 'en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+                if (!isNaN(ts)) {
+                    el.innerText = timeAgo(ts, lang);
+                }
+            });
+        }
+
+        function checkUserReviewStatus() {
+            let currentUser = localStorage.getItem('songdb_user');
+            if(!currentUser) return;
+            
+            const reviewCards = document.querySelectorAll('[data-username]');
+            reviewCards.forEach(card => {
+                if(card.getAttribute('data-username') === currentUser) {
+                    userHasReviewed = true;
+                    let commentTextEl = card.querySelector('p');
+                    if(commentTextEl) userExistingComment = commentTextEl.innerText;
+                    
+                    let mainText = document.getElementById('mainRateBtnText');
+                    let secBtn = document.getElementById('secRateBtn');
+                    let editLabel = (localStorage.getItem('musicy_lang') === 'ar') ? 'تعديل تقييمك ورأيك' : 'Edit Your Review';
+                    if(mainText) mainText.innerText = editLabel;
+                    if(secBtn) secBtn.innerText = editLabel;
+                }
+            });
+        }
+
+        function setStarRating(val) {
+            currentRatingVal = val;
+            document.getElementById('hiddenRating').value = val;
+            document.getElementById('starValueText').innerText = val + '/5';
+            
+            let stars = document.querySelectorAll('#starContainer i');
+            stars.forEach((star, index) => {
+                if(index < val) {
+                    star.classList.add('text-[#00ff66]', 'drop-shadow-[0_0_12px_#00ff66]');
+                    star.classList.remove('text-gray-600');
+                } else {
+                    star.classList.remove('text-[#00ff66]', 'drop-shadow-[0_0_12px_#00ff66]');
+                    star.classList.add('text-gray-600');
                 }
             });
         }
 
         function openRateModal() {
             let currentUser = localStorage.getItem('songdb_user');
-            if(!currentUser) { window.location.href = '/login'; return; }
+            if (!currentUser) { 
+                alert('Please login first to rate songs!'); 
+                window.location.href = '/login'; 
+                return; 
+            }
+            if(userHasReviewed && userExistingComment) {
+                document.getElementById('commentInput').value = userExistingComment;
+            }
+            setStarRating(currentRatingVal);
             document.getElementById('rateModal').classList.remove('hidden');
         }
 
-        function closeRateModal() {
-            document.getElementById('rateModal').classList.add('hidden');
-        }
+        function closeRateModal() { document.getElementById('rateModal').classList.add('hidden'); }
+        function closeStoryModal() { document.getElementById('storyModal').classList.add('hidden'); location.reload(); }
 
-        function submitReview() {
+        function submitRating() {
             let currentUser = localStorage.getItem('songdb_user');
-            if(!currentUser) { window.location.href = '/login'; return; }
-            let score = document.getElementById('modalRatingScore').value;
-            let comment = document.getElementById('modalRatingComment').value;
-            let spotifyId = "{{ song.spotify_id }}";
-
+            if (!currentUser) {
+                alert('Please login first!');
+                window.location.href = '/login';
+                return;
+            }
+            let rating = parseFloat(document.getElementById('hiddenRating').value);
+            let comment = document.getElementById('commentInput').value;
+            if (isNaN(rating) || rating < 1 || rating > 5) { alert('Please select a rating between 1 and 5 stars.'); return; }
+            
             fetch('/api/rate', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({spotify_id: spotifyId, rating: score, comment: comment, username: currentUser})
-            }).then(res => res.json()).then(data => {
-                if(data.success) {
-                    location.reload();
+                body: JSON.stringify({ spotify_id: '{{ song.spotify_id }}', rating: rating, username: currentUser, comment: comment })
+            }).then(res => res.json()).then(resp => {
+                if (resp.success) {
+                    closeRateModal();
+                    let currentAvatar = localStorage.getItem('songdb_avatar') || resp.avatar;
+                    lastRatedData = {
+                        username: currentUser,
+                        avatar: currentAvatar,
+                        rating: rating,
+                        comment: comment,
+                        title: '{{ song.title }}',
+                        artist: '{{ song.artist }}',
+                        img: '{{ song.img }}'
+                    };
+                    generateInstagramStory(lastRatedData);
+                    document.getElementById('storyModal').classList.remove('hidden');
                 } else {
-                    alert(data.message || 'Error submitting review');
+                    alert(resp.message || 'Error submitting rating.');
                 }
             });
         }
 
-        function likeReview(reviewId) {
+        function generateInstagramStory(data) {
+            const canvas = document.getElementById('storyCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, 1920);
+            bgGrad.addColorStop(0, '#000000');
+            bgGrad.addColorStop(0.3, '#020d05');
+            bgGrad.addColorStop(1, '#000000');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, 1080, 1920);
+
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 255, 102, 0.5)';
+            ctx.shadowBlur = 90;
+            ctx.fillStyle = 'rgba(3, 12, 6, 0.95)';
+            ctx.beginPath();
+            ctx.roundRect(80, 120, 920, 1680, 60);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(0, 255, 102, 0.7)';
+            ctx.lineWidth = 5;
+            ctx.stroke();
+            ctx.restore();
+
+            ctx.fillStyle = '#00ff66';
+            ctx.font = 'bold 36px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('MUSICY REVIEW & RATING', 540, 220);
+
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.src = data.img;
+            img.onload = function() {
+                ctx.save();
+                ctx.shadowColor = 'rgba(0,0,0,0.9)';
+                ctx.shadowBlur = 60;
+                ctx.shadowOffsetY = 30;
+                ctx.beginPath();
+                ctx.roundRect(190, 280, 700, 700, 40);
+                ctx.closePath();
+                ctx.clip();
+                ctx.drawImage(img, 190, 280, 700, 700);
+                ctx.restore();
+
+                ctx.save();
+                ctx.strokeStyle = 'rgba(0, 255, 102, 0.8)';
+                ctx.lineWidth = 6;
+                ctx.beginPath();
+                ctx.roundRect(190, 280, 700, 700, 40);
+                ctx.stroke();
+                ctx.restore();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 52px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(data.title, 540, 1060, 850);
+
+                ctx.fillStyle = '#9ca3af';
+                ctx.font = '36px sans-serif';
+                ctx.fillText(data.artist, 540, 1130, 850);
+
+                let starStr = '★'.repeat(data.rating) + '☆'.repeat(5 - Math.floor(data.rating));
+                ctx.fillStyle = '#00ff66';
+                ctx.font = 'bold 50px sans-serif';
+                ctx.fillText(starStr + ` (${data.rating}/5)`, 540, 1240);
+
+                if(data.comment) {
+                    ctx.fillStyle = '#d1d5db';
+                    ctx.font = 'italic 34px sans-serif';
+                    wrapText(ctx, `"${data.comment}"`, 540, 1340, 800, 50);
+                }
+
+                ctx.fillStyle = '#00ff66';
+                ctx.font = 'bold 28px sans-serif';
+                ctx.fillText(`Reviewed by @${data.username} on Musicy`, 540, 1680);
+            };
+        }
+
+        function wrapText(context, text, x, y, maxWidth, lineHeight) {
+            let words = text.split(' ');
+            let line = '';
+            for(let n = 0; n < words.length; n++) {
+                let testLine = line + words[n] + ' ';
+                let metrics = context.measureText(testLine);
+                let testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    context.fillText(line, x, y);
+                    line = words[n] + ' ';
+                    y += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            context.fillText(line, x, y);
+        }
+
+        function downloadStory() {
+            const canvas = document.getElementById('storyCanvas');
+            let link = document.createElement('a');
+            link.download = 'musicy-story.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function likeReview(reviewId, btnEl) {
             let currentUser = localStorage.getItem('songdb_user');
-            if(!currentUser) { window.location.href = '/login'; return; }
+            if(!currentUser) {
+                alert('Please login to like reviews!');
+                window.location.href = '/login';
+                return;
+            }
             fetch('/api/like_review', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({review_id: reviewId, username: currentUser})
+                body: JSON.stringify({ review_id: reviewId, username: currentUser })
             }).then(res => res.json()).then(data => {
                 if(data.success) {
-                    document.getElementById('likes-count-' + reviewId).innerText = data.likes;
-                    let icon = document.getElementById('like-icon-' + reviewId);
-                    let btn = document.getElementById('like-btn-' + reviewId);
-                    if(data.liked) {
-                        icon.className = 'fa-solid fa-heart text-red-500 scale-125 transition transform duration-200';
-                        btn.classList.add('like-animate');
-                        setTimeout(() => btn.classList.remove('like-animate'), 400);
-                    } else {
-                        icon.className = 'fa-regular fa-heart text-gray-400';
-                    }
-                }
-            });
-        }
-
-        function checkUserLikes() {
-            let currentUser = localStorage.getItem('songdb_user');
-            if(!currentUser) return;
-            let reviewIds = [];
-            document.querySelectorAll('[id^="like-btn-"]').forEach(el => {
-                let id = el.id.replace('like-btn-', '');
-                reviewIds.push(parseInt(id));
-            });
-            if(reviewIds.length === 0) return;
-            fetch('/api/check_likes', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username: currentUser, review_ids: reviewIds})
-            }).then(res => res.json()).then(data => {
-                for(let rid in data) {
-                    if(data[rid]) {
-                        let icon = document.getElementById('like-icon-' + rid);
-                        if(icon) icon.className = 'fa-solid fa-heart text-red-500';
+                    let countEl = document.querySelector(`.like-count-${reviewId}`);
+                    if(countEl) countEl.innerText = data.likes;
+                    let iconEl = document.querySelector(`.like-icon-${reviewId}`);
+                    if(iconEl) {
+                        if(data.liked) {
+                            iconEl.classList.remove('text-gray-400');
+                            iconEl.classList.add('text-[#ff2255]');
+                            iconEl.classList.add('like-animate');
+                            setTimeout(() => iconEl.classList.remove('like-animate'), 400);
+                        } else {
+                            iconEl.classList.remove('text-[#ff2255]');
+                            iconEl.classList.add('text-gray-400');
+                        }
                     }
                 }
             });
         }
     </script>
 </body>
-</html>
-"""
+</html>"""
+)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+  socketio.run(app, host='0.0.0.0', port=5000, debug=True)
