@@ -600,7 +600,7 @@ background_styles = """
     body.light-mode aside {
         background: rgba(255, 255, 255, 0.95) !important;
         border-right-color: rgba(0, 180, 70, 0.3) !important;
-  css_code = r"""
+css_code = r"""
 body.light-mode .glass-card,
 body.light-mode div.bg-gradient-to-r.from-\[\#031408\] {
     background: #ffffff !important;
@@ -610,7 +610,6 @@ body.light-mode div.bg-gradient-to-r.from-\[\#031408\] {
     color: #0f172a !important;
 }
 """
-    }
     body.light-mode input, body.light-mode textarea {
         background: #ffffff !important;
         color: #0f172a !important;
