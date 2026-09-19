@@ -410,335 +410,6 @@ def add_review():
   if score < 1 or score > 5:
     return jsonify({'success': False, 'message': 'التقييم يجب أن يكون بين 1 و 5'})
 
-  # فلتر الكلمات البذيئة والسب (يمكنك إضافة أي كلمات أخرى للقائمة)
-python
-import re
-import unicodedata
-from flask import Flask, request, jsonify
-
-app = Flask(__name__)
-
-
-  # فلتر الكلمات البذيئة والسب
-  import re
-  import unicodedata
-
-  bad_words = [
-      # ==================== العربية ====================
-      'سب', 'شتم', 'أنتحار', 'قذر', 'انتحار',
-      'كلب', 'كلبة', 'حمار', 'حمارة',
-      'غبي', 'غبية', 'أحمق', 'حمقاء',
-      'حقير', 'حقيرة', 'سافل', 'سافلة',
-      'تافه', 'تافهة', 'وسخ', 'وسخة',
-      'نجس', 'نجسة', 'خسيس', 'خسيسة',
-      'وضيع', 'وضيعة', 'ملعون', 'ملعونة',
-      'لعنة', 'تبا', 'تباً', 'تبًا',
-      'يا غبي', 'يا حمار', 'يا كلب',
-      'ابن الكلب', 'ابن الحمار',
-      'قحبة', 'قحاب', 'شرموط', 'شرموطة',
-      'عرص', 'عرصة', 'عاهرة', 'زانية',
-      'ديوث', 'قواد', 'قوادة',
-      'منيك', 'منايك', 'كس', 'زب',
-      'طيز', 'خرا', 'خراء',
-      'نيك', 'ينك', 'نايك',
-      'متناك', 'متناكة',
-      'بضان', 'خنيث', 'خول',
-      'فاجر', 'فاجرة', 'مخنث',
-      'وسخ', 'زبالة', 'نذل', 'نذلة',
-
-      # ==================== العراقي ====================
-      'جلب', 'جلبه', 'جلبك',
-      'ابن الجلب', 'ابن الكلب',
-      'قندرة', 'قندره', 'ابن القندرة', 'ابن القندره',
-      'طيزك', 'طيزج',
-      'كسمك', 'كسمج',
-      'زبي', 'زبيك',
-      'خرا عليك',
-      'يا خرا', 'يا زبالة',
-      'يا جلب', 'يا قندرة',
-      'يا قندره', 'يا وسخ',
-      'يا قذر', 'يا نذل',
-      'يا سافل', 'يا واطي',
-      'واطي', 'واطية',
-      'بطران', 'طرطور',
-      'اهبل', 'أهبل', 'هبلة',
-      'معتوه', 'مخبول',
-      'فاشل', 'فاشلة',
-      'عديم الشرف', 'عديم الاخلاق',
-      'عديم الأدب', 'بلا شرف',
-      'بلا اخلاق', 'بلا أدب',
-      'يا حيوان', 'يا حمار',
-      'يا كلب', 'يا غبي',
-
-      # ==================== English ====================
-      'damn', 'dammit',
-      'shit', 'fuck', 'fucking', 'fucker',
-      'motherfucker', 'bitch', 'bitches',
-      'asshole', 'assholes',
-      'bastard', 'bastards',
-      'dick', 'dickhead',
-      'cock', 'pussy', 'cunt',
-      'whore', 'slut',
-      'crap', 'bullshit',
-      'dumbass', 'jackass',
-      'idiot', 'idiots',
-      'stupid', 'moron',
-      'loser', 'jerk',
-      'scumbag', 'shithead',
-      'fuckhead', 'prick',
-      'son of a bitch',
-      'piece of shit',
-
-      # ==================== French ====================
-      'merde', 'putain', 'pute',
-      'salope', 'connard', 'connasse',
-      'enculé', 'encule',
-      'bordel', 'con', 'conne',
-      'idiot', 'idiote',
-      'imbécile', 'batard', 'batarde',
-      'nique', 'nique ta mère',
-
-      # ==================== Spanish ====================
-      'mierda', 'puta', 'puto',
-      'putas', 'putos',
-      'cabron', 'cabrón', 'cabrona',
-      'coño', 'joder',
-      'gilipollas',
-      'idiota',
-      'pendejo', 'pendeja',
-      'maricon', 'maricón', 'marica',
-      'zorra',
-      'imbecil', 'imbécil',
-      'hijo de puta',
-      'hijos de puta',
-
-      # ==================== German ====================
-      'scheisse', 'scheiße',
-      'fick', 'ficken', 'ficker',
-      'arsch', 'arschloch',
-      'wichser', 'hure',
-      'hurensohn', 'fotze',
-      'schlampe',
-      'idiot', 'dummkopf',
-      'blödmann', 'mistkerl',
-
-      # ==================== Italian ====================
-      'merda', 'cazzo', 'cazzi',
-      'stronzo', 'stronza',
-      'puttana', 'troia',
-      'bastardo', 'bastarda',
-      'coglione', 'coglioni',
-      'vaffanculo', 'minchia',
-      'cretino', 'cretina',
-      'idiota',
-
-      # ==================== Portuguese ====================
-      'merda', 'porra', 'caralho',
-      'puta', 'puto',
-      'filho da puta',
-      'viado', 'veado', 'bicha',
-      'idiota', 'imbecil',
-      'otário', 'otaria',
-      'babaca', 'arrombado',
-
-      # ==================== Turkish ====================
-      'siktir', 'sik', 'sikik',
-      'sikerim', 'orospu',
-      'orospu çocuğu',
-      'piç', 'yarrak',
-      'amcık',
-      'salak', 'aptal',
-      'şerefsiz', 'gerizekalı',
-      'hıyar', 'ibne', 'göt',
-
-      # ==================== Persian ====================
-      'احمق', 'ابله', 'کثیف',
-      'آشغال', 'عوضی',
-      'بی شعور', 'بی‌شعور',
-      'حرامزاده', 'فاحشه',
-      'کسکش', 'کونی',
-      'دیوث', 'بی ناموس',
-      'بی‌ناموس', 'گوه', 'کیر',
-      'کس', 'مادرجنده',
-
-      # ==================== Hindi ====================
-      'बेवकूफ', 'गधा', 'गधे',
-      'हरामी', 'कमीना', 'कमीनी',
-      'चूतिया', 'गांडू',
-      'कुत्ता', 'कुत्ती',
-      'नालायक', 'पागल', 'बكواس',
-
-      # ==================== Urdu ====================
-      'احمق', 'بےوقوف', 'بے وقوف',
-      'گدھا', 'گدھی',
-      'حرامی', 'کمینہ', 'کمینی',
-      'کُتا', 'کُتیا',
-      'بے غیرت', 'بےغیرت',
-      'چوتیا', 'گاندو',
-
-      # ==================== Russian ====================
-      'дурак', 'дура', 'идиот',
-      'дебил', 'тупой', 'тупица',
-      'сука', 'блядь', 'бля',
-      'хуй', 'пизда', 'ебать',
-      'ебаный', 'мудак',
-      'козёл', 'ублюдок',
-      'сволочь',
-
-      # ==================== Dutch ====================
-      'godverdomme', 'klootzak',
-      'kut', 'lul', 'hoer',
-      'tyfus', 'tering',
-      'eikel', 'idioot', 'sukkel',
-
-      # ==================== Polish ====================
-      'kurwa', 'cholera',
-      'pierdol', 'pierdolony',
-      'chuj', 'cipa',
-      'dupek', 'idiota',
-      'debil', 'skurwysyn',
-      'suka',
-
-      # ==================== Greek ====================
-      'malaka', 'malakas',
-      'γαμώ', 'μαλάκας',
-      'μαλακα', 'πούστης',
-      'πουτάνα', 'ηλίθιος',
-
-      # ==================== Indonesian ====================
-      'anjing', 'babi', 'bangsat',
-      'brengsek', 'tolol', 'bodoh',
-      'kontol', 'memek',
-      'sialan', 'kampret',
-      'bajingan', 'asu',
-
-      # ==================== Filipino ====================
-      'putangina', 'gago', 'tanga',
-      'bobo', 'tarantado',
-      'ulol', 'leche', 'lintik',
-      'peste', 'hayop',
-
-      # ==================== Japanese ====================
-      'ばか', 'バカ', '馬鹿',
-      'あほ', 'アホ',
-      'くそ', 'クソ',
-      '死ね', 'しね',
-      'きもい', 'うざい',
-      'まぬけ',
-
-      # ==================== Korean ====================
-      '씨발', '시발',
-      '개새끼', '새끼',
-      '병신', '미친놈',
-      '미친년', '좆',
-      '존나', '지랄',
-      '꺼져', '븅신',
-
-      # ==================== Chinese ====================
-      '傻逼', '傻子', '笨蛋',
-      '混蛋', '王八蛋',
-      '操', '艹',
-      '妈的', '他妈的',
-      '草泥马',
-      '贱人', '垃圾',
-      '废物', '滚蛋',
-  ]
-
-  legal_risk_patterns = [
-      # تهديدات
-      'راح اقتلك', 'راح أقتلك', 'سوف اقتلك', 'سوف أقتلك', 'سوف اقتله',
-      'راح اذبحك', 'راح أذبحك', 'راح اضربك', 'راح أضربك', 'راح احرقك',
-      'راح أحرقك', 'سوف احرقك', 'سوف أحرقك', 'سوف اذبحك', 'سوف أذبحك',
-      'i will kill you', 'i am going to kill you', 'i will hurt you', 'i will attack you',
-      # ابتزاز
-      'ادفع لي', 'ادفع وإلا', 'ادفع والا', 'اذا ما تدفع', 'إذا ما تدفع',
-      'سوف انشر صورك', 'سوف أنشر صورك', 'راح انشر صورك', 'راح أنشر صورك',
-      'راح افضحك', 'راح أفضحك', 'سوف افضحك', 'سوف أفضحك',
-      'pay me or', 'pay me or i will',
-      # نشر معلومات شخصية
-      'راح انشر رقمك', 'راح أنشر رقمك', 'سوف انشر رقمك', 'سوف أنشر رقمك',
-      'راح انشر عنوانك', 'راح أنشر عنوانك', 'سوف انشر عنوانك', 'سوف أنشر عنوانك',
-      'راح انشر معلوماتك', 'راح أنشر معلوماتك',
-      # انتحال صفة
-      'انا من الشرطة', 'أنا من الشرطة', 'انا من الحكومة', 'أنا من الحكومة',
-      'انا موظف حكومي', 'أنا موظف حكومي',
-  ]
-
-  def normalize_text(text):
-    text = unicodedata.normalize('NFKC', text)
-    text = text.lower()
-    text = re.sub(
-        r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]',
-        '',
-        text
-    )
-    arabic_map = str.maketrans({
-        'أ': 'ا',
-        'إ': 'ا',
-        'آ': 'ا',
-        'ٱ': 'ا',
-        'ى': 'ي',
-        'ة': 'ه',
-    })
-    text = text.translate(arabic_map)
-    return text
-
-  def compact_text(text):
-    text = normalize_text(text)
-    return re.sub(r'[^\w]', '', text, flags=re.UNICODE)
-
-  def contains_bad_word(text_to_check):
-    normal_text = normalize_text(text_to_check)
-    compact = compact_text(text_to_check)
-    for word in bad_words:
-      normal_word = normalize_text(word)
-      compact_word = compact_text(word)
-      if normal_word in normal_text:
-        return True
-      if compact_word and compact_word in compact:
-        return True
-    return False
-
-  def contains_legal_risk(text_to_check):
-    normal_text = normalize_text(text_to_check)
-    compact = compact_text(text_to_check)
-    for pattern in legal_risk_patterns:
-      normal_pattern = normalize_text(pattern)
-      compact_pattern = compact_text(pattern)
-      if normal_pattern in normal_text:
-        return True
-      if compact_pattern and compact_pattern in compact:
-        return True
-    return False
-
-  if contains_bad_word(comment):
-    return jsonify({
-        'success': False,
-        'message': 'عذراً، تعليقك يحتوي على ألفاظ بذيئة أو غير لائقة ولا يمكن نشره!'
-    }), 400
-
-  if contains_legal_risk(comment):
-    return jsonify({
-        'success': False,
-        'message': 'عذراً، لا يمكن نشر هذا التعليق لأنه قد يخالف قواعد الموقع.'
-    }), 400
-    # =====================================================
-    # إذا وصلنا هنا فالتعليق اجتاز الفلتر
-    # =====================================================
-
-    # ضع هنا كود حفظ التعليق في قاعدة البيانات
-
-    return jsonify({
-        'success': True,
-        'message': 'تم نشر التعليق بنجاح!'
-    }), 200
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
-```
-
-
   song = Song.query.filter_by(spotify_id=spotify_id).first()
   if not song:
     return jsonify({'success': False, 'message': 'الأغنية غير موجودة'}), 400
@@ -911,6 +582,7 @@ background_styles = """
         color: #f1f5f9;
         transition: background 0.4s ease, color 0.4s ease;
     }
+    /* الوضع الساطع الفخم المحدث لضمان وضوح كامل للكتابة وتحويل كافة النصوص المطلوبة إلى لون أسود عند تفعيله */
     body.light-mode {
         background: linear-gradient(135deg, #f8fafc, #e2e8f0, #f1f5f9, #cbd5e1) !important;
         color: #0f172a !important;
@@ -951,6 +623,8 @@ background_styles = """
     body.light-mode .text-\[\#00ff66\], body.light-mode span.text-\[\#00ff66\] {
         color: #047857 !important;
     }
+
+    /* تعديل العناصر المطلوبة (ميد وذ لوف، بلاي اون سبوتفاي، تسجيل الخروج، وتحويل اللغة) لتصبح بيضاء في الداكن وسوداء في الساطع */
     body.light-mode .ammar-love-badge,
     body.light-mode .ammar-love-badge span,
     body.light-mode a[href*="spotify.com"],
@@ -968,6 +642,8 @@ background_styles = """
         background: rgba(240, 240, 240, 0.9) !important;
         border-color: rgba(0, 0, 0, 0.2) !important;
     }
+
+    /* تأثير ضغطة زر الفخامة (Dark Mode Button) */
     .luxury-dark-btn {
         position: relative;
         overflow: hidden;
@@ -995,6 +671,8 @@ background_styles = """
         0% { transform: scale(0, 0) translate(-50%, -50%); opacity: 0.8; }
         100% { transform: scale(40, 40) translate(-50%, -50%); opacity: 0; }
     }
+
+    /* خلفية ضبابية مع تأثيرات العمق */
     body::before {
         content: "";
         position: fixed;
@@ -1030,6 +708,7 @@ background_styles = """
         border-radius: 50%;
         filter: blur(70px);
     }
+    /* علامات موسيقية تتفاعل مع حركة الماوس */
     .musical-note {
         position: fixed;
         color: rgba(0, 255, 102, 0.35);
@@ -1087,6 +766,7 @@ background_styles = """
 <div class="floating-orb" style="top: 85%; left: 20%; animation-delay: 3s;"></div>
 <div class="floating-orb" style="top: 25%; left: 80%; animation-delay: 4.5s;"></div>
 
+<!-- علامات موسيقية خلفية متفاعلة مع الماوس -->
 <div class="musical-note" style="top: 20%; left: 15%;" data-speed="0.02"><i class="fa-solid fa-music"></i></div>
 <div class="musical-note" style="top: 40%; left: 75%;" data-speed="0.04"><i class="fa-solid fa-compact-disc"></i></div>
 <div class="musical-note" style="top: 70%; left: 30%;" data-speed="0.03"><i class="fa-solid fa-microphone-lines"></i></div>
@@ -1094,6 +774,7 @@ background_styles = """
 <div class="musical-note" style="top: 30%; left: 45%;" data-speed="0.025"><i class="fa-solid fa-radio"></i></div>
 
 <script>
+    // تفاعل العلامات الموسيقية مع حركة الماوس بدون كيرسر مزعج
     document.addEventListener('mousemove', (e) => {
         const mouseX = e.clientX;
         const mouseY = e.clientY;
@@ -1118,6 +799,7 @@ background_styles = """
         });
     });
 
+    // دالة تفعيل وتغيير وضع الدارك مود والساطع
     function toggleDarkMode() {
         document.body.classList.toggle('light-mode');
         let isLight = document.body.classList.contains('light-mode');
@@ -1185,14 +867,14 @@ background_styles = """
             rateModalTitle: "Rate",
             ratingScoreLabel: "Rating Stars (1 to 5):",
             commentLabel: "Your Review / Comment:",
-            submitRatingBtn: "Submit Rating",
+            submitRatingBtn: "Submit Rating & Generate Story",
             cancelBtn: "Cancel",
             logoutTitle: "Logout",
             profileTitle: "Edit Profile & Avatar",
-            avatarFileLabel: "Choose image from device:",
+            avatarFileLabel: "Choose image from device (PC or Phone):",
             saveAvatarBtn: "Upload & Save Avatar",
-            storyModalTitle: "Rarting Preview",
-            downloadStoryBtn: "Download Photo",
+            storyModalTitle: "Luxury Instagram Story Preview",
+            downloadStoryBtn: "Download Luxury Story",
             closeStoryBtn: "Close & Continue"
         },
         ar: {
@@ -1239,10 +921,10 @@ background_styles = """
             cancelBtn: "إلغاء",
             logoutTitle: "تسجيل الخروج",
             profileTitle: "تعديل الصورة الشخصية",
-            avatarFileLabel: "اختر صورة من جهازك:",
+            avatarFileLabel: "اختر صورة من جهازك (كمبيوتر أو هاتف):",
             saveAvatarBtn: "رفع وحفظ الصورة الشخصية",
-            storyModalTitle: "معاينة ستوري انستقرام",
-            downloadStoryBtn: "تحميل ستوري",
+            storyModalTitle: "معاينة ستوري انستقرام الخارقة الفخامة",
+            downloadStoryBtn: "تحميل ستوري الفخامة",
             closeStoryBtn: "إغلاق ومتابعة"
         }
     };
@@ -1317,12 +999,14 @@ html_template = (
     + """
 </head>
 <body class="text-gray-100 font-sans antialiased min-h-screen flex flex-col">
+    <!-- شريط التنقل العلوي الفخم باللون الأسود والأخضر المضوي -->
     <header class="border-b border-[#00ff66]/40 bg-[#000000]/95 backdrop-blur-2xl sticky top-0 z-50 h-16 flex items-center px-3 sm:px-6 justify-between shadow-[0_4px_35px_rgba(0,0,0,0.9)] gap-2">
         <div class="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
             <a href="/" class="flex items-center space-x-2 text-[#00ff66] font-bold text-base sm:text-xl tracking-wider group shrink-0">
                 <i class="fa-solid fa-music text-[#00ff66] group-hover:rotate-45 group-hover:scale-125 transition transform duration-500 drop-shadow-[0_0_15px_#00ff66]"></i>
                 <span class="tracking-widest bg-gradient-to-r from-white via-gray-200 to-[#00ff66] bg-clip-text text-transparent font-extrabold" data-i18n="brandName">Musicy</span>
             </a>
+            <!-- شريط البحث المطور الفخم -->
             <div class="relative flex-1 max-w-xs sm:max-w-md">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-[#00ff66]"><i class="fa-solid fa-magnifying-glass text-xs"></i></span>
                 <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Search songs or artists on Spotify..." class="w-full bg-[#020804] text-xs text-gray-200 pl-9 pr-3 py-2 sm:py-2.5 rounded-xl border border-[#00ff66]/40 focus:outline-none focus:border-[#00ff66] focus:ring-2 focus:ring-[#00ff66]/40 transition shadow-inner">
@@ -1343,11 +1027,13 @@ html_template = (
     </header>
 
     <div class="flex flex-1">
+        <!-- القائمة الجانبية الفخمة مع زر دارك مود تحت توب ريتد تماماً -->
         <aside class="w-64 border-r border-[#00ff66]/30 bg-[#000000]/85 p-4 hidden lg:flex flex-col justify-between shrink-0 backdrop-blur-2xl">
             <div class="space-y-6 w-full">
                 <nav class="space-y-2 text-xs font-medium">
                     <a href="/" class="flex items-center space-x-3 px-4 py-3 rounded-2xl bg-[#00ff66]/25 text-[#00ff66] font-semibold border-l-4 border-[#00ff66] shadow-[0_0_20px_rgba(0,255,102,0.3)]"><i class="fa-solid fa-house w-4"></i><span data-i18n="home">Home</span></a>
                     <a href="/top-rated" class="flex items-center space-x-3 px-4 py-3 rounded-2xl text-gray-400 hover:bg-[#00ff66]/20 hover:text-white transition duration-300"><i class="fa-solid fa-star w-4 text-[#00ff66]"></i><span data-i18n="topRated">Top Rated</span></a>
+                    <!-- زر الدارك مود الفخم المضاف خصيصاً تحت توب ريتد -->
                     <button onclick="toggleDarkMode()" class="luxury-dark-btn w-full flex items-center space-x-3 px-4 py-3 rounded-2xl bg-[#020804] border border-[#00ff66]/50 text-gray-200 hover:text-[#00ff66] hover:border-[#00ff66] transition duration-300 shadow-[0_0_15px_rgba(0,255,102,0.2)] text-left">
                         <i id="darkModeIcon" class="fa-solid fa-moon w-4 text-[#00ff66]"></i>
                         <span data-i18n="darkMode" id="darkModeText">Dark Mode</span>
@@ -1356,6 +1042,7 @@ html_template = (
             </div>
         </aside>
 
+        <!-- المحتوى الرئيسي الفخم والمتجاوب -->
         <main class="flex-1 p-3 sm:p-6 md:p-10 space-y-6 sm:space-y-10 overflow-x-hidden">
             <div class="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-r from-[#031408] via-[#010803] to-[#000000] border border-[#00ff66]/60 p-5 sm:p-8 md:p-14 shadow-[0_20px_60px_rgba(0,0,0,0.9)] flex flex-col justify-between backdrop-blur-2xl group neon-border">
                 <div class="absolute -right-12 -bottom-12 w-48 sm:w-80 h-48 sm:h-80 bg-[#00ff66]/25 rounded-full blur-3xl group-hover:scale-150 transition duration-1000 pointer-events-none"></div>
@@ -1373,6 +1060,7 @@ html_template = (
                         <i class="fa-solid fa-rotate"></i> <span data-i18n="refreshSongs">Refresh Songs</span>
                     </button>
                 </div>
+                <!-- شبكة الأغاني الفخمة -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-5">
                     {% for song in songs %}
                     <div onclick="window.location.href='/song/{{ song.spotify_id }}'" class="glass-card rounded-xl sm:rounded-2xl p-2.5 sm:p-4 space-y-2 cursor-pointer group flex flex-col justify-between">
@@ -1434,18 +1122,11 @@ html_template = (
                 `;
             }
         }
-        
-        // تعديل دالة تسجيل الخروج لتطلب التأكيد
-        function handleLogout() {
-            let lang = localStorage.getItem('musicy_lang') || 'en';
-            let msg = (lang === 'ar') ? 'أنت على وشك تسجيل الخروج، هل أنت متأكد؟' : 'You are about to log out, are you sure?';
-            if (confirm(msg)) {
-                localStorage.removeItem('songdb_user'); 
-                localStorage.removeItem('songdb_avatar'); 
-                location.reload(); 
-            }
+        function handleLogout() { 
+            localStorage.removeItem('songdb_user'); 
+            localStorage.removeItem('songdb_avatar'); 
+            location.reload(); 
         }
-
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
         let timeout = null;
@@ -1792,6 +1473,7 @@ song_detail_template = (
         </div>
     </header>
     <main class="flex-1 p-3 sm:p-6 md:p-10 space-y-6 sm:space-y-10 max-w-5xl mx-auto w-full">
+        <!-- قسم تفاصيل الأغنية الفخم للغاية -->
         <div class="bg-gradient-to-r from-[#031408] via-[#010803] to-[#000000] border border-[#00ff66]/60 rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-10 flex flex-col md:flex-row items-center gap-5 sm:gap-8 shadow-[0_20px_60px_rgba(0,0,0,0.9)] backdrop-blur-2xl neon-border text-center md:text-left">
             <div class="relative shrink-0 group">
                 <img id="songCoverImg" src="{{ song.img }}" crossorigin="anonymous" class="w-36 h-36 sm:w-52 sm:h-52 md:w-60 md:h-60 object-cover rounded-2xl shadow-2xl border border-[#00ff66]/60 group-hover:scale-105 transition duration-700 mx-auto">
@@ -1838,6 +1520,7 @@ song_detail_template = (
                                 </div>
                                 <div class="flex items-center space-x-1 text-[#00ff66] text-xs font-bold shrink-0"><i class="fa-solid fa-star text-[10px]"></i><span>{{ rev.rating }}/5</span></div>
                             </div>
+                            <!-- تم تكبير خط رفيو المستخدم على الأغنية وجعله أكثر فخامة ووضوحاً -->
                             <p class="text-sm sm:text-base text-gray-200 leading-relaxed font-normal break-words py-1">{{ rev.comment }}</p>
                             <div class="flex items-center justify-between pt-2 border-t border-[#00ff66]/20 text-xs">
                                 <button onclick="likeReview({{ rev.id }}, this)" class="flex items-center space-x-2 text-gray-300 hover:text-[#00ff66] transition bg-[#020804] px-3.5 py-2 rounded-xl border border-[#00ff66]/30 shadow">
@@ -1863,6 +1546,7 @@ song_detail_template = (
         </div>
     </main>
 
+    <!-- نافذة التقييم الفخمة -->
     <div id="rateModal" class="fixed inset-0 bg-black/90 flex items-center justify-center hidden z-50 p-3 backdrop-blur-xl">
         <div class="glass-card border border-[#00ff66]/70 rounded-2xl sm:rounded-3xl p-5 sm:p-8 w-full max-w-md space-y-4 shadow-2xl">
             <h3 class="text-xs sm:text-base font-bold text-white truncate"><span data-i18n="rateModalTitle">Rate</span> "{{ song.title }}"</h3>
@@ -1888,6 +1572,7 @@ song_detail_template = (
         </div>
     </div>
 
+    <!-- نافذة معاينة الستوري الفخمة -->
     <div id="storyModal" class="fixed inset-0 bg-black/95 flex items-center justify-center hidden z-50 p-3 backdrop-blur-2xl">
         <div class="glass-card border border-[#00ff66]/80 rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-full max-w-sm space-y-4 shadow-2xl text-center">
             <h3 class="text-xs sm:text-sm font-bold text-white" data-i18n="storyModalTitle">معاينة ستوري انستقرام الخارقة الفخامة</h3>
@@ -2182,45 +1867,45 @@ song_detail_template = (
         function downloadStory() {
             const canvas = document.getElementById('storyCanvas');
             let link = document.createElement('a');
-            link.download = 'musicy-story.png';
+            link.download = 'Musicy_Story.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         }
 
-        function likeReview(reviewId, btnEl) {
+        function likeReview(reviewId, btn) {
             let currentUser = localStorage.getItem('songdb_user');
-            if(!currentUser) {
-                alert('Please login to like reviews!');
-                window.location.href = '/login';
-                return;
-            }
+            if(!currentUser) { alert('Please login first to like reviews!'); window.location.href = '/login'; return; }
             fetch('/api/like_review', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ review_id: reviewId, username: currentUser })
-            }).then(res => res.json()).then(data => {
-                if(data.success) {
+            }).then(res => res.json()).then(resp => {
+                if(resp.success) {
                     let countEl = document.querySelector(`.like-count-${reviewId}`);
-                    if(countEl) countEl.innerText = data.likes;
                     let iconEl = document.querySelector(`.like-icon-${reviewId}`);
+                    if(countEl) countEl.innerText = resp.likes;
                     if(iconEl) {
-                        if(data.liked) {
+                        iconEl.classList.add('like-animate');
+                        setTimeout(() => iconEl.classList.remove('like-animate'), 400);
+
+                        if(resp.liked) {
                             iconEl.classList.remove('text-gray-400');
                             iconEl.classList.add('text-[#ff2255]');
-                            iconEl.classList.add('like-animate');
-                            setTimeout(() => iconEl.classList.remove('like-animate'), 400);
                         } else {
                             iconEl.classList.remove('text-[#ff2255]');
                             iconEl.classList.add('text-gray-400');
                         }
                     }
+                } else {
+                    alert(resp.message || 'Error liking review');
                 }
             });
         }
     </script>
 </body>
-</html>"""
+</html>
+"""
 )
 
 if __name__ == '__main__':
-  socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+  socketio.run(app, debug=True)
