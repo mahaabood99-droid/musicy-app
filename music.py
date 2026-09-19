@@ -600,16 +600,15 @@ background_styles = """
     body.light-mode aside {
         background: rgba(255, 255, 255, 0.95) !important;
         border-right-color: rgba(0, 180, 70, 0.3) !important;
-css_code = r"""
-body.light-mode .glass-card,
-body.light-mode div.bg-gradient-to-r.from-\[\#031408\] {
-    background: #ffffff !important;
-    background-image: none !important;
-    border: 1px solid rgba(0, 180, 70, 0.4) !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
-    color: #0f172a !important;
-}
-"""
+    }
+    body.light-mode .glass-card,
+    body.light-mode div.bg-gradient-to-r.from-\[\#031408\] {
+        background: #ffffff !important;
+        background-image: none !important;
+        border: 1px solid rgba(0, 180, 70, 0.4) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+        color: #0f172a !important;
+    }
     body.light-mode input, body.light-mode textarea {
         background: #ffffff !important;
         color: #0f172a !important;
@@ -1084,23 +1083,6 @@ html_template = (
         </main>
     </div>
 
-    <!-- نافذة تحذير تسجيل الخروج الفخمة الجديدة -->
-    <div id="logoutConfirmModal" class="fixed inset-0 bg-black/90 flex items-center justify-center hidden z-50 p-3 backdrop-blur-xl">
-        <div class="glass-card border border-[#00ff66]/70 rounded-2xl sm:rounded-3xl p-6 sm:p-8 w-full max-w-sm space-y-5 shadow-2xl text-center">
-            <div class="w-16 h-16 mx-auto rounded-full bg-red-500/20 border border-red-500/50 flex items-center justify-center text-red-500 text-2xl shadow-[0_0_20px_rgba(255,34,85,0.4)] animate-pulse">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <div class="space-y-2">
-                <h3 class="text-lg font-extrabold text-white">تنبيه تسجيل الخروج</h3>
-                <p class="text-xs text-gray-300 leading-relaxed">أنت على وشك تسجيل الخروج من حسابك، هل أنت متأكد من رغبتك في ذلك؟</p>
-            </div>
-            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
-                <button onclick="confirmLogoutAction()" class="w-full sm:flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:opacity-95 text-white font-bold py-3 rounded-xl text-xs transition shadow-[0_0_20px_rgba(255,34,85,0.5)]">تأكيد الخروج</button>
-                <button onclick="closeLogoutModal()" class="w-full sm:flex-1 bg-[#020804] hover:bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-3 rounded-xl text-xs transition">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => { 
             updateUserNav();
@@ -1141,14 +1123,6 @@ html_template = (
             }
         }
         function handleLogout() { 
-            let modal = document.getElementById('logoutConfirmModal');
-            if(modal) modal.classList.remove('hidden');
-        }
-        function closeLogoutModal() {
-            let modal = document.getElementById('logoutConfirmModal');
-            if(modal) modal.classList.add('hidden');
-        }
-        function confirmLogoutAction() {
             localStorage.removeItem('songdb_user'); 
             localStorage.removeItem('songdb_avatar'); 
             location.reload(); 
@@ -1615,23 +1589,6 @@ song_detail_template = (
         </div>
     </div>
 
-    <!-- نافذة تحذير تسجيل الخروج الفخمة الجديدة -->
-    <div id="logoutConfirmModal" class="fixed inset-0 bg-black/90 flex items-center justify-center hidden z-50 p-3 backdrop-blur-xl">
-        <div class="glass-card border border-[#00ff66]/70 rounded-2xl sm:rounded-3xl p-6 sm:p-8 w-full max-w-sm space-y-5 shadow-2xl text-center">
-            <div class="w-16 h-16 mx-auto rounded-full bg-red-500/20 border border-red-500/50 flex items-center justify-center text-red-500 text-2xl shadow-[0_0_20px_rgba(255,34,85,0.4)] animate-pulse">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <div class="space-y-2">
-                <h3 class="text-lg font-extrabold text-white">تنبيه تسجيل الخروج</h3>
-                <p class="text-xs text-gray-300 leading-relaxed">أنت على وشك تسجيل الخروج من حسابك، هل أنت متأكد من رغبتك في ذلك؟</p>
-            </div>
-            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
-                <button onclick="confirmLogoutAction()" class="w-full sm:flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:opacity-95 text-white font-bold py-3 rounded-xl text-xs transition shadow-[0_0_20px_rgba(255,34,85,0.5)]">تأكيد الخروج</button>
-                <button onclick="closeLogoutModal()" class="w-full sm:flex-1 bg-[#020804] hover:bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-3 rounded-xl text-xs transition">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         let currentRatingVal = 5;
         let userHasReviewed = false;
@@ -1769,185 +1726,186 @@ song_detail_template = (
             if(userHasReviewed && userExistingComment) {
                 document.getElementById('commentInput').value = userExistingComment;
             }
+            setStarRating(currentRatingVal);
             document.getElementById('rateModal').classList.remove('hidden');
         }
 
-        function closeRateModal() {
-            document.getElementById('rateModal').classList.add('hidden');
-        }
+        function closeRateModal() { document.getElementById('rateModal').classList.add('hidden'); }
+        function closeStoryModal() { document.getElementById('storyModal').classList.add('hidden'); location.reload(); }
 
         function submitRating() {
             let currentUser = localStorage.getItem('songdb_user');
-            let rating = document.getElementById('hiddenRating').value;
+            if (!currentUser) {
+                alert('Please login first!');
+                window.location.href = '/login';
+                return;
+            }
+            let rating = parseFloat(document.getElementById('hiddenRating').value);
             let comment = document.getElementById('commentInput').value;
-
+            if (isNaN(rating) || rating < 1 || rating > 5) { alert('Please select a rating between 1 and 5 stars.'); return; }
+            
             fetch('/api/rate', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    spotify_id: "{{ song.spotify_id }}",
-                    rating: rating,
-                    comment: comment,
-                    username: currentUser
-                })
-            }).then(res => res.json()).then(data => {
-                if(data.success) {
-                    lastRatedData = data;
+                body: JSON.stringify({ spotify_id: '{{ song.spotify_id }}', rating: rating, username: currentUser, comment: comment })
+            }).then(res => res.json()).then(resp => {
+                if (resp.success) {
                     closeRateModal();
-                    generateStoryCanvas(data);
+                    let currentAvatar = localStorage.getItem('songdb_avatar') || resp.avatar;
+                    lastRatedData = {
+                        username: currentUser,
+                        avatar: currentAvatar,
+                        rating: rating,
+                        comment: comment,
+                        title: '{{ song.title }}',
+                        artist: '{{ song.artist }}',
+                        img: '{{ song.img }}'
+                    };
+                    generateInstagramStory(lastRatedData);
                     document.getElementById('storyModal').classList.remove('hidden');
                 } else {
-                    alert(data.message || 'Error submitting rating');
+                    alert(resp.message || 'Error submitting rating.');
                 }
             });
         }
 
-        function closeStoryModal() {
-            document.getElementById('storyModal').classList.add('hidden');
-            location.reload();
-        }
-
-        function downloadStory() {
-            let canvas = document.getElementById('storyCanvas');
-            let link = document.createElement('a');
-            link.download = 'musicy-story.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        }
-
-        function generateStoryCanvas(data) {
-            let canvas = document.getElementById('storyCanvas');
-            let ctx = canvas.getContext('2d');
-
-            let bgGrad = ctx.createLinearGradient(0, 0, 0, 1920);
+        function generateInstagramStory(data) {
+            const canvas = document.getElementById('storyCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, 1920);
             bgGrad.addColorStop(0, '#000000');
-            bgGrad.addColorStop(0.5, '#031408');
+            bgGrad.addColorStop(0.3, '#020d05');
             bgGrad.addColorStop(1, '#000000');
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, 1080, 1920);
 
-            ctx.strokeStyle = 'rgba(0, 255, 102, 0.4)';
-            ctx.lineWidth = 15;
-            ctx.strokeRect(40, 40, 1000, 1840);
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 255, 102, 0.5)';
+            ctx.shadowBlur = 90;
+            ctx.fillStyle = 'rgba(3, 12, 6, 0.95)';
+            ctx.beginPath();
+            ctx.roundRect(80, 120, 920, 1680, 60);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(0, 255, 102, 0.7)';
+            ctx.lineWidth = 5;
+            ctx.stroke();
+            ctx.restore();
 
-            ctx.shadowColor = '#00ff66';
-            ctx.shadowBlur = 40;
             ctx.fillStyle = '#00ff66';
-            ctx.font = 'bold 55px sans-serif';
+            ctx.font = 'bold 36px sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('MUSICY REVIEW', 540, 180);
-            ctx.shadowBlur = 0;
+            ctx.fillText('MUSICY REVIEW & RATING', 540, 220);
 
-            let albumImg = new Image();
-            albumImg.crossOrigin = 'anonymous';
-            albumImg.src = data.img;
-            albumImg.onload = function() {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.src = data.img;
+            img.onload = function() {
                 ctx.save();
+                ctx.shadowColor = 'rgba(0,0,0,0.9)';
+                ctx.shadowBlur = 60;
+                ctx.shadowOffsetY = 30;
                 ctx.beginPath();
-                ctx.roundRect(240, 260, 600, 600, 40);
+                ctx.roundRect(190, 280, 700, 700, 40);
                 ctx.closePath();
                 ctx.clip();
-                ctx.drawImage(albumImg, 240, 260, 600, 600);
+                ctx.drawImage(img, 190, 280, 700, 700);
                 ctx.restore();
 
+                ctx.save();
                 ctx.strokeStyle = 'rgba(0, 255, 102, 0.8)';
-                ctx.lineWidth = 8;
+                ctx.lineWidth = 6;
                 ctx.beginPath();
-                ctx.roundRect(240, 260, 600, 600, 40);
+                ctx.roundRect(190, 280, 700, 700, 40);
                 ctx.stroke();
+                ctx.restore();
 
                 ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 50px sans-serif';
-                ctx.fillText(data.song_title, 540, 940, 900);
+                ctx.font = 'bold 52px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(data.title, 540, 1060, 850);
 
                 ctx.fillStyle = '#9ca3af';
                 ctx.font = '36px sans-serif';
-                ctx.fillText(data.artist, 540, 1010, 900);
+                ctx.fillText(data.artist, 540, 1130, 850);
+
+                let starStr = '★'.repeat(data.rating) + '☆'.repeat(5 - Math.floor(data.rating));
+                ctx.fillStyle = '#00ff66';
+                ctx.font = 'bold 50px sans-serif';
+                ctx.fillText(starStr + ` (${data.rating}/5)`, 540, 1240);
+
+                if(data.comment) {
+                    ctx.fillStyle = '#d1d5db';
+                    ctx.font = 'italic 34px sans-serif';
+                    wrapText(ctx, `"${data.comment}"`, 540, 1340, 800, 50);
+                }
 
                 ctx.fillStyle = '#00ff66';
-                ctx.font = 'bold 70px sans-serif';
-                ctx.fillText(`★ ${data.new_rating} / 5`, 540, 1150);
-
-                ctx.fillStyle = '#d1d5db';
-                ctx.font = '30px sans-serif';
-                ctx.fillText(`Total Votes: ${data.votes}`, 540, 1220);
-
-                let userAvatar = new Image();
-                userAvatar.crossOrigin = 'anonymous';
-                userAvatar.src = data.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200';
-                userAvatar.onload = function() {
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.arc(540, 1420, 70, 0, Math.PI * 2, true);
-                    ctx.closePath();
-                    ctx.clip();
-                    ctx.drawImage(userAvatar, 470, 1350, 140, 140);
-                    ctx.restore();
-
-                    ctx.strokeStyle = '#00ff66';
-                    ctx.lineWidth = 5;
-                    ctx.beginPath();
-                    ctx.arc(540, 1420, 70, 0, Math.PI * 2, true);
-                    ctx.stroke();
-
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 36px sans-serif';
-                    ctx.fillText('@' + localStorage.getItem('songdb_user'), 540, 1550);
-
-                    ctx.fillStyle = 'rgba(0, 255, 102, 0.7)';
-                    ctx.font = '28px sans-serif';
-                    ctx.fillText('Shared via Musicy Community', 540, 1750);
-                };
+                ctx.font = 'bold 28px sans-serif';
+                ctx.fillText(`Reviewed by @${data.username} on Musicy`, 540, 1680);
             };
         }
 
-        function likeReview(reviewId, btnEl) {
-            let currentUser = localStorage.getItem('songdb_user');
-            if(!currentUser) {
-                alert('Please login to like reviews');
-                window.location.href = '/login';
-                return;
+        function wrapText(context, text, x, y, maxWidth, lineHeight) {
+            let words = text.split(' ');
+            let line = '';
+            for(let n = 0; n < words.length; n++) {
+                let testLine = line + words[n] + ' ';
+                let metrics = context.measureText(testLine);
+                let testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    context.fillText(line, x, y);
+                    line = words[n] + ' ';
+                    y += lineHeight;
+                } else {
+                    line = testLine;
+                }
             }
+            context.fillText(line, x, y);
+        }
 
+        function downloadStory() {
+            const canvas = document.getElementById('storyCanvas');
+            let link = document.createElement('a');
+            link.download = 'Musicy_Story.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function likeReview(reviewId, btn) {
+            let currentUser = localStorage.getItem('songdb_user');
+            if(!currentUser) { alert('Please login first to like reviews!'); window.location.href = '/login'; return; }
             fetch('/api/like_review', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ review_id: reviewId, username: currentUser })
-            }).then(res => res.json()).then(data => {
-                if(data.success) {
+            }).then(res => res.json()).then(resp => {
+                if(resp.success) {
                     let countEl = document.querySelector(`.like-count-${reviewId}`);
                     let iconEl = document.querySelector(`.like-icon-${reviewId}`);
-                    if(countEl) countEl.innerText = data.likes;
+                    if(countEl) countEl.innerText = resp.likes;
                     if(iconEl) {
-                        if(data.liked) {
+                        iconEl.classList.add('like-animate');
+                        setTimeout(() => iconEl.classList.remove('like-animate'), 400);
+
+                        if(resp.liked) {
                             iconEl.classList.remove('text-gray-400');
-                            iconEl.classList.add('text-[#ff2255]', 'like-animate');
-                            setTimeout(() => iconEl.classList.remove('like-animate'), 400);
+                            iconEl.classList.add('text-[#ff2255]');
                         } else {
                             iconEl.classList.remove('text-[#ff2255]');
                             iconEl.classList.add('text-gray-400');
                         }
                     }
+                } else {
+                    alert(resp.message || 'Error liking review');
                 }
             });
         }
-        function handleLogout() { 
-            let modal = document.getElementById('logoutConfirmModal');
-            if(modal) modal.classList.remove('hidden');
-        }
-        function closeLogoutModal() {
-            let modal = document.getElementById('logoutConfirmModal');
-            if(modal) modal.classList.add('hidden');
-        }
-        function confirmLogoutAction() {
-            localStorage.removeItem('songdb_user'); 
-            localStorage.removeItem('songdb_avatar'); 
-            location.reload(); 
-        }
     </script>
 </body>
-</html>"""
+</html>
+"""
 )
 
 if __name__ == '__main__':
-  socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+  socketio.run(app, debug=True)
