@@ -600,7 +600,7 @@ background_styles = """
     body.light-mode aside {
         background: rgba(255, 255, 255, 0.95) !important;
         border-right-color: rgba(0, 180, 70, 0.3) !important;
-    }
+   css_code = r"""
     body.light-mode .glass-card,
     body.light-mode div.bg-gradient-to-r.from-\[\#031408\] {
         background: #ffffff !important;
@@ -608,6 +608,8 @@ background_styles = """
         border: 1px solid rgba(0, 180, 70, 0.4) !important;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
         color: #0f172a !important;
+    }
+"""
     }
     body.light-mode input, body.light-mode textarea {
         background: #ffffff !important;
@@ -1950,4 +1952,3 @@ song_detail_template = (
 
 if __name__ == '__main__':
   socketio.run(app, host='0.0.0.0', port=5000, debug=True)
-```[cite: 2]
