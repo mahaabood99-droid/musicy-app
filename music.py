@@ -517,259 +517,544 @@ def check_likes():
 
 background_styles = """
 <style>
+    /* ==========================================================
+       MUSICY — design system
+       Warm obsidian + album-driven accent, Bodoni / Amiri display.
+       --theme-color is rewritten by the song page from the cover art,
+       so every accent below re-tints itself per album.
+       ========================================================== */
     :root {
-        --theme-color: 0, 255, 102; /* اللون الأخضر الأساسي الافتراضي */
-        --theme-color-dark: 0, 204, 82;
+        --theme-color: 201, 164, 98;
+        --theme-color-dark: 161, 131, 78;
+
+        --bg: #110e0c;
+        --bg-2: #181410;
+        --bg-3: #211c17;
+        --text: #f4ede2;
+        --muted: #aca295;
+        --faint: #857b6f;
+        --line: rgba(244, 237, 226, 0.11);
+        --line-strong: rgba(244, 237, 226, 0.24);
+        --track: rgba(244, 237, 226, 0.17);
+        --scrim: rgba(6, 4, 3, 0.78);
+        --accent: rgb(var(--theme-color));
+        --accent-ink: rgb(var(--theme-color));
+
+        --display: "Bodoni Moda", "Amiri", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+        --sans: "Hanken Grotesk", "IBM Plex Sans Arabic", "Segoe UI", system-ui, -apple-system, sans-serif;
+        --gutter: clamp(20px, 4.5vw, 64px);
+        --max: 1240px;
+        --dir: 1;
+        --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
     }
-    @keyframes backgroundMove {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-    @keyframes pulseGlow {
-        0%, 100% { opacity: 0.3; transform: scale(1) translateY(0); }
-        50% { opacity: 0.6; transform: scale(1.15) translateY(-20px); }
-    }
-    @keyframes floatParticle {
-        0% { transform: translateY(0px) rotate(0deg) scale(1); opacity: 0.3; }
-        50% { transform: translateY(-50px) rotate(180deg) scale(1.3); opacity: 0.7; }
-        100% { transform: translateY(0px) rotate(360deg) scale(1); opacity: 0.3; }
-    }
-    @keyframes neonPulse {
-        0%, 100% { box-shadow: 0 0 20px rgba(var(--theme-color), 0.4), inset 0 0 15px rgba(var(--theme-color), 0.2); }
-        50% { box-shadow: 0 0 45px rgba(var(--theme-color), 0.9), inset 0 0 25px rgba(var(--theme-color), 0.6); }
-    }
-    @keyframes heartbeat {
-        0%, 100% { transform: scale(1); }
-        15% { transform: scale(1.25); }
-        30% { transform: scale(1); }
-        45% { transform: scale(1.15); }
-        60% { transform: scale(1); }
-    }
-    @keyframes luxuryLikePop {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.4) rotate(10deg); filter: drop-shadow(0 0 12px rgba(255, 34, 85, 0.9)); }
-        100% { transform: scale(1); }
-    }
-    .like-animate {
-        animation: luxuryLikePop 0.4s ease-in-out;
-    }
-    .ammar-love-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: linear-gradient(135deg, rgba(5, 15, 10, 0.95), rgba(0, 5, 2, 0.95));
-        padding: 6px 14px;
-        border-radius: 9999px;
-        border: 1px solid rgba(var(--theme-color), 0.6);
-        box-shadow: 0 0 25px rgba(var(--theme-color), 0.4), inset 0 1px 0 rgba(var(--theme-color), 0.4);
-        backdrop-filter: blur(16px);
-        font-size: 11px;
-        font-weight: 700;
-        color: #ffffff;
-        letter-spacing: 0.8px;
-        white-space: nowrap;
-        transition: color 0.3s ease;
-    }
-    .ammar-love-badge i.fa-heart {
-        color: #ff2255;
-        filter: drop-shadow(0 0 10px rgba(255, 34, 85, 0.9));
-        animation: heartbeat 1.6s infinite ease-in-out;
-        font-size: 12px;
-    }
-    body {
-        background: linear-gradient(135deg, #000000, #030a05, #000000, #051408);
-        background-size: 400% 400%;
-        animation: backgroundMove 18s ease infinite;
-        position: relative;
-        overflow-x: hidden;
-        color: #f1f5f9;
-        transition: background 0.4s ease, color 0.4s ease;
-    }
+    [dir="rtl"] { --dir: -1; }
+
     body.light-mode {
-        background: linear-gradient(135deg, #f8fafc, #e2e8f0, #f1f5f9, #cbd5e1) !important;
-        color: #0f172a !important;
+        --bg: #f5f0e8;
+        --bg-2: #fbf8f3;
+        --bg-3: #ece5da;
+        --text: #1d1813;
+        --muted: #6a6055;
+        --faint: #7b7166;
+        --line: rgba(29, 24, 19, 0.12);
+        --line-strong: rgba(29, 24, 19, 0.3);
+        --track: rgba(29, 24, 19, 0.16);
+        --scrim: rgba(28, 22, 16, 0.55);
+        --accent-ink: rgb(var(--theme-color-dark));
     }
-    body.light-mode header {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border-bottom-color: rgba(var(--theme-color-dark), 0.4) !important;
-    }
-    body.light-mode header span[data-i18n="brandName"], 
-    body.light-mode header a, 
-    body.light-mode header .fa-music {
-        color: rgb(var(--theme-color-dark)) !important;
-        -webkit-text-fill-color: rgb(var(--theme-color-dark)) !important;
-    }
-    body.light-mode aside {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border-right-color: rgba(var(--theme-color-dark), 0.3) !important;
-    }
-    body.light-mode .glass-card,
-    body.light-mode div.bg-gradient-to-r.from-\[\#031408\] {
-        background: #ffffff !important;
-        background-image: none !important;
-        border: 1px solid rgba(var(--theme-color-dark), 0.4) !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
-        color: #0f172a !important;
-    }
-    body.light-mode input, body.light-mode textarea {
-        background: #ffffff !important;
-        color: #0f172a !important;
-        border-color: rgba(var(--theme-color-dark), 0.5) !important;
-    }
-    body.light-mode h1, body.light-mode h2, body.light-mode h3, body.light-mode h4, body.light-mode p, body.light-mode span {
-        color: #0f172a !important;
-    }
-    body.light-mode .text-gray-300, body.light-mode .text-gray-400, body.light-mode .text-gray-500 {
-        color: #334155 !important;
-    }
-    body.light-mode .text-theme, body.light-mode span.text-theme {
-        color: rgb(var(--theme-color-dark)) !important;
+    @supports (color: color-mix(in srgb, red 50%, white)) {
+        :root { --accent-ink: color-mix(in srgb, rgb(var(--theme-color)) 74%, #ffffff); }
+        body.light-mode { --accent-ink: color-mix(in srgb, rgb(var(--theme-color)) 50%, #000000); }
     }
 
-    body.light-mode .ammar-love-badge,
-    body.light-mode .ammar-love-badge span,
-    body.light-mode a[href*="spotify.com"],
-    body.light-mode span[data-i18n="listenSpotify"],
-    body.light-mode a[href*="spotify.com"] i,
-    body.light-mode button[onclick*="handleLogout"],
-    body.light-mode button[onclick*="handleLogout"] i,
-    body.light-mode .fa-right-from-bracket,
-    body.light-mode .lang-switcher-text-black,
-    body.light-mode button[onclick^="setLanguage"] {
-        color: #000000 !important;
-        -webkit-text-fill-color: #000000 !important;
+    /* ---------- base ---------- */
+    *, *::before, *::after { box-sizing: border-box; }
+    html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(160, 150, 135, 0.45) transparent;
     }
-    body.light-mode .ammar-love-badge {
-        background: rgba(240, 240, 240, 0.9) !important;
-        border-color: rgba(0, 0, 0, 0.2) !important;
+    body.musicy {
+        margin: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        overflow-x: clip;
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    html[lang="ar"] body.musicy { line-height: 1.85; }
+    [dir="rtl"] body.musicy * { letter-spacing: normal !important; }
+    body.musicy ::selection { background: rgba(var(--theme-color), 0.38); color: var(--text); }
+    body.musicy :focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
+    :where(body.musicy) a { color: inherit; text-decoration: none; }
+    :where(body.musicy) img { display: block; }
+    body.musicy .search-input:focus-visible, body.musicy .input:focus-visible, body.musicy .textarea:focus-visible { outline: none; }
+    .hidden { display: none !important; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(160, 150, 135, 0.4); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(160, 150, 135, 0.7); background-clip: content-box; }
+
+    /* ---------- ambient theme (canvas + grain) ---------- */
+    #ambientCanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
+    .grain {
+        position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.07;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    body.light-mode .grain { opacity: 0.09; mix-blend-mode: multiply; }
+
+    /* ---------- typography helpers ---------- */
+    .display { font-family: var(--display); font-weight: 500; font-optical-sizing: auto; }
+    [dir="rtl"] .display { line-height: 1.3 !important; }
+    .h2 { font-family: var(--display); font-weight: 500; font-size: clamp(1.5rem, 2.6vw, 2.1rem); line-height: 1.15; margin: 0; }
+    .h3 { font-family: var(--display); font-weight: 500; font-size: clamp(1.35rem, 2.2vw, 1.8rem); line-height: 1.2; margin: 0; }
+    .count { font-family: var(--sans); font-size: 14px; font-weight: 400; color: var(--faint); margin-inline-start: 0.5em; }
+    .lede { margin: 12px 0 0; color: var(--muted); max-width: 52ch; }
+    .sep { display: inline-block; width: 1px; height: 12px; background: var(--line-strong); flex-shrink: 0; }
+
+    /* ---------- header ---------- */
+    .top {
+        position: sticky; top: 0; z-index: 40;
+        border-bottom: 1px solid var(--line);
+        background: rgba(17, 14, 12, 0.78);
+        -webkit-backdrop-filter: blur(18px) saturate(1.15);
+        backdrop-filter: blur(18px) saturate(1.15);
+    }
+    body.light-mode .top { background: rgba(245, 240, 232, 0.8); }
+    @supports (color: color-mix(in srgb, red 50%, white)) {
+        .top, body.light-mode .top { background: color-mix(in srgb, var(--bg) 74%, transparent); }
+    }
+    .top-inner {
+        width: min(100% - 2 * var(--gutter), var(--max));
+        margin-inline: auto;
+        min-height: 72px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        column-gap: 28px;
+    }
+    .top-left { grid-column: 1; grid-row: 1; display: flex; align-items: center; gap: 36px; }
+    .search { grid-column: 2; grid-row: 1; justify-self: center; width: 100%; max-width: 460px; position: relative; }
+    .top-tools { grid-column: 3; grid-row: 1; justify-self: end; display: flex; align-items: center; gap: 12px; }
+
+    .brand { display: inline-flex; align-items: center; gap: 11px; flex-shrink: 0; color: var(--text); }
+    .brand-mark { width: 27px; height: 27px; color: var(--text); flex-shrink: 0; }
+    .brand-mark .ring-b { opacity: 0.45; }
+    .brand-mark .core { fill: rgb(var(--theme-color)); transition: fill 0.9s ease; }
+    .brand-mark .hole { fill: var(--bg); }
+    .brand-name { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 27px; line-height: 1; letter-spacing: -0.01em; }
+
+    .top-nav { display: none; align-items: center; gap: 28px; }
+    .top-nav a { position: relative; font-size: 14px; color: var(--muted); padding: 6px 0; transition: color 0.25s; }
+    .top-nav a:hover, .top-nav a.is-active { color: var(--text); }
+    .top-nav a.is-active::after { content: ""; position: absolute; inset-inline: 0; bottom: -1px; height: 1px; background: var(--accent-ink); }
+
+    .search-ico { position: absolute; inset-inline-start: 17px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--faint); pointer-events: none; }
+    .search-input {
+        width: 100%; height: 44px; padding-inline: 44px 18px;
+        border: 1px solid var(--line-strong); border-radius: 999px;
+        background: transparent; color: var(--text);
+        font-family: var(--sans); font-size: 14px;
+        transition: border-color 0.25s, background-color 0.25s;
+    }
+    .search-input::placeholder { color: var(--faint); opacity: 1; }
+    .search-input:hover { border-color: var(--faint); }
+    .search-input:focus { outline: none; border-color: var(--accent-ink); background: var(--bg-2); }
+    .results {
+        position: absolute; inset-inline: 0; top: calc(100% + 10px); z-index: 60;
+        max-height: 360px; overflow-y: auto;
+        background: var(--bg-2); border: 1px solid var(--line-strong); border-radius: 4px;
+        box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.7);
     }
 
-    .luxury-dark-btn {
-        position: relative;
-        overflow: hidden;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    .tools { display: flex; align-items: center; gap: 10px; }
+    .lang { display: inline-flex; padding: 3px; border: 1px solid var(--line); border-radius: 999px; }
+    .lang-btn {
+        border: 0; background: transparent; min-width: 44px; height: 30px; padding: 0 12px; border-radius: 999px;
+        font-family: var(--sans); font-size: 12px; font-weight: 500; line-height: 1;
+        color: var(--faint); cursor: pointer; transition: background-color 0.25s, color 0.25s;
     }
-    .luxury-dark-btn:active {
-        transform: scale(0.92);
-        box-shadow: 0 0 10px rgba(var(--theme-color), 0.8), inset 0 0 15px rgba(var(--theme-color), 0.5);
+    .lang-btn:hover { color: var(--text); }
+    html[lang="en"] .lang-btn[data-l="en"], html[lang="ar"] .lang-btn[data-l="ar"] { background: var(--text); color: var(--bg); }
+    .mode-btn {
+        display: inline-flex; align-items: center; gap: 9px; height: 38px; padding: 0 13px;
+        border: 1px solid var(--line); border-radius: 999px; background: transparent;
+        color: var(--muted); font-family: var(--sans); font-size: 13px; cursor: pointer;
+        transition: border-color 0.25s, color 0.25s;
     }
-    .luxury-dark-btn::after {
-        content: '';
-        position: absolute;
-        top: 50%; left: 50%;
-        width: 5px; height: 5px;
-        background: rgba(255, 255, 255, 0.6);
-        opacity: 0;
-        border-radius: 100%;
-        transform: scale(1, 1) translate(-50%, -50%);
-        transform-origin: 50% 50%;
+    .mode-btn:hover { border-color: var(--line-strong); color: var(--text); }
+    .mode-btn i { color: var(--accent-ink) !important; font-size: 13px; }
+    .mode-btn span { display: none; }
+    .mode-btn { width: 38px; padding: 0; justify-content: center; }
+    .icon-link { display: none; width: 38px; height: 38px; align-items: center; justify-content: center; border: 1px solid var(--line); border-radius: 50%; color: var(--accent-ink); font-size: 13px; transition: border-color 0.25s; }
+    .icon-link:hover { border-color: var(--line-strong); }
+
+    #userProfileArea { display: flex; align-items: center; }
+    #userProfileArea > div { display: flex; align-items: center; gap: 10px; }
+    #userProfileArea * { margin: 0; }
+    #userProfileArea a[href="/login"] {
+        width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+        border: 1px solid var(--line-strong); border-radius: 50%; background: transparent; background-image: none;
+        color: var(--text); box-shadow: none; transform: none; font-size: 13px;
+        transition: border-color 0.25s, color 0.25s;
     }
-    .luxury-dark-btn:active::after {
-        animation: rippleEffect 0.5s ease-out;
+    #userProfileArea a[href="/login"]:hover { border-color: var(--accent-ink); color: var(--accent-ink); transform: none; }
+    #userProfileArea a[href="/login"] i { color: inherit; }
+    #userProfileArea a[href="/profile"] {
+        display: flex; align-items: center; gap: 9px; height: 38px; padding: 4px 14px 4px 4px;
+        border: 1px solid var(--line-strong); border-radius: 999px; background: transparent; box-shadow: none; opacity: 1;
+        transition: border-color 0.25s;
     }
-    @keyframes rippleEffect {
-        0% { transform: scale(0, 0) translate(-50%, -50%); opacity: 0.8; }
-        100% { transform: scale(40, 40) translate(-50%, -50%); opacity: 0; }
+    [dir="rtl"] #userProfileArea a[href="/profile"] { padding: 4px 4px 4px 14px; }
+    #userProfileArea a[href="/profile"]:hover { border-color: var(--accent-ink); opacity: 1; }
+    #userProfileArea a[href="/profile"] img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 0; }
+    #userProfileArea a[href="/profile"] span { color: var(--text); font-size: 13px; font-weight: 500; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #userProfileArea button {
+        width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+        border: 1px solid var(--line); border-radius: 50%; background: transparent; box-shadow: none; color: var(--muted);
+        transition: border-color 0.25s, color 0.25s;
+    }
+    #userProfileArea button:hover { border-color: rgba(214, 84, 108, 0.7); color: #d6546c; }
+
+    /* search dropdown rows are built by the page script, so they're styled by structure */
+    #searchResults > div { display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-bottom: 1px solid var(--line); cursor: pointer; background: transparent; transition: background-color 0.2s; }
+    #searchResults > div:last-child { border-bottom: 0; }
+    #searchResults > div:hover { background: var(--bg-3); }
+    #searchResults > div > * { margin: 0; }
+    #searchResults img { width: 44px; height: 44px; flex-shrink: 0; object-fit: cover; border: 0; border-radius: 2px; }
+    #searchResults .font-bold { font-family: var(--display); font-size: 15px; font-weight: 500; line-height: 1.3; color: var(--text); }
+    #searchResults .text-gray-400 { font-size: 12.5px; color: var(--muted); }
+
+    /* ---------- buttons ---------- */
+    .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+        height: 48px; padding: 0 26px; border: 1px solid transparent; border-radius: 2px;
+        font-family: var(--sans); font-size: 14px; font-weight: 500; line-height: 1; letter-spacing: 0.02em;
+        cursor: pointer; white-space: nowrap;
+        transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.2s;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn i { font-size: 13px; }
+    .btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .btn-primary:hover { background: var(--accent-ink); }
+    .btn-ghost { border-color: var(--line-strong); color: var(--text); background: transparent; }
+    .btn-primary:hover { border-color: var(--accent-ink); }
+    .btn-ghost:hover { border-color: var(--accent-ink); color: var(--accent-ink); }
+    .btn-sm { height: 38px; padding: 0 18px; font-size: 13px; }
+    .btn-block { width: 100%; }
+
+    /* ---------- stars (fractional, driven by --r) ---------- */
+    .stars {
+        --r: 0;
+        display: inline-block; flex-shrink: 0;
+        width: calc(5 * 1.25em); height: 1em; font-size: 13px; vertical-align: -0.14em;
+        background: linear-gradient(90deg, var(--accent-ink) calc(var(--r) / 5 * 100%), var(--track) 0);
+        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 24'%3E%3Cpath transform='translate(3 0)' d='M12 2.2l2.95 6.2 6.85.9-5 4.75 1.25 6.75L12 17.4 5.9 20.8l1.25-6.75-5-4.75 6.85-.9z'/%3E%3C/svg%3E") 0 0 / 1.25em 1em repeat-x;
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 24'%3E%3Cpath transform='translate(3 0)' d='M12 2.2l2.95 6.2 6.85.9-5 4.75 1.25 6.75L12 17.4 5.9 20.8l1.25-6.75-5-4.75 6.85-.9z'/%3E%3C/svg%3E") 0 0 / 1.25em 1em repeat-x;
+    }
+    .stars.lg { font-size: 20px; }
+    [dir="rtl"] .stars { background: linear-gradient(270deg, var(--accent-ink) calc(var(--r) / 5 * 100%), var(--track) 0); }
+
+    /* ---------- sleeve + vinyl (the signature object) ---------- */
+    .sleeve { position: relative; aspect-ratio: 1; }
+    .sleeve .cover {
+        position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; object-fit: cover; border-radius: 2px;
+        background: var(--bg-3);
+        box-shadow: 0 40px 70px -34px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.07);
+    }
+    body.light-mode .sleeve .cover { box-shadow: 0 34px 60px -30px rgba(50, 34, 16, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.06); }
+    .vinyl-wrap {
+        position: absolute; z-index: 1; top: 4%; inset-inline-start: 2%; width: 92%; aspect-ratio: 1;
+        transform: translateX(calc(var(--dir) * 30%));
+        transition: transform 1.1s var(--ease);
+        animation: slideOut 1.6s 0.7s var(--ease) backwards;
+    }
+    .vinyl-wrap::after {
+        content: ""; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+        background: conic-gradient(from 35deg, transparent 0 8%, rgba(255, 255, 255, 0.11) 14%, transparent 22% 50%, rgba(255, 255, 255, 0.08) 64%, transparent 72%);
+    }
+    .vinyl {
+        position: absolute; inset: 0; border-radius: 50%;
+        background: repeating-radial-gradient(circle at 50% 50%, #0d0a09 0 1px, #191411 1px 2px);
+        box-shadow: 0 24px 40px -22px rgba(0, 0, 0, 0.8), inset 0 0 0 2px #050403;
+        animation: spin 30s linear infinite;
+    }
+    .vinyl::before {
+        content: ""; position: absolute; inset: 33%; border-radius: 50%;
+        background: conic-gradient(from 0deg, rgb(var(--theme-color)) 0 64%, rgba(var(--theme-color-dark), 1) 64% 100%);
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+    }
+    .vinyl::after { content: ""; position: absolute; inset: 48.4%; border-radius: 50%; background: #0d0a09; }
+    .spotlight:hover .vinyl-wrap, .track-art:hover .vinyl-wrap { transform: translateX(calc(var(--dir) * 40%)); }
+    @keyframes slideOut { from { transform: translateX(0); } to { transform: translateX(calc(var(--dir) * 30%)); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes rise { from { transform: translateY(105%); } to { transform: none; } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes dialogIn { from { opacity: 0; transform: translateY(18px) scale(0.985); } to { opacity: 1; transform: none; } }
+
+    /* ---------- pages ---------- */
+    .page { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; flex: 1 0 auto; overflow-x: clip; }
+    .page.narrow { width: min(100% - 2 * var(--gutter), 900px); }
+    .section { margin-top: clamp(48px, 7vw, 96px); }
+    .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 18px; margin-bottom: clamp(24px, 3vw, 40px); border-bottom: 1px solid var(--line); }
+
+    /* home hero */
+    .hero {
+        display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); align-items: center;
+        gap: clamp(28px, 6vw, 96px);
+        padding-block: clamp(36px, 7vw, 96px) 0;
+    }
+    .hero-title { margin: 0; font-size: clamp(2.7rem, 6.4vw, 5.7rem); line-height: 0.98; letter-spacing: -0.028em; }
+    .hero-title .line { display: block; overflow: hidden; padding-bottom: 0.12em; }
+    .hero-title .line > span { display: block; animation: rise 1.1s var(--ease) backwards; }
+    .hero-title .line:nth-child(2) { padding-inline-start: 1.05em; }
+    .hero-title .line:nth-child(2) > span { animation-delay: 0.14s; }
+    html[lang="ar"] .hero-title { font-size: clamp(2.3rem, 5vw, 4.3rem); }
+    .hero-tag { margin: clamp(22px, 3vw, 36px) 0 0; font-family: var(--display); font-style: italic; font-size: clamp(1.1rem, 1.8vw, 1.4rem); color: var(--accent-ink); animation: fadeUp 0.9s 0.55s var(--ease) backwards; }
+    [dir="rtl"] .hero-tag { font-style: normal; }
+    .hero-desc { margin: 12px 0 0; max-width: 44ch; color: var(--muted); animation: fadeUp 0.9s 0.68s var(--ease) backwards; }
+    .hero-cta { margin-top: 32px; animation: fadeUp 0.9s 0.8s var(--ease) backwards; }
+
+    .spotlight { display: block; justify-self: center; width: min(100%, 400px); padding-inline-end: 18%; animation: fadeUp 1s 0.2s var(--ease) backwards; }
+    .spot-meta { margin-top: 26px; padding-inline-end: 4%; }
+    .spot-title { font-family: var(--display); font-size: 1.35rem; font-weight: 500; line-height: 1.2; transition: color 0.25s; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .spotlight:hover .spot-title { color: var(--accent-ink); }
+    .spot-artist { margin-top: 2px; color: var(--muted); font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .spot-rate { display: flex; align-items: center; gap: 10px; margin-top: 10px; color: var(--muted); font-size: 13px; }
+    .spot-rate b { color: var(--accent-ink); font-weight: 600; }
+
+    /* album wall */
+    .wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 176px), 1fr)); gap: clamp(26px, 3vw, 44px) clamp(16px, 2vw, 28px); }
+    .tile { display: block; min-width: 0; }
+    .tile-cover { aspect-ratio: 1; overflow: hidden; border-radius: 2px; background: var(--bg-3); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06); }
+    body.light-mode .tile-cover { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.07); }
+    .tile-cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--ease); }
+    .tile:hover .tile-cover img { transform: scale(1.045); }
+    .tile-meta { margin-top: 14px; }
+    .tile-title { margin: 0; font-family: var(--display); font-size: 1.05rem; font-weight: 500; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-decoration: underline; text-decoration-color: transparent; text-decoration-thickness: 1px; text-underline-offset: 5px; transition: text-decoration-color 0.3s; }
+    .tile:hover .tile-title { text-decoration-color: var(--accent-ink); }
+    .tile-artist { margin: 1px 0 0; font-size: 13.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tile-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 3px 8px; margin-top: 9px; font-size: 12.5px; color: var(--faint); min-width: 0; }
+    .tile-foot b { color: var(--accent-ink); font-weight: 600; }
+    .tile-foot .votes-note { flex-basis: 100%; white-space: nowrap; }
+
+    /* ranked list */
+    .page-head { padding-block: clamp(36px, 6vw, 80px) clamp(22px, 3vw, 36px); }
+    .h1 { margin: 0; font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1.02; letter-spacing: -0.025em; }
+    .rank { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-strong); }
+    .rank-row { display: grid; grid-template-columns: clamp(34px, 6vw, 56px) 64px minmax(0, 1fr) auto 18px; align-items: center; column-gap: clamp(12px, 2.4vw, 28px); padding: 18px 8px; border-bottom: 1px solid var(--line); transition: background-color 0.25s; }
+    .rank-row:hover { background: var(--bg-2); }
+    .rank-num { font-family: var(--display); font-size: clamp(1.6rem, 3vw, 2.3rem); font-weight: 400; line-height: 1; text-align: center; color: var(--faint); }
+    .is-first .rank-num { color: var(--accent-ink); }
+    .rank-cover { width: 64px; height: 64px; object-fit: cover; border-radius: 2px; background: var(--bg-3); }
+    .rank-main { min-width: 0; }
+    .rank-title { display: block; font-family: var(--display); font-size: clamp(1.05rem, 1.8vw, 1.3rem); font-weight: 500; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: color 0.25s; }
+    .rank-row:hover .rank-title { color: var(--accent-ink); }
+    .rank-sub { display: flex; align-items: center; gap: 10px; margin-top: 4px; min-width: 0; font-size: 13px; color: var(--muted); }
+    .rank-sub > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rank-score { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+    .score-num { font-family: var(--display); font-size: 1.5rem; line-height: 1; color: var(--accent-ink); }
+    .rank-votes { font-size: 12px; color: var(--faint); white-space: nowrap; }
+    .rank-votes b { color: var(--muted); font-weight: 600; }
+    .chev { font-size: 12px; color: var(--faint); transition: transform 0.25s, color 0.25s; }
+    [dir="rtl"] .chev { rotate: 180deg; }
+    .rank-row:hover .chev { transform: translateX(calc(var(--dir) * 4px)); color: var(--accent-ink); }
+    .empty { padding: 56px 20px; text-align: center; color: var(--muted); border: 1px dashed var(--line-strong); border-radius: 2px; }
+
+    /* song page */
+    .track { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); align-items: center; gap: clamp(32px, 6vw, 88px); padding-block: clamp(32px, 6vw, 72px) 0; }
+    .track-art { padding-inline-end: 18%; }
+    .track-art .cover { box-shadow: 0 50px 90px -42px rgba(var(--theme-color), 0.65), 0 24px 48px -24px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.07); transition: box-shadow 1.2s ease; }
+    body.light-mode .track-art .cover { box-shadow: 0 50px 90px -42px rgba(var(--theme-color), 0.7), 0 24px 48px -26px rgba(50, 34, 16, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.06); }
+    .track-info { min-width: 0; }
+    .track-title { margin: 0; font-size: clamp(2.1rem, 5.2vw, 4.3rem); line-height: 1.02; letter-spacing: -0.025em; overflow-wrap: anywhere; text-wrap: balance; }
+    .track-artist { margin: 14px 0 0; font-family: var(--display); font-size: clamp(1.15rem, 2.2vw, 1.6rem); font-weight: 400; color: var(--muted); }
+    .track-meta { display: flex; align-items: center; gap: 12px; margin: 14px 0 0; font-size: 14px; color: var(--faint); }
+    .track-rating { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 16px; margin-top: clamp(24px, 3vw, 36px); }
+    .big-score { font-family: var(--display); font-size: clamp(2.6rem, 5vw, 3.8rem); font-weight: 500; line-height: 1; color: var(--accent-ink); transition: color 0.9s ease; }
+    .of { margin-inline-start: 4px; font-size: 15px; color: var(--faint); }
+    .votes { font-size: 14px; color: var(--muted); }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(24px, 3vw, 36px); }
+
+    .cols { display: grid; grid-template-columns: minmax(0, 1fr) 320px; align-items: start; gap: clamp(32px, 6vw, 88px); }
+    .ledger { position: sticky; top: 104px; padding-top: 22px; border-top: 1px solid var(--line-strong); }
+    .ledger h4 { margin: 0 0 8px; font-family: var(--display); font-size: 1.3rem; font-weight: 500; }
+    .ledger dl { margin: 0; }
+    .ledger .row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-block: 15px; border-bottom: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+    .ledger dt, .ledger dd { margin: 0; }
+    .ledger dd { font-weight: 600; color: var(--text); }
+    .ledger dd.accent { font-family: var(--display); font-size: 1.25rem; font-weight: 500; color: var(--accent-ink); }
+
+    .review { padding-block: 28px; border-bottom: 1px solid var(--line); }
+    .review:first-child { padding-top: 4px; }
+    .review-head { display: flex; align-items: center; gap: 14px; }
+    .avatar { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; object-fit: cover; background: var(--bg-3); box-shadow: 0 0 0 1px var(--line-strong); }
+    .who { flex: 1; min-width: 0; }
+    .who h4 { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .when { font-size: 12.5px; color: var(--faint); }
+    .review-score { display: flex; align-items: center; gap: 10px; flex-shrink: 0; font-size: 13px; color: var(--muted); }
+    .review-text { unicode-bidi: plaintext; text-align: start; margin: 16px 0 0; padding-inline-start: 58px; font-size: 16.5px; line-height: 1.75; overflow-wrap: anywhere; }
+    .review-foot { margin-top: 16px; padding-inline-start: 58px; }
+    .like-btn {
+        display: inline-flex; align-items: center; gap: 9px; height: 36px; padding: 0 16px;
+        border: 1px solid var(--line-strong); border-radius: 999px; background: transparent;
+        font-family: var(--sans); font-size: 13px; color: var(--muted); cursor: pointer;
+        transition: border-color 0.25s, color 0.25s;
+    }
+    .like-btn:hover { border-color: var(--accent-ink); color: var(--text); }
+    .like-btn i { font-size: 13px; }
+    .like-btn i.text-gray-400 { color: var(--faint); }
+    .like-btn i[class*="ff2255"] { color: #dc3d62; }
+    .like-btn b { color: var(--text); font-weight: 600; }
+    .like-animate { animation: luxuryLikePop 0.4s ease-in-out; }
+    @keyframes luxuryLikePop { 0% { transform: scale(1); } 50% { transform: scale(1.4) rotate(10deg); } 100% { transform: scale(1); } }
+
+    /* ---------- forms + auth ---------- */
+    .field { margin-top: 22px; }
+    .field label { display: block; margin-bottom: 4px; font-size: 13px; font-weight: 500; color: var(--muted); }
+    .input {
+        display: block; width: 100%; padding: 12px 2px; border: 0; border-bottom: 1px solid var(--line-strong); border-radius: 0;
+        background: transparent; color: var(--text); font-family: var(--sans); font-size: 16px;
+        transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .input::placeholder { color: var(--faint); opacity: 1; }
+    .input:focus { outline: none; border-bottom-color: var(--accent-ink); box-shadow: 0 1px 0 0 var(--accent-ink); }
+    .textarea {
+        display: block; width: 100%; margin-top: 8px; padding: 14px; resize: vertical;
+        border: 1px solid var(--line-strong); border-radius: 2px; background: transparent; color: var(--text);
+        font-family: var(--sans); font-size: 16px; line-height: 1.6;
+        transition: border-color 0.25s;
+    }
+    .textarea::placeholder { color: var(--faint); opacity: 1; }
+    .textarea:focus { outline: none; border-color: var(--accent-ink); }
+    .file {
+        display: block; width: 100%; padding: 14px; border: 1px dashed var(--line-strong); border-radius: 2px;
+        background: transparent; color: var(--muted); font-family: var(--sans); font-size: 14px; cursor: pointer;
+    }
+    .file::file-selector-button {
+        margin-inline-end: 14px; height: 34px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 2px;
+        background: transparent; color: var(--text); font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer;
     }
 
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        z-index: -2;
-        pointer-events: none;
+    .auth-main { flex: 1 0 auto; display: grid; align-items: center; padding-block: clamp(28px, 5vw, 64px); width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; grid-template-columns: minmax(0, 1fr); }
+    .auth-art { display: none; }
+    .auth-panel { width: min(100%, 460px); margin-inline: auto; padding: clamp(28px, 4vw, 48px); border: 1px solid var(--line-strong); border-radius: 2px; background: var(--bg-2); }
+    @supports (color: color-mix(in srgb, red 50%, white)) {
+        .auth-panel { background: color-mix(in srgb, var(--bg-2) 86%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
     }
-    .animated-bg-glow {
-        position: fixed;
-        width: 600px;
-        height: 600px;
-        background: radial-gradient(circle, rgba(var(--theme-color), 0.15) 0%, rgba(0, 0, 0, 0) 70%);
-        top: -200px;
-        right: -150px;
-        z-index: -1;
-        animation: pulseGlow 7s ease-in-out infinite;
-        pointer-events: none;
-        border-radius: 50%;
-        filter: blur(60px);
+    .back { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 30px; font-size: 13px; color: var(--muted); transition: color 0.25s; }
+    .back:hover { color: var(--text); }
+    .back i { font-size: 11px; }
+    [dir="rtl"] .back i { rotate: 180deg; }
+    .auth-title { margin: 0; font-size: clamp(2rem, 4vw, 2.7rem); line-height: 1.08; letter-spacing: -0.02em; }
+    .auth-panel .btn-block { margin-top: 34px; }
+    .switch { margin: 26px 0 0; font-size: 14px; color: var(--muted); }
+    .switch a { color: var(--accent-ink); font-weight: 600; margin-inline-start: 6px; border-bottom: 1px solid transparent; transition: border-color 0.25s; }
+    .switch a:hover { border-bottom-color: var(--accent-ink); }
+    .auth-top { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .avatar-lg { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; margin-bottom: 22px; background: var(--bg-3); box-shadow: 0 0 0 5px var(--bg-2), 0 0 0 6px var(--accent-ink); }
+    .auth-panel .who-line { margin: 0 0 6px; font-family: var(--display); font-size: 1.7rem; font-weight: 500; line-height: 1.15; overflow-wrap: anywhere; }
+    .auth-art .vinyl-wrap { position: relative; inset: auto; top: auto; width: 100%; transform: none; animation: none; transition: none; }
+
+    /* ---------- modals ---------- */
+    .modal {
+        position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px;
+        background: var(--scrim); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+        animation: fadeIn 0.25s ease;
     }
-    .animated-bg-glow-2 {
-        position: fixed;
-        width: 600px;
-        height: 600px;
-        background: radial-gradient(circle, rgba(var(--theme-color-dark), 0.1) 0%, rgba(0, 0, 0, 0) 70%);
-        bottom: -200px;
-        left: -150px;
-        z-index: -1;
-        animation: pulseGlow 9s ease-in-out infinite alternate;
-        pointer-events: none;
-        border-radius: 50%;
-        filter: blur(70px);
+    .dialog {
+        width: min(100%, 480px); max-height: calc(100dvh - 40px); overflow-y: auto; padding: clamp(24px, 4vw, 36px);
+        background: var(--bg-2); border: 1px solid var(--line-strong); border-radius: 4px;
+        box-shadow: 0 50px 100px -30px rgba(0, 0, 0, 0.8);
+        animation: dialogIn 0.4s var(--ease);
     }
-    .musical-note {
-        position: fixed;
-        color: rgba(var(--theme-color), 0.35);
-        font-size: 18px;
-        pointer-events: none;
-        z-index: -1;
-        transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), color 0.3s;
-        text-shadow: 0 0 10px rgba(var(--theme-color), 0.5);
+    .dialog-title { margin: 0; font-family: var(--display); font-size: 1.55rem; font-weight: 500; line-height: 1.2; overflow-wrap: anywhere; }
+    .dialog .field label { margin-bottom: 0; }
+    .dialog-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 28px; }
+    .dialog.story { width: min(100%, 400px); text-align: center; }
+    .dialog.story .dialog-title { font-size: 1.2rem; }
+    #storyCanvas { display: block; height: min(52vh, 430px); width: auto; max-width: 100%; aspect-ratio: 1080 / 1920; margin: 22px auto 0; border-radius: 4px; box-shadow: 0 0 0 1px var(--line-strong); }
+    .dialog.story .dialog-actions { margin-top: 22px; }
+
+    #starContainer { display: flex; align-items: center; gap: 4px; margin-top: 10px; }
+    #starContainer i { padding: 4px; font-size: 30px; color: var(--track); cursor: pointer; filter: none !important; transition: transform 0.18s var(--ease), color 0.25s; }
+    #starContainer i.text-theme { color: var(--accent-ink); }
+    #starContainer i:hover { transform: scale(1.14); }
+    #starValueText { margin-inline-start: 12px; font-family: var(--display); font-size: 1.4rem; color: var(--accent-ink); }
+
+    /* ---------- footer ---------- */
+    .foot { margin-top: clamp(64px, 9vw, 120px); }
+    .auth-page .foot { margin-top: 0; }
+    .foot-inner { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; padding: 26px 0 34px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 13px; color: var(--faint); }
+    .foot .fa-heart { margin-inline: 4px; color: #c8415f; font-size: 11px; }
+    .foot-brand { font-family: var(--display); font-style: italic; font-size: 16px; }
+
+    /* ---------- responsive ---------- */
+    @media (min-width: 640px) {
+        .top-nav { display: flex; }
+        .dialog-actions { flex-direction: row-reverse; }
+        .dialog-actions .btn { flex: 1; }
     }
-    .floating-orb {
-        position: fixed;
-        width: 6px;
-        height: 6px;
-        background: rgb(var(--theme-color));
-        box-shadow: 0 0 15px rgb(var(--theme-color)), 0 0 25px rgb(var(--theme-color));
-        border-radius: 50%;
-        z-index: -1;
-        animation: floatParticle 6s ease-in-out infinite;
-        pointer-events: none;
+    @media (min-width: 1100px) {
+        .mode-btn { width: auto; padding: 0 13px; }
+        .mode-btn span { display: inline; }
     }
-    .glass-card {
-        background: rgba(5, 12, 8, 0.85);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(var(--theme-color), 0.35);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(var(--theme-color), 0.25);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    @media (min-width: 960px) {
+        .auth-main { grid-template-columns: minmax(0, 1fr) minmax(0, 480px); column-gap: clamp(40px, 8vw, 120px); }
+        .auth-art { display: block; justify-self: center; width: min(100%, 460px); }
+        .auth-panel { margin-inline: 0; }
     }
-    .glass-card:hover {
-        border-color: rgba(var(--theme-color), 0.9);
-        box-shadow: 0 0 30px rgba(var(--theme-color), 0.4), inset 0 0 15px rgba(var(--theme-color), 0.3);
-        transform: translateY(-4px) scale(1.01);
+    @media (max-width: 859px) {
+        .top-inner { grid-template-columns: 1fr auto; min-height: 0; padding-block: 12px; row-gap: 12px; }
+        .top-left { grid-column: 1; }
+        .top-tools { grid-column: 2; }
+        .search { grid-column: 1 / -1; grid-row: 2; max-width: none; }
+        .search-input { font-size: 16px; }
     }
-    .neon-border {
-        animation: neonPulse 3s infinite;
+    @media (max-width: 859px) {
+        .hero { grid-template-columns: minmax(0, 1fr); }
+        .spotlight { justify-self: start; width: min(100%, 340px); }
+        .track { grid-template-columns: minmax(0, 1fr); }
+        .track-art { width: min(100%, 340px); margin-inline: auto; }
+        .cols { grid-template-columns: minmax(0, 1fr); }
+        .ledger { position: static; }
     }
-    ::-webkit-scrollbar { width: 7px; }
-    ::-webkit-scrollbar-track { background: #000000; }
-    ::-webkit-scrollbar-thumb { background: rgba(var(--theme-color-dark), 0.6); border-radius: 4px; border: 1px solid rgba(var(--theme-color),0.4); }
-    ::-webkit-scrollbar-thumb:hover { background: rgb(var(--theme-color)); box-shadow: 0 0 12px rgb(var(--theme-color)); }
-    
-    @media (max-width: 768px) {
-        body { font-size: 14px; }
-        input, select, textarea, button { font-size: 16px !important; }
-        .mobile-stack { flex-direction: column !important; }
-        .mobile-full { width: 100% !important; }
-        .mobile-center { text-align: center !important; justify-content: center !important; }
-        .mobile-p-3 { padding: 12px !important; }
+    @media (max-width: 639px) {
+        body.musicy { font-size: 15px; }
+        .icon-link { display: flex; }
+        .brand-name { font-size: 24px; }
+        .top-left { gap: 0; }
+        .top-inner { column-gap: 12px; }
+        .top-tools, .tools { gap: 8px; }
+        .lang-btn { min-width: 34px; padding: 0 8px; }
+        .wall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .rank-row { grid-template-columns: 30px 52px minmax(0, 1fr) auto; padding-inline: 2px; }
+        .rank-cover { width: 52px; height: 52px; }
+        .rank-score .stars, .chev { display: none; }
+        .review-text, .review-foot { padding-inline-start: 0; }
+        .review-score .stars { display: none; }
+        .section-head { flex-wrap: wrap; }
+        .foot-inner { flex-direction: column; align-items: flex-start; gap: 6px; }
+        .hero-title .line:nth-child(2) { padding-inline-start: 0.6em; }
+    }
+
+    /* ---------- motion preferences ---------- */
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+        .vinyl { animation: none; }
     }
 </style>
-<div class="animated-bg-glow"></div>
-<div class="animated-bg-glow-2"></div>
-<div class="floating-orb" style="top: 15%; left: 8%; animation-delay: 0s;"></div>
-<div class="floating-orb" style="top: 55%; left: 90%; animation-delay: 1.5s;"></div>
-<div class="floating-orb" style="top: 85%; left: 20%; animation-delay: 3s;"></div>
-<div class="floating-orb" style="top: 25%; left: 80%; animation-delay: 4.5s;"></div>
-
-<div class="musical-note" style="top: 20%; left: 15%;" data-speed="0.02"><i class="fa-solid fa-music"></i></div>
-<div class="musical-note" style="top: 40%; left: 75%;" data-speed="0.04"><i class="fa-solid fa-compact-disc"></i></div>
-<div class="musical-note" style="top: 70%; left: 30%;" data-speed="0.03"><i class="fa-solid fa-microphone-lines"></i></div>
-<div class="musical-note" style="top: 80%; left: 85%;" data-speed="0.05"><i class="fa-solid fa-music"></i></div>
-<div class="musical-note" style="top: 30%; left: 45%;" data-speed="0.025"><i class="fa-solid fa-radio"></i></div>
 
 <script>
     document.addEventListener('mousemove', (e) => {
@@ -966,18 +1251,123 @@ background_styles = """
 </script>
 """
 
+ambient_html = """
+<canvas id="ambientCanvas" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<script>
+(function () {
+    // Apply saved theme/language before first paint so nothing flashes.
+    try {
+        if (localStorage.getItem('musicy_theme') === 'light') { document.body.classList.add('light-mode'); }
+        var savedLang = localStorage.getItem('musicy_lang');
+        if (savedLang === 'ar' || savedLang === 'en') {
+            document.documentElement.setAttribute('lang', savedLang);
+            document.documentElement.setAttribute('dir', savedLang === 'ar' ? 'rtl' : 'ltr');
+        }
+    } catch (e) {}
+
+    var cv = document.getElementById('ambientCanvas');
+    if (!cv || !cv.getContext) return;
+    var ctx = cv.getContext('2d');
+    var reduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+
+    var W = 0, H = 0, DPR = 1, raf = 0, running = false;
+    var pointer = 0.5, pointerSmooth = 0.5, scrollY = 0;
+    var cur = [201, 164, 98], goal = [201, 164, 98];
+    var LINES = 15;
+
+    // The ribbon takes its colour from --theme-color, so on a song page it
+    // slowly drifts to the album's colour once the cover has been sampled.
+    function readColor() {
+        var raw = getComputedStyle(document.documentElement).getPropertyValue('--theme-color').split(',');
+        if (raw.length !== 3) return;
+        var n = raw.map(function (v) { return parseFloat(v); });
+        for (var i = 0; i < 3; i++) { if (isNaN(n[i])) return; }
+        goal = n;
+    }
+
+    function resize() {
+        DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+        W = window.innerWidth;
+        H = window.innerHeight;
+        cv.width = Math.round(W * DPR);
+        cv.height = Math.round(H * DPR);
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+
+    function draw(ms) {
+        var t = ms / 1000;
+        var light = document.body.classList.contains('light-mode');
+        var k = light ? 0.6 : 1;
+        for (var i = 0; i < 3; i++) { cur[i] += (goal[i] - cur[i]) * 0.05; }
+        var r = Math.round(cur[0] * k), g = Math.round(cur[1] * k), b = Math.round(cur[2] * k);
+
+        pointerSmooth += (pointer - pointerSmooth) * 0.04;
+        var shift = (pointerSmooth - 0.5) * 0.9;
+        var compact = W < 700;
+        var amp = Math.min(H * 0.17, compact ? 90 : 150);
+        var cy = H * (compact ? 0.3 : 0.4) - scrollY * 0.06;
+        var step = compact ? 8 : 5;
+
+        ctx.clearRect(0, 0, W, H);
+        ctx.lineWidth = 1;
+        for (var n = 0; n < LINES; n++) {
+            var u = n / (LINES - 1);
+            var ph = u * 2.4;
+            ctx.beginPath();
+            for (var x = 0; x <= W + step; x += step) {
+                var nx = Math.min(x / W, 1);
+                var env = Math.pow(Math.sin(Math.PI * nx), 1.15);
+                var y = cy
+                    + Math.sin(nx * 5.2 + t * 0.32 + ph + shift) * amp * 0.62 * env
+                    + Math.sin(nx * 9.4 - t * 0.21 + ph * 1.8) * amp * 0.2 * env
+                    + (u - 0.5) * amp * 1.05 * env * Math.sin(nx * 2.1 + t * 0.14);
+                if (x === 0) { ctx.moveTo(x, y); } else { ctx.lineTo(x, y); }
+            }
+            var a = (0.07 + 0.26 * Math.sin(Math.PI * u)) * (light ? 1.15 : 1);
+            ctx.strokeStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + a.toFixed(3) + ')';
+            ctx.stroke();
+        }
+    }
+
+    function loop(ms) {
+        if (!running) return;
+        draw(ms);
+        raf = requestAnimationFrame(loop);
+    }
+    function start() { if (running || reduce.matches) return; running = true; raf = requestAnimationFrame(loop); }
+    function stop() { running = false; cancelAnimationFrame(raf); }
+    function still() { for (var i = 0; i < 3; i++) { cur[i] = goal[i]; } draw(7000); }
+
+    resize();
+    readColor();
+    cur = goal.slice();
+    if (reduce.matches) { still(); } else { start(); }
+
+    window.addEventListener('resize', function () { resize(); if (reduce.matches) { still(); } }, { passive: true });
+    window.addEventListener('pointermove', function (e) { pointer = e.clientX / Math.max(W, 1); }, { passive: true });
+    window.addEventListener('scroll', function () { scrollY = window.scrollY || 0; }, { passive: true });
+    document.addEventListener('visibilitychange', function () { if (document.hidden) { stop(); } else { start(); } });
+
+    // Pick up colour changes (album sampled, theme toggled).
+    setInterval(function () {
+        readColor();
+        if (reduce.matches) { still(); }
+    }, 700);
+})();
+</script>
+"""
+
 lang_switcher_html = """
-<div class="flex items-center space-x-2 sm:space-x-3">
-    <div class="ammar-love-badge hidden md:inline-flex items-center gap-2">
-        <span>Made with</span>
-        <i class="fa-solid fa-heart"></i>
-        <span>by Ammar</span>
+<div class="tools">
+    <div class="lang" role="group" aria-label="Language">
+        <button type="button" onclick="setLanguage('en')" title="English" data-l="en" class="lang-btn">EN</button>
+        <button type="button" onclick="setLanguage('ar')" title="العربية" data-l="ar" class="lang-btn">عربي</button>
     </div>
-    <div class="flex items-center space-x-1.5 sm:space-x-2 bg-[#030d06]/95 px-2.5 sm:px-3.5 py-1.5 rounded-full border border-theme/60 shadow-[0_0_20px_rgba(var(--theme-color),0.35)] backdrop-blur-md">
-        <button onclick="setLanguage('en')" title="English" class="lang-switcher-text-black hover:scale-125 transition transform duration-200 text-sm sm:text-base drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] text-white">🇺🇸</button>
-        <span class="text-theme/60 text-xs font-light">|</span>
-        <button onclick="setLanguage('ar')" title="العربية" class="lang-switcher-text-black hover:scale-125 transition transform duration-200 text-sm sm:text-base drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] text-white">🇮🇶</button>
-    </div>
+    <button type="button" onclick="toggleDarkMode()" class="mode-btn" title="Theme">
+        <i id="darkModeIcon" class="fa-solid fa-moon w-4 text-theme"></i>
+        <span data-i18n="darkMode" id="darkModeText">Dark Mode</span>
+    </button>
 </div>
 """
 
@@ -987,6 +1377,7 @@ html_template = (
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#110e0c">
     <title>Musicy - Discover, Rate, Share Music</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -1002,89 +1393,99 @@ html_template = (
             }
         }
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=Hanken+Grotesk:wght@300..700&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     """
     + background_styles
     + """
 </head>
-<body class="text-gray-100 font-sans antialiased min-h-screen flex flex-col">
-    <header class="border-b border-theme/40 bg-[#000000]/95 backdrop-blur-2xl sticky top-0 z-50 h-16 flex items-center px-3 sm:px-6 justify-between shadow-[0_4px_35px_rgba(0,0,0,0.9)] gap-2">
-        <div class="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
-            <a href="/" class="flex items-center space-x-2 text-theme font-bold text-base sm:text-xl tracking-wider group shrink-0">
-                <i class="fa-solid fa-music text-theme group-hover:rotate-45 group-hover:scale-125 transition transform duration-500 drop-shadow-[0_0_15px_rgba(var(--theme-color),1)]"></i>
-                <span class="tracking-widest bg-gradient-to-r from-white via-gray-200 to-theme bg-clip-text text-transparent font-extrabold" data-i18n="brandName">Musicy</span>
-            </a>
-            <div class="relative flex-1 max-w-xs sm:max-w-md">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-theme"><i class="fa-solid fa-magnifying-glass text-xs"></i></span>
-                <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Search songs or artists on Spotify..." class="w-full bg-[#020804] text-xs text-gray-200 pl-9 pr-3 py-2 sm:py-2.5 rounded-xl border border-theme/40 focus:outline-none focus:border-theme focus:ring-2 focus:ring-theme/40 transition shadow-inner">
-                <div id="searchResults" class="absolute left-0 right-0 mt-2 bg-[#020804]/98 border border-theme/60 rounded-xl shadow-2xl hidden z-50 max-h-64 overflow-y-auto backdrop-blur-2xl"></div>
+<body class="musicy">
+    """
+    + ambient_html
+    + """
+    <header class="top">
+        <div class="top-inner">
+            <div class="top-left">
+                <a href="/" class="brand" aria-label="Musicy">
+                    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle class="ring-b" cx="16" cy="16" r="9.6" fill="none" stroke="currentColor" stroke-width="0.8"/><circle class="core" cx="16" cy="16" r="4.6"/><circle class="hole" cx="16" cy="16" r="1.1"/></svg>
+                    <span class="brand-name" data-i18n="brandName">Musicy</span>
+                </a>
+                <nav class="top-nav">
+                    <a href="/" class="is-active" data-i18n="home">Home</a>
+                    <a href="/top-rated" data-i18n="topRated">Top Rated</a>
+                </nav>
             </div>
-        </div>
-        <div class="flex items-center space-x-2 sm:space-x-4 text-xs font-medium text-gray-300 shrink-0">
-            """
+            <div class="search">
+                <i class="fa-solid fa-magnifying-glass search-ico"></i>
+                <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Search songs or artists on Spotify..." class="search-input" autocomplete="off">
+                <div id="searchResults" class="results hidden"></div>
+            </div>
+            <div class="top-tools">
+                """
     + lang_switcher_html
     + """
-            <a href="/top-rated" class="lg:hidden w-8 h-8 rounded-full bg-[#020804] border border-theme/40 text-theme flex items-center justify-center shadow hover:border-theme transition" title="Top Rated"><i class="fa-solid fa-star text-xs"></i></a>
-            <div id="userProfileArea">
-                <a href="/login" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-theme to-themeDark text-gray-950 font-extrabold border border-theme/80 flex items-center justify-center shadow-[0_0_20px_rgba(var(--theme-color),0.7)] hover:scale-110 transition transform duration-300">
-                    <i class="fa-solid fa-user text-xs"></i>
-                </a>
+                <a href="/top-rated" class="icon-link" title="Top Rated"><i class="fa-solid fa-star"></i></a>
+                <div id="userProfileArea">
+                    <a href="/login" aria-label="Sign in"><i class="fa-solid fa-user"></i></a>
+                </div>
             </div>
         </div>
     </header>
-
-    <div class="flex flex-1">
-        <aside class="w-64 border-r border-theme/30 bg-[#000000]/85 p-4 hidden lg:flex flex-col justify-between shrink-0 backdrop-blur-2xl">
-            <div class="space-y-6 w-full">
-                <nav class="space-y-2 text-xs font-medium">
-                    <a href="/" class="flex items-center space-x-3 px-4 py-3 rounded-2xl bg-theme/25 text-theme font-semibold border-l-4 border-theme shadow-[0_0_20px_rgba(var(--theme-color),0.3)]"><i class="fa-solid fa-house w-4"></i><span data-i18n="home">Home</span></a>
-                    <a href="/top-rated" class="flex items-center space-x-3 px-4 py-3 rounded-2xl text-gray-400 hover:bg-theme/20 hover:text-white transition duration-300"><i class="fa-solid fa-star w-4 text-theme"></i><span data-i18n="topRated">Top Rated</span></a>
-                    <button onclick="toggleDarkMode()" class="luxury-dark-btn w-full flex items-center space-x-3 px-4 py-3 rounded-2xl bg-[#020804] border border-theme/50 text-gray-200 hover:text-theme hover:border-theme transition duration-300 shadow-[0_0_15px_rgba(var(--theme-color),0.2)] text-left">
-                        <i id="darkModeIcon" class="fa-solid fa-moon w-4 text-theme"></i>
-                        <span data-i18n="darkMode" id="darkModeText">Dark Mode</span>
-                    </button>
-                </nav>
+    <main class="page">
+        <section class="hero">
+            <div class="hero-copy">
+                <h1 class="display hero-title">
+                    <span class="line"><span data-i18n="heroTitle1">Discover. Rate.</span></span>
+                    <span class="line"><span data-i18n="heroTitle2">Share Music.</span></span>
+                </h1>
+                <p class="hero-tag" data-i18n="heroTag">Real fans. Real ratings.</p>
+                <p class="hero-desc" data-i18n="heroDesc">Search any song from Spotify to view ratings</p>
+                <div class="hero-cta"><a href="/top-rated" class="btn btn-ghost" data-i18n="topRated">Top Rated</a></div>
             </div>
-        </aside>
-
-        <main class="flex-1 p-3 sm:p-6 md:p-10 space-y-6 sm:space-y-10 overflow-x-hidden">
-            <div class="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-r from-[#031408] via-[#010803] to-[#000000] border border-theme/60 p-5 sm:p-8 md:p-14 shadow-[0_20px_60px_rgba(0,0,0,0.9)] flex flex-col justify-between backdrop-blur-2xl group neon-border">
-                <div class="absolute -right-12 -bottom-12 w-48 sm:w-80 h-48 sm:h-80 bg-theme/25 rounded-full blur-3xl group-hover:scale-150 transition duration-1000 pointer-events-none"></div>
-                <div class="relative z-10 space-y-3 sm:space-y-5 max-w-xl">
-                    <span class="text-[10px] sm:text-[11px] tracking-widest text-theme uppercase font-bold bg-theme/20 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-theme/40 shadow-sm" data-i18n="heroTag">Real fans. Real ratings.</span>
-                    <h1 class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight"><span data-i18n="heroTitle1">Discover. Rate.</span><br><span class="text-theme drop-shadow-[0_0_25px_rgba(var(--theme-color),0.8)]" data-i18n="heroTitle2">Share Music.</span></h1>
-                    <p class="text-xs sm:text-sm text-gray-300 leading-relaxed font-light" data-i18n="heroDesc">Search any song from Spotify to view ratings</p>
+            {% if songs %}
+            {% set spot = songs[0] %}
+            <a href="/song/{{ spot.spotify_id }}" class="spotlight">
+                <div class="sleeve">
+                    <div class="vinyl-wrap"><div class="vinyl"></div></div>
+                    <img class="cover" src="{{ spot.img }}" alt="{{ spot.title }}">
                 </div>
+                <div class="spot-meta">
+                    <div class="spot-title">{{ spot.title }}</div>
+                    <div class="spot-artist">{{ spot.artist }}</div>
+                    <div class="spot-rate"><span class="stars" style="--r: {{ spot.rating }}"></span><b>{{ spot.rating }}</b></div>
+                </div>
+            </a>
+            {% endif %}
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <h2 class="h2"><span data-i18n="trendingTitle">Trending &amp; Random Songs</span><span class="count">({{ songs|length }})</span></h2>
+                <button type="button" onclick="location.reload()" class="btn btn-ghost btn-sm"><i class="fa-solid fa-rotate"></i><span data-i18n="refreshSongs">Refresh Songs</span></button>
             </div>
-
-            <section class="space-y-4 sm:space-y-5">
-                <div class="flex items-center justify-between gap-2">
-                    <h2 class="text-xs sm:text-base font-bold text-white flex items-center space-x-2"><i class="fa-solid fa-fire text-theme text-xs animate-bounce"></i><span data-i18n="trendingTitle">Trending & Random Songs</span> <span class="text-[10px] sm:text-xs text-gray-400 font-normal">({{ songs|length }})</span></h2>
-                    <button onclick="location.reload()" class="text-[11px] sm:text-xs text-theme hover:text-white font-semibold flex items-center space-x-1.5 bg-[#020804] border border-theme/50 px-3 sm:px-4 py-2 rounded-xl transition hover:border-theme shadow shrink-0">
-                        <i class="fa-solid fa-rotate"></i> <span data-i18n="refreshSongs">Refresh Songs</span>
-                    </button>
-                </div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-5">
-                    {% for song in songs %}
-                    <div onclick="window.location.href='/song/{{ song.spotify_id }}'" class="glass-card rounded-xl sm:rounded-2xl p-2.5 sm:p-4 space-y-2 cursor-pointer group flex flex-col justify-between">
-                        <div class="relative overflow-hidden rounded-lg sm:rounded-xl">
-                            <img src="{{ song.img }}" class="w-full h-28 sm:h-36 object-cover group-hover:scale-115 transition duration-700">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
-                        </div>
-                        <div class="space-y-0.5">
-                            <h4 class="font-bold text-xs text-white truncate group-hover:text-theme transition">{{ song.title }}</h4>
-                            <p class="text-[10px] text-gray-400 truncate">{{ song.artist }}</p>
-                        </div>
-                        <div class="flex items-center justify-between text-[10px] pt-2 border-t border-theme/20">
-                            <span class="text-theme font-bold flex items-center"><i class="fa-solid fa-star text-[9px] mr-1"></i> {{ song.rating }}</span>
-                            <span class="text-gray-500">({{ song.votes }} <span data-i18n="votesText">votes</span>)</span>
-                        </div>
+            <div class="wall">
+                {% for song in songs %}
+                <a href="/song/{{ song.spotify_id }}" class="tile">
+                    <div class="tile-cover"><img src="{{ song.img }}" alt="" loading="lazy"></div>
+                    <div class="tile-meta">
+                        <h4 class="tile-title">{{ song.title }}</h4>
+                        <p class="tile-artist">{{ song.artist }}</p>
+                        <div class="tile-foot"><span class="stars" style="--r: {{ song.rating }}"></span><b>{{ song.rating }}</b><span class="votes-note">({{ song.votes }} <span data-i18n="votesText">votes</span>)</span></div>
                     </div>
-                    {% endfor %}
-                </div>
-            </section>
-        </main>
-    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <footer class="foot">
+        <div class="foot-inner">
+            <span class="credit">Made with <i class="fa-solid fa-heart"></i> by Ammar</span>
+            <span class="foot-brand">Musicy</span>
+        </div>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => { 
@@ -1165,6 +1566,7 @@ top_rated_html = (
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#110e0c">
     <title>Top Rated Songs - Musicy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -1180,67 +1582,73 @@ top_rated_html = (
             }
         }
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=Hanken+Grotesk:wght@300..700&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     """
     + background_styles
     + """
 </head>
-<body class="text-gray-100 font-sans antialiased min-h-screen flex flex-col">
-    <header class="border-b border-theme/40 bg-[#000000]/95 backdrop-blur-2xl sticky top-0 z-50 h-16 flex items-center px-4 md:px-8 justify-between shadow-[0_4px_35px_rgba(0,0,0,0.9)]">
-        <div class="flex items-center space-x-12 w-full"><a href="/" class="flex items-center space-x-2 text-theme font-bold text-xl tracking-wider"><i class="fa-solid fa-music text-theme"></i><span class="tracking-widest" data-i18n="brandName">Musicy</span></a></div>
-        <div class="flex items-center space-x-4 text-xs font-medium text-gray-300">
-            """
-    + lang_switcher_html
+<body class="musicy">
+    """
+    + ambient_html
     + """
-            <a href="/" class="flex items-center space-x-1.5 text-theme hover:text-white transition"><i class="fa-solid fa-house"></i> <span data-i18n="home">Home</span></a>
-        </div>
-    </header>
-    <div class="flex flex-1">
-        <aside class="w-64 border-r border-theme/30 bg-[#000000]/85 p-4 hidden lg:flex flex-col justify-between shrink-0 backdrop-blur-2xl">
-            <div class="space-y-6 w-full">
-                <nav class="space-y-2 text-xs font-medium">
-                    <a href="/" class="flex items-center space-x-3 px-4 py-3 rounded-2xl text-gray-400 hover:bg-theme/20 hover:text-white transition duration-300"><i class="fa-solid fa-house w-4 text-theme"></i><span data-i18n="home">Home</span></a>
-                    <a href="/top-rated" class="flex items-center space-x-3 px-4 py-3 rounded-2xl bg-theme/25 text-theme font-semibold border-l-4 border-theme shadow-[0_0_20px_rgba(var(--theme-color),0.3)]"><i class="fa-solid fa-star w-4"></i><span data-i18n="topRated">Top Rated</span></a>
-                    <button onclick="toggleDarkMode()" class="luxury-dark-btn w-full flex items-center space-x-3 px-4 py-3 rounded-2xl bg-[#020804] border border-theme/50 text-gray-200 hover:text-theme hover:border-theme transition duration-300 shadow-[0_0_15px_rgba(var(--theme-color),0.2)] text-left">
-                        <i id="darkModeIcon" class="fa-solid fa-moon w-4 text-theme"></i>
-                        <span data-i18n="darkMode" id="darkModeText">Dark Mode</span>
-                    </button>
+    <header class="top">
+        <div class="top-inner">
+            <div class="top-left">
+                <a href="/" class="brand" aria-label="Musicy">
+                    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle class="ring-b" cx="16" cy="16" r="9.6" fill="none" stroke="currentColor" stroke-width="0.8"/><circle class="core" cx="16" cy="16" r="4.6"/><circle class="hole" cx="16" cy="16" r="1.1"/></svg>
+                    <span class="brand-name" data-i18n="brandName">Musicy</span>
+                </a>
+                <nav class="top-nav">
+                    <a href="/" data-i18n="home">Home</a>
+                    <a href="/top-rated" class="is-active" data-i18n="topRated">Top Rated</a>
                 </nav>
             </div>
-        </aside>
-        <main class="flex-1 p-3 sm:p-6 md:p-10 space-y-6 sm:space-y-8 max-w-6xl mx-auto w-full">
-            <div class="space-y-2">
-                <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-white flex items-center space-x-2 sm:space-x-3"><i class="fa-solid fa-star text-theme animate-spin"></i><span data-i18n="topRatedTitle">All Top Rated Songs</span></h1>
-                <p class="text-xs text-gray-400" data-i18n="topRatedDesc">Explore the highest-rated songs ranked by user reviews and votes on Musicy.</p>
+            <div class="top-tools">
+                """
+    + lang_switcher_html
+    + """
             </div>
-            <div class="space-y-3">
-                {% for song in songs %}
-                <div onclick="window.location.href='/song/{{ song.spotify_id }}'" class="glass-card rounded-2xl p-3 sm:p-4.5 flex items-center justify-between cursor-pointer group gap-2">
-                    <div class="flex items-center space-x-2.5 sm:space-x-4 min-w-0">
-                        <span class="text-xs font-bold text-gray-500 w-4 sm:w-6 text-center shrink-0">#{{ loop.index }}</span>
-                        <img src="{{ song.img }}" class="w-11 h-11 sm:w-14 sm:h-14 object-cover rounded-xl border border-theme/50 shadow-md shrink-0">
-                        <div class="min-w-0">
-                            <h3 class="font-bold text-xs sm:text-sm text-white group-hover:text-theme transition truncate">{{ song.title }}</h3>
-                            <p class="text-[10px] sm:text-xs text-gray-400 truncate">{{ song.artist }} &bull; <span class="text-gray-500">{{ song.release_year }}</span></p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-3 text-right shrink-0">
-                        <div>
-                            <div class="text-xs sm:text-sm font-extrabold text-theme flex items-center justify-end space-x-1">
-                                <i class="fa-solid fa-star text-[10px]"></i>
-                                <span>{{ song.rating }}</span>
-                            </div>
-                            <div class="text-[10px] text-gray-500"><span class="font-bold">{{ song.votes }}</span> <span data-i18n="votesText">votes</span></div>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-xs text-gray-600 group-hover:text-theme group-hover:translate-x-1 transition hidden sm:inline pr-2"></i>
-                    </div>
-                </div>
-                {% else %}
-                <div class="glass-card rounded-2xl p-8 text-center text-gray-400 text-xs" data-i18n="noRated">No rated songs found yet. Start searching and rating songs!</div>
-                {% endfor %}
-            </div>
-        </main>
-    </div>
+        </div>
+    </header>
+    <main class="page narrow">
+        <div class="page-head">
+            <h1 class="display h1" data-i18n="topRatedTitle">All Top Rated Songs</h1>
+            <p class="lede" data-i18n="topRatedDesc">Explore the highest-rated songs ranked by user reviews and votes on Musicy.</p>
+        </div>
+        <ol class="rank">
+            {% for song in songs %}
+            <li class="{% if loop.index == 1 %}is-first{% endif %}">
+                <a href="/song/{{ song.spotify_id }}" class="rank-row">
+                    <span class="rank-num">{{ loop.index }}</span>
+                    <img class="rank-cover" src="{{ song.img }}" alt="">
+                    <span class="rank-main">
+                        <span class="rank-title">{{ song.title }}</span>
+                        <span class="rank-sub"><span>{{ song.artist }}</span><span class="sep"></span><span>{{ song.release_year }}</span></span>
+                    </span>
+                    <span class="rank-score">
+                        <span class="score-num">{{ song.rating }}</span>
+                        <span class="stars" style="--r: {{ song.rating }}"></span>
+                        <span class="rank-votes"><b>{{ song.votes }}</b> <span data-i18n="votesText">votes</span></span>
+                    </span>
+                    <i class="fa-solid fa-chevron-right chev"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="empty" data-i18n="noRated">No rated songs found yet. Start searching and rating songs!</li>
+            {% endfor %}
+        </ol>
+    </main>
+
+    <footer class="foot">
+        <div class="foot-inner">
+            <span class="credit">Made with <i class="fa-solid fa-heart"></i> by Ammar</span>
+            <span class="foot-brand">Musicy</span>
+        </div>
+    </footer>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
@@ -1265,6 +1673,7 @@ login_html = (
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#110e0c">
     <title>Sign In - Musicy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -1280,31 +1689,47 @@ login_html = (
             }
         }
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=Hanken+Grotesk:wght@300..700&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     """
     + background_styles
     + """
 </head>
-<body class="text-gray-100 font-sans min-h-screen flex items-center justify-center p-4">
-    <div class="absolute top-4 right-4">
+<body class="musicy auth-page">
+    """
+    + ambient_html
+    + """
+    <div class="auth-top">
+        <a href="/" class="brand" aria-label="Musicy">
+                    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle class="ring-b" cx="16" cy="16" r="9.6" fill="none" stroke="currentColor" stroke-width="0.8"/><circle class="core" cx="16" cy="16" r="4.6"/><circle class="hole" cx="16" cy="16" r="1.1"/></svg>
+                    <span class="brand-name" data-i18n="brandName">Musicy</span>
+                </a>
         """
     + lang_switcher_html
     + """
     </div>
-    <div class="w-full max-w-md glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl space-y-5 relative neon-border">
-        <a href="/" class="absolute top-5 left-5 text-gray-400 hover:text-white text-xs flex items-center space-x-1 transition"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="home">Home</span></a>
-        <div class="text-center space-y-2 pt-3">
-            <div class="inline-flex w-14 h-14 rounded-2xl bg-theme/20 border border-theme/50 text-theme items-center justify-center text-xl shadow-inner"><i class="fa-solid fa-music"></i></div>
-            <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight" data-i18n="welcomeBack">Welcome Back</h1>
-            <p class="text-xs text-gray-400" data-i18n="loginDesc">Sign in to rate songs and share your reviews on Musicy</p>
+    <main class="auth-main">
+            <div class="auth-art" aria-hidden="true">
+                <div class="vinyl-wrap"><div class="vinyl"></div></div>
+            </div>
+        <section class="auth-panel">
+            <a href="/" class="back"><i class="fa-solid fa-arrow-left"></i><span data-i18n="home">Home</span></a>
+            <h1 class="display auth-title" data-i18n="welcomeBack">Welcome Back</h1>
+            <p class="lede" data-i18n="loginDesc">Sign in to rate songs and share your reviews on Musicy</p>
+            <div class="field"><label data-i18n="emailLabel">Email Address</label><input type="email" id="loginEmail" placeholder="name@example.com" class="input"></div>
+            <div class="field"><label data-i18n="passwordLabel">Password</label><input type="password" id="loginPassword" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" class="input"></div>
+            <button type="button" onclick="handleLogin()" class="btn btn-primary btn-block" data-i18n="signInBtn">Sign In</button>
+            <p class="switch"><span data-i18n="noAccount">Don't have an account?</span><a href="/register" data-i18n="createAccountLink">Create Account</a></p>
+        </section>
+    </main>
+    <footer class="foot">
+        <div class="foot-inner">
+            <span class="credit">Made with <i class="fa-solid fa-heart"></i> by Ammar</span>
+            <span class="foot-brand">Musicy</span>
         </div>
-        <div class="space-y-3.5 text-xs">
-            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="emailLabel">Email Address</label><input type="email" id="loginEmail" placeholder="name@example.com" class="w-full bg-[#020804] text-gray-200 px-3.5 py-3 rounded-xl border border-theme/40 focus:outline-none focus:border-theme focus:ring-2 focus:ring-theme/30 transition shadow-inner"></div>
-            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="passwordLabel">Password</label><input type="password" id="loginPassword" placeholder="••••••••" class="w-full bg-[#020804] text-gray-200 px-3.5 py-3 rounded-xl border border-theme/40 focus:outline-none focus:border-theme focus:ring-2 focus:ring-theme/30 transition shadow-inner"></div>
-            <button onclick="handleLogin()" class="w-full bg-gradient-to-r from-theme to-themeDark hover:opacity-95 text-gray-950 font-bold py-3.5 rounded-xl transition shadow-[0_0_25px_rgba(var(--theme-color),0.5)] text-xs mt-1 hover:scale-[1.01] transform duration-300" data-i18n="signInBtn">Sign In</button>
-        </div>
-        <div class="text-center text-xs text-gray-400 pt-1"><span data-i18n="noAccount">Don't have an account?</span> <a href="/register" class="text-theme font-bold hover:underline" data-i18n="createAccountLink">Create Account</a></div>
-    </div>
+    </footer>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
@@ -1335,6 +1760,7 @@ register_html = (
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#110e0c">
     <title>Create Account - Musicy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -1350,32 +1776,48 @@ register_html = (
             }
         }
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=Hanken+Grotesk:wght@300..700&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     """
     + background_styles
     + """
 </head>
-<body class="text-gray-100 font-sans min-h-screen flex items-center justify-center p-4">
-    <div class="absolute top-4 right-4">
+<body class="musicy auth-page">
+    """
+    + ambient_html
+    + """
+    <div class="auth-top">
+        <a href="/" class="brand" aria-label="Musicy">
+                    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle class="ring-b" cx="16" cy="16" r="9.6" fill="none" stroke="currentColor" stroke-width="0.8"/><circle class="core" cx="16" cy="16" r="4.6"/><circle class="hole" cx="16" cy="16" r="1.1"/></svg>
+                    <span class="brand-name" data-i18n="brandName">Musicy</span>
+                </a>
         """
     + lang_switcher_html
     + """
     </div>
-    <div class="w-full max-w-md glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl space-y-5 relative neon-border">
-        <a href="/" class="absolute top-5 left-5 text-gray-400 hover:text-white text-xs flex items-center space-x-1 transition"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="home">Home</span></a>
-        <div class="text-center space-y-2 pt-3">
-            <div class="inline-flex w-14 h-14 rounded-2xl bg-theme/20 border border-theme/50 text-theme items-center justify-center text-xl shadow-inner"><i class="fa-solid fa-music"></i></div>
-            <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight" data-i18n="createAccountTitle">Create Account</h1>
-            <p class="text-xs text-gray-400" data-i18n="createAccountDesc">Join Musicy community and start rating today</p>
+    <main class="auth-main">
+            <div class="auth-art" aria-hidden="true">
+                <div class="vinyl-wrap"><div class="vinyl"></div></div>
+            </div>
+        <section class="auth-panel">
+            <a href="/" class="back"><i class="fa-solid fa-arrow-left"></i><span data-i18n="home">Home</span></a>
+            <h1 class="display auth-title" data-i18n="createAccountTitle">Create Account</h1>
+            <p class="lede" data-i18n="createAccountDesc">Join Musicy community and start rating today</p>
+            <div class="field"><label data-i18n="usernameLabel">Username</label><input type="text" id="regUsername" placeholder="musiclover99" class="input"></div>
+            <div class="field"><label data-i18n="emailLabel">Email Address</label><input type="email" id="regEmail" placeholder="name@example.com" class="input"></div>
+            <div class="field"><label data-i18n="passwordLabel">Password</label><input type="password" id="regPassword" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" class="input"></div>
+            <button type="button" onclick="handleRegister()" class="btn btn-primary btn-block" data-i18n="createAccountTitle">Create Account</button>
+            <p class="switch"><span data-i18n="alreadyAccount">Already have an account?</span><a href="/login" data-i18n="signInLink">Sign In</a></p>
+        </section>
+    </main>
+    <footer class="foot">
+        <div class="foot-inner">
+            <span class="credit">Made with <i class="fa-solid fa-heart"></i> by Ammar</span>
+            <span class="foot-brand">Musicy</span>
         </div>
-        <div class="space-y-3.5 text-xs">
-            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="usernameLabel">Username</label><input type="text" id="regUsername" placeholder="musiclover99" class="w-full bg-[#020804] text-gray-200 px-3.5 py-3 rounded-xl border border-theme/40 focus:outline-none focus:border-theme focus:ring-2 focus:ring-theme/30 transition shadow-inner"></div>
-            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="emailLabel">Email Address</label><input type="email" id="regEmail" placeholder="name@example.com" class="w-full bg-[#020804] text-gray-200 px-3.5 py-3 rounded-xl border border-theme/40 focus:outline-none focus:border-theme focus:ring-2 focus:ring-theme/30 transition shadow-inner"></div>
-            <div class="space-y-1"><label class="text-gray-400 font-medium" data-i18n="passwordLabel">Password</label><input type="password" id="regPassword" placeholder="••••••••" class="w-full bg-[#020804] text-gray-200 px-3.5 py-3 rounded-xl border border-theme/40 focus:outline-none focus:border-theme focus:ring-2 focus:ring-theme/30 transition shadow-inner"></div>
-            <button onclick="handleRegister()" class="w-full bg-gradient-to-r from-theme to-themeDark hover:opacity-95 text-gray-950 font-bold py-3.5 rounded-xl transition shadow-[0_0_25px_rgba(var(--theme-color),0.5)] text-xs mt-1 hover:scale-[1.01] transform duration-300" data-i18n="createAccountTitle">Create Account</button>
-        </div>
-        <div class="text-center text-xs text-gray-400 pt-1"><span data-i18n="alreadyAccount">Already have an account?</span> <a href="/login" class="text-theme font-bold hover:underline" data-i18n="signInLink">Sign In</a></div>
-    </div>
+    </footer>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
@@ -1407,6 +1849,7 @@ profile_html = (
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#110e0c">
     <title>Edit Profile - Musicy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -1422,34 +1865,49 @@ profile_html = (
             }
         }
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=Hanken+Grotesk:wght@300..700&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     """
     + background_styles
     + """
 </head>
-<body class="text-gray-100 font-sans min-h-screen flex items-center justify-center p-4">
-    <div class="absolute top-4 right-4">
+<body class="musicy auth-page">
+    """
+    + ambient_html
+    + """
+    <div class="auth-top">
+        <a href="/" class="brand" aria-label="Musicy">
+                    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle class="ring-b" cx="16" cy="16" r="9.6" fill="none" stroke="currentColor" stroke-width="0.8"/><circle class="core" cx="16" cy="16" r="4.6"/><circle class="hole" cx="16" cy="16" r="1.1"/></svg>
+                    <span class="brand-name" data-i18n="brandName">Musicy</span>
+                </a>
         """
     + lang_switcher_html
     + """
     </div>
-    <div class="w-full max-w-md glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl space-y-5 relative neon-border">
-        <a href="/" class="absolute top-5 left-5 text-gray-400 hover:text-white text-xs flex items-center space-x-1 transition"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="home">Home</span></a>
-        <div class="text-center space-y-3 pt-3">
-            <div class="relative w-20 h-20 sm:w-24 sm:h-24 mx-auto">
-                <img id="profileAvatarPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-theme shadow-xl">
+    <main class="auth-main">
+            <div class="auth-art" aria-hidden="true">
+                <div class="vinyl-wrap"><div class="vinyl"></div></div>
             </div>
-            <h1 class="text-lg sm:text-xl font-extrabold text-white tracking-tight" id="profileUsernameDisplay">Username</h1>
-            <p class="text-xs text-gray-400" data-i18n="profileTitle">تعديل الصورة الشخصية</p>
-        </div>
-        <div class="space-y-4 text-xs">
-            <div class="space-y-1.5">
-                <label class="text-gray-400 font-medium" data-i18n="avatarFileLabel">اختر صورة من جهازك (كمبيوتر أو هاتف):</label>
-                <input type="file" id="avatarFileInput" accept="image/*" class="w-full bg-[#020804] text-gray-200 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-theme file:text-gray-950 hover:file:bg-themeDark file:cursor-pointer p-2.5 rounded-xl border border-theme/50 focus:outline-none transition shadow-inner">
+        <section class="auth-panel">
+            <a href="/" class="back"><i class="fa-solid fa-arrow-left"></i><span data-i18n="home">Home</span></a>
+            <img id="profileAvatarPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" class="avatar-lg" alt="">
+            <h1 class="who-line" id="profileUsernameDisplay">Username</h1>
+            <p class="lede" data-i18n="profileTitle">تعديل الصورة الشخصية</p>
+            <div class="field">
+                <label data-i18n="avatarFileLabel">اختر صورة من جهازك (كمبيوتر أو هاتف):</label>
+                <input type="file" id="avatarFileInput" accept="image/*" class="file">
             </div>
-            <button onclick="saveAvatarFile()" class="w-full bg-gradient-to-r from-theme to-themeDark hover:opacity-95 text-gray-950 font-bold py-3.5 rounded-xl transition shadow-[0_0_25px_rgba(var(--theme-color),0.5)] text-xs mt-1 hover:scale-[1.01] transform duration-300" data-i18n="saveAvatarBtn">رفع وحفظ الصورة الشخصية</button>
+            <button type="button" onclick="saveAvatarFile()" class="btn btn-primary btn-block" data-i18n="saveAvatarBtn">رفع وحفظ الصورة الشخصية</button>
+        </section>
+    </main>
+    <footer class="foot">
+        <div class="foot-inner">
+            <span class="credit">Made with <i class="fa-solid fa-heart"></i> by Ammar</span>
+            <span class="foot-brand">Musicy</span>
         </div>
-    </div>
+    </footer>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
@@ -1510,6 +1968,7 @@ song_detail_template = (
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#110e0c">
     <title>{{ song.title }} - Musicy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -1525,132 +1984,146 @@ song_detail_template = (
             }
         }
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=Hanken+Grotesk:wght@300..700&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     """
     + background_styles
     + """
 </head>
-<body class="text-gray-100 font-sans antialiased min-h-screen flex flex-col">
-    <header class="border-b border-theme/40 bg-[#000000]/95 backdrop-blur-2xl sticky top-0 z-50 h-16 flex items-center px-4 md:px-8 justify-between shadow-[0_4px_35px_rgba(0,0,0,0.9)]">
-        <div class="flex items-center space-x-12 w-full"><a href="/" class="flex items-center space-x-2 text-theme font-bold text-xl tracking-wider"><i class="fa-solid fa-music text-theme"></i><span class="tracking-widest" data-i18n="brandName">Musicy</span></a></div>
-        <div class="flex items-center space-x-4 text-xs font-medium text-gray-300">
-            """
+<body class="musicy">
+    """
+    + ambient_html
+    + """
+    <header class="top">
+        <div class="top-inner">
+            <div class="top-left">
+                <a href="/" class="brand" aria-label="Musicy">
+                    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle class="ring-b" cx="16" cy="16" r="9.6" fill="none" stroke="currentColor" stroke-width="0.8"/><circle class="core" cx="16" cy="16" r="4.6"/><circle class="hole" cx="16" cy="16" r="1.1"/></svg>
+                    <span class="brand-name" data-i18n="brandName">Musicy</span>
+                </a>
+                <nav class="top-nav">
+                    <a href="/" data-i18n="home">Home</a>
+                    <a href="/top-rated" data-i18n="topRated">Top Rated</a>
+                </nav>
+            </div>
+            <div class="top-tools">
+                """
     + lang_switcher_html
     + """
-            <a href="/" class="flex items-center space-x-1.5 text-theme hover:text-white transition"><i class="fa-solid fa-house"></i> <span data-i18n="home">Home</span></a>
+            </div>
         </div>
     </header>
-    <main class="flex-1 p-3 sm:p-6 md:p-10 space-y-6 sm:space-y-10 max-w-5xl mx-auto w-full">
-        <div class="bg-gradient-to-r from-[#031408] via-[#010803] to-[#000000] border border-theme/60 rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-10 flex flex-col md:flex-row items-center gap-5 sm:gap-8 shadow-[0_20px_60px_rgba(0,0,0,0.9)] backdrop-blur-2xl neon-border text-center md:text-left">
-            <div class="relative shrink-0 group">
-                <img id="songCoverImg" src="{{ song.img }}" crossorigin="anonymous" class="w-36 h-36 sm:w-52 sm:h-52 md:w-60 md:h-60 object-cover rounded-2xl shadow-2xl border border-theme/60 group-hover:scale-105 transition duration-700 mx-auto">
-                <div class="absolute inset-0 bg-theme/25 rounded-2xl filter blur-xl opacity-0 group-hover:opacity-100 transition duration-700 -z-10"></div>
-            </div>
-            <div class="flex-1 space-y-3 w-full min-w-0">
-                <div>
-                    <h1 class="text-xl sm:text-3xl md:text-4xl font-extrabold text-white truncate">{{ song.title }}</h1>
-                    <p class="text-sm sm:text-lg text-gray-300 font-medium truncate">{{ song.artist }}</p>
-                    <p class="text-[11px] sm:text-xs text-gray-400 mt-0.5">{{ song.release_year }} &bull; {{ song.genre }}</p>
-                </div>
-                <div class="flex items-center justify-center md:justify-start space-x-2.5">
-                    <div class="flex text-theme text-xs sm:text-sm"><i class="fa-solid fa-star"></i></div>
-                    <span class="text-lg sm:text-xl font-bold text-white">{{ song.rating }} <span class="text-xs text-gray-400 font-normal">/5</span></span>
-                    <span class="text-xs text-gray-400">({{ song.votes }} <span data-i18n="votesText">votes</span>)</span>
-                </div>
-                <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2.5 sm:gap-4 pt-1 w-full">
-                    <button id="mainRateBtn" onclick="openRateModal()" class="w-full sm:w-auto bg-gradient-to-r from-theme to-themeDark hover:opacity-95 text-gray-950 font-bold px-5 sm:px-7 py-3 rounded-xl text-xs flex items-center justify-center space-x-2 transition shadow-[0_0_25px_rgba(var(--theme-color),0.5)] hover:scale-105 transform duration-300">
-                        <i class="fa-solid fa-star"></i>
-                        <span id="mainRateBtnText" data-i18n="rateSongBtn">Rate This Song</span>
-                    </button>
-                    <a href="https://open.spotify.com/track/{{ song.spotify_id }}" target="_blank" class="w-full sm:w-auto bg-[#020804] border border-theme/50 hover:bg-theme/25 text-theme font-bold px-5 sm:px-7 py-3 rounded-xl text-xs flex items-center justify-center space-x-2 transition shadow-lg hover:scale-105 transform duration-300">
-                        <i class="fa-brands fa-spotify text-sm"></i>
-                        <span data-i18n="listenSpotify">Listen on Spotify</span>
-                    </a>
+    <main class="page">
+        <section class="track">
+            <div class="track-art">
+                <div class="sleeve">
+                    <div class="vinyl-wrap"><div class="vinyl"></div></div>
+                    <img id="songCoverImg" class="cover" src="{{ song.img }}" crossorigin="anonymous" alt="{{ song.title }}">
                 </div>
             </div>
-        </div>
+            <div class="track-info">
+                <h1 class="display track-title">{{ song.title }}</h1>
+                <p class="track-artist">{{ song.artist }}</p>
+                <p class="track-meta"><span>{{ song.release_year }}</span><span class="sep"></span><span>{{ song.genre }}</span></p>
+                <div class="track-rating">
+                    <span><span class="big-score">{{ song.rating }}</span><span class="of">/5</span></span>
+                    <span class="stars lg" style="--r: {{ song.rating }}"></span>
+                    <span class="votes">({{ song.votes }} <span data-i18n="votesText">votes</span>)</span>
+                </div>
+                <div class="actions">
+                    <button type="button" id="mainRateBtn" onclick="openRateModal()" class="btn btn-primary"><i class="fa-solid fa-star"></i><span id="mainRateBtnText" data-i18n="rateSongBtn">Rate This Song</span></button>
+                    <a href="https://open.spotify.com/track/{{ song.spotify_id }}" target="_blank" rel="noopener" class="btn btn-ghost"><i class="fa-brands fa-spotify"></i><span data-i18n="listenSpotify">Listen on Spotify</span></a>
+                </div>
+            </div>
+        </section>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 space-y-4 sm:space-y-6">
-                <div class="flex items-center justify-between"><h3 class="text-sm sm:text-base font-bold text-white" data-i18n="reviewsTitle">Reviews & Ratings</h3><button id="secRateBtn" onclick="openRateModal()" class="bg-[#020804] hover:bg-theme/25 text-theme font-bold px-3 py-2 rounded-xl text-xs border border-theme/50 transition shadow" data-i18n="writeReviewBtn">Write Review</button></div>
+        <section class="section cols">
+            <div class="reviews">
+                <div class="section-head">
+                    <h3 class="h3" data-i18n="reviewsTitle">Reviews &amp; Ratings</h3>
+                    <button type="button" id="secRateBtn" onclick="openRateModal()" class="btn btn-ghost btn-sm" data-i18n="writeReviewBtn">Write Review</button>
+                </div>
                 {% if reviews %}
-                    <div class="space-y-3">
-                        {% for rev in reviews %}
-                        <div class="glass-card rounded-2xl p-4 sm:p-6 space-y-3" data-username="{{ rev.username }}">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3 min-w-0">
-                                    <img src="{{ rev.avatar }}" class="w-9 h-9 sm:w-11 sm:h-11 rounded-full object-cover border border-theme/70 shadow-md shrink-0">
-                                    <div class="min-w-0">
-                                        <h4 class="font-bold text-sm text-white truncate">{{ rev.username }}</h4>
-                                        <span class="text-[11px] text-gray-500 time-ago-el" data-timestamp="{{ rev.timestamp }}"></span>
-                                    </div>
-                                </div>
-                                <div class="flex items-center space-x-1 text-theme text-xs font-bold shrink-0"><i class="fa-solid fa-star text-[10px]"></i><span>{{ rev.rating }}/5</span></div>
+                <div class="review-list">
+                    {% for rev in reviews %}
+                    <article class="review" data-username="{{ rev.username }}">
+                        <div class="review-head">
+                            <img src="{{ rev.avatar }}" class="avatar" alt="">
+                            <div class="who">
+                                <h4>{{ rev.username }}</h4>
+                                <span class="when time-ago-el" data-timestamp="{{ rev.timestamp }}"></span>
                             </div>
-                            <p class="text-sm sm:text-base text-gray-200 leading-relaxed font-normal break-words py-1">{{ rev.comment }}</p>
-                            <div class="flex items-center justify-between pt-2 border-t border-theme/20 text-xs">
-                                <button onclick="likeReview({{ rev.id }}, this)" class="flex items-center space-x-2 text-gray-300 hover:text-theme transition bg-[#020804] px-3.5 py-2 rounded-xl border border-theme/30 shadow">
-                                    <i class="fa-solid fa-heart text-gray-400 like-icon-{{ rev.id }}" data-review-id="{{ rev.id }}"></i>
-                                    <span>Like</span>
-                                    <span class="font-bold text-white ml-1 like-count-{{ rev.id }}">{{ rev.likes }}</span>
-                                </button>
-                            </div>
+                            <div class="review-score"><span class="stars" style="--r: {{ rev.rating }}"></span><span>{{ rev.rating }}/5</span></div>
                         </div>
-                        {% endfor %}
-                    </div>
+                        <p class="review-text">{{ rev.comment }}</p>
+                        <div class="review-foot">
+                            <button type="button" onclick="likeReview({{ rev.id }}, this)" class="like-btn">
+                                <i class="fa-solid fa-heart text-gray-400 like-icon-{{ rev.id }}" data-review-id="{{ rev.id }}"></i>
+                                <span>Like</span>
+                                <b class="like-count-{{ rev.id }}">{{ rev.likes }}</b>
+                            </button>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
                 {% else %}
-                    <div class="glass-card rounded-2xl p-6 text-center text-gray-400 text-xs" data-i18n="noReviews">No reviews yet. Be the first to review this song!</div>
+                <div class="empty" data-i18n="noReviews">No reviews yet. Be the first to review this song!</div>
                 {% endif %}
             </div>
-            <div class="glass-card rounded-2xl p-4 sm:p-6 space-y-3 h-fit">
-                <h4 class="font-bold text-xs text-white uppercase tracking-wider" data-i18n="ratingDetails">Rating Details</h4>
-                <div class="space-y-2.5 text-xs text-gray-400">
-                    <div class="flex items-center justify-between"><span data-i18n="overallRating">Overall Rating</span><span class="text-theme font-bold">{{ song.rating }} / 5</span></div>
-                    <div class="flex items-center justify-between"><span data-i18n="totalVotes">Total Votes</span><span class="text-white font-bold">{{ song.votes }}</span></div>
-                </div>
-            </div>
-        </div>
+            <aside class="ledger">
+                <h4 data-i18n="ratingDetails">Rating Details</h4>
+                <dl>
+                    <div class="row"><dt data-i18n="overallRating">Overall Rating</dt><dd class="accent">{{ song.rating }} / 5</dd></div>
+                    <div class="row"><dt data-i18n="totalVotes">Total Votes</dt><dd>{{ song.votes }}</dd></div>
+                </dl>
+            </aside>
+        </section>
     </main>
 
-    <!-- نافذة التقييم الفخمة -->
-    <div id="rateModal" class="fixed inset-0 bg-black/90 flex items-center justify-center hidden z-50 p-3 backdrop-blur-xl">
-        <div class="glass-card border border-theme/70 rounded-2xl sm:rounded-3xl p-5 sm:p-8 w-full max-w-md space-y-4 shadow-2xl">
-            <h3 class="text-xs sm:text-base font-bold text-white truncate"><span data-i18n="rateModalTitle">Rate</span> "{{ song.title }}"</h3>
-            <div class="space-y-3 text-xs">
-                <div>
-                    <label class="text-gray-400 block mb-1.5 font-medium" data-i18n="ratingScoreLabel">اختر النجوم (من 1 إلى 5):</label>
-                    <div class="flex items-center justify-between sm:justify-start sm:space-x-4 text-2xl sm:text-3xl text-gray-600 cursor-pointer" id="starContainer">
-                        <i class="fa-solid fa-star hover:text-theme transition transform hover:scale-125 p-1" onclick="setStarRating(1)" data-value="1"></i>
-                        <i class="fa-solid fa-star hover:text-theme transition transform hover:scale-125 p-1" onclick="setStarRating(2)" data-value="2"></i>
-                        <i class="fa-solid fa-star hover:text-theme transition transform hover:scale-125 p-1" onclick="setStarRating(3)" data-value="3"></i>
-                        <i class="fa-solid fa-star hover:text-theme transition transform hover:scale-125 p-1" onclick="setStarRating(4)" data-value="4"></i>
-                        <i class="fa-solid fa-star hover:text-theme transition transform hover:scale-125 p-1" onclick="setStarRating(5)" data-value="5"></i>
-                        <span id="starValueText" class="text-sm font-extrabold text-theme ml-2">5/5</span>
-                    </div>
-                    <input type="hidden" id="hiddenRating" value="5">
+    <footer class="foot">
+        <div class="foot-inner">
+            <span class="credit">Made with <i class="fa-solid fa-heart"></i> by Ammar</span>
+            <span class="foot-brand">Musicy</span>
+        </div>
+    </footer>
+
+    <!-- Rate dialog -->
+    <div id="rateModal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="dialog">
+            <h3 class="dialog-title"><span data-i18n="rateModalTitle">Rate</span> "{{ song.title }}"</h3>
+            <div class="field">
+                <label data-i18n="ratingScoreLabel">اختر النجوم (من 1 إلى 5):</label>
+                <div id="starContainer">
+                    <i class="fa-solid fa-star" onclick="setStarRating(1)" data-value="1"></i>
+                    <i class="fa-solid fa-star" onclick="setStarRating(2)" data-value="2"></i>
+                    <i class="fa-solid fa-star" onclick="setStarRating(3)" data-value="3"></i>
+                    <i class="fa-solid fa-star" onclick="setStarRating(4)" data-value="4"></i>
+                    <i class="fa-solid fa-star" onclick="setStarRating(5)" data-value="5"></i>
+                    <span id="starValueText">5/5</span>
                 </div>
-                <div><label class="text-gray-400 block mb-1.5 font-medium" data-i18n="commentLabel">Your Review / Comment:</label><textarea id="commentInput" rows="3" placeholder="This song is amazing..." class="w-full bg-[#020804] text-gray-200 p-3 rounded-xl border border-theme/40 focus:outline-none focus:border-theme focus:ring-2 focus:ring-theme/30 shadow-inner"></textarea></div>
+                <input type="hidden" id="hiddenRating" value="5">
             </div>
-            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-1">
-                <button onclick="submitRating()" class="w-full sm:flex-1 bg-gradient-to-r from-theme to-themeDark hover:opacity-95 text-gray-950 font-bold py-3 rounded-xl text-xs transition shadow-[0_0_25px_rgba(var(--theme-color),0.5)]" data-i18n="submitRatingBtn">Submit Rating & Generate Story</button>
-                <button onclick="closeRateModal()" class="w-full sm:flex-1 bg-[#020804] hover:bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-3 rounded-xl text-xs transition" data-i18n="cancelBtn">Cancel</button>
+            <div class="field">
+                <label data-i18n="commentLabel">Your Review / Comment:</label>
+                <textarea id="commentInput" rows="3" placeholder="This song is amazing..." class="textarea"></textarea>
+            </div>
+            <div class="dialog-actions">
+                <button type="button" onclick="submitRating()" class="btn btn-primary" data-i18n="submitRatingBtn">Submit Rating &amp; Generate Story</button>
+                <button type="button" onclick="closeRateModal()" class="btn btn-ghost" data-i18n="cancelBtn">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- نافذة معاينة الستوري الفخمة -->
-    <div id="storyModal" class="fixed inset-0 bg-black/95 flex items-center justify-center hidden z-50 p-3 backdrop-blur-2xl">
-        <div class="glass-card border border-theme/80 rounded-2xl sm:rounded-3xl p-4 sm:p-6 w-full max-w-sm space-y-4 shadow-2xl text-center">
-            <h3 class="text-xs sm:text-sm font-bold text-white" data-i18n="storyModalTitle">معاينة ستوري انستقرام الخارقة الفخامة</h3>
-            <div class="relative flex justify-center">
-                <canvas id="storyCanvas" width="1080" height="1920" class="w-full max-h-[350px] sm:max-h-[420px] object-contain rounded-xl border border-theme/50 shadow-2xl"></canvas>
-            </div>
-            <div class="space-y-2">
-                <button onclick="downloadStory()" class="w-full bg-gradient-to-r from-theme to-themeDark hover:opacity-95 text-gray-950 font-bold py-3 rounded-xl text-xs transition shadow-[0_0_25px_rgba(var(--theme-color),0.6)] flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-download"></i>
-                    <span data-i18n="downloadStoryBtn">تحميل ستوري الفخامة</span>
-                </button>
-                <button onclick="closeStoryModal()" class="w-full bg-[#020804] hover:bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-2.5 rounded-xl text-xs transition" data-i18n="closeStoryBtn">إغلاق ومتابعة</button>
+    <!-- Story preview dialog -->
+    <div id="storyModal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="dialog story">
+            <h3 class="dialog-title" data-i18n="storyModalTitle">معاينة ستوري انستقرام الخارقة الفخامة</h3>
+            <canvas id="storyCanvas" width="1080" height="1920"></canvas>
+            <div class="dialog-actions">
+                <button type="button" onclick="downloadStory()" class="btn btn-primary"><i class="fa-solid fa-download"></i><span data-i18n="downloadStoryBtn">تحميل ستوري الفخامة</span></button>
+                <button type="button" onclick="closeStoryModal()" class="btn btn-ghost" data-i18n="closeStoryBtn">إغلاق ومتابعة</button>
             </div>
         </div>
     </div>
