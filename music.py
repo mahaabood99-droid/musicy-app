@@ -932,7 +932,7 @@ background_styles = """
     .like-btn:hover { border-color: var(--accent-ink); color: var(--text); }
     .like-btn i { font-size: 13px; }
     .like-btn i.text-gray-400 { color: var(--faint); }
-    .like-btn i[class*="ff2255"] { color: #dc3d62; }
+    .like-btn i.liked-red, .like-btn.liked i { color: #dc3d62 !important; }
     .like-btn b { color: var(--text); font-weight: 600; }
     .like-animate { animation: luxuryLikePop 0.4s ease-in-out; }
     @keyframes luxuryLikePop { 0% { transform: scale(1); } 50% { transform: scale(1.4) rotate(10deg); } 100% { transform: scale(1); } }
@@ -1282,7 +1282,6 @@ ambient_html = """
 </div>
 <script>
 (function () {
-    // Apply saved theme/language before first paint so nothing flashes.
     try {
         if (localStorage.getItem('musicy_theme') === 'light') { document.body.classList.add('light-mode'); }
         var savedLang = localStorage.getItem('musicy_lang');
@@ -1685,8 +1684,7 @@ login_html = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#030712">
-    <title>Sign In - Musicy</title>
+    <title>Login - Musicy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -1701,103 +1699,6 @@ login_html = """<!DOCTYPE html>
             }
         }
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=Hanken+Grotesk:wght@300..700&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    """ + background_styles + """
-</head>
-<body class="musicy auth-page">
-    """ + ambient_html + """
-    <div class="auth-top">
-        <a href="/" class="brand" aria-label="Musicy">
-            <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle class="ring-b" cx="16" cy="16" r="9.6" fill="none" stroke="currentColor" stroke-width="0.8"/><circle class="core" cx="16" cy="16" r="4.6"/><circle class="hole" cx="16" cy="16" r="1.1"/></svg>
-            <span class="brand-name" data-i18n="brandName">Musicy</span>
-        </a>
-        """ + lang_switcher_html + """
-    </div>
-    <main class="auth-main">
-        <div class="auth-art">
-            <div class="sleeve">
-                <div class="vinyl-wrap"><div class="vinyl"></div></div>
-                <img class="cover" src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=600" alt="">
-            </div>
-        </div>
-        <div class="auth-panel">
-            <a href="/" class="back"><i class="fa-solid fa-chevron-left"></i><span data-i18n="home">Home</span></a>
-            <h1 class="display auth-title" data-i18n="welcomeBack">Welcome Back</h1>
-            <p class="lede" data-i18n="loginDesc">Sign in to rate songs and share your reviews on Musicy</p>
-            <form id="loginForm" onsubmit="handleLogin(event)">
-                <div class="field">
-                    <label data-i18n="emailLabel">Email Address</label>
-                    <input type="email" id="loginEmail" required class="input" placeholder="name@example.com">
-                </div>
-                <div class="field">
-                    <label data-i18n="passwordLabel">Password</label>
-                    <input type="password" id="loginPassword" required class="input" placeholder="••••••••">
-                </div>
-                <button type="submit" class="btn btn-primary btn-block" data-i18n="signInBtn">Sign In</button>
-            </form>
-            <p class="switch"><span data-i18n="noAccount">Don't have an account?</span><a href="/register" data-i18n="createAccountLink">Create Account</a></p>
-        </div>
-    </main>
-    <footer class="foot">
-        <div class="foot-inner">
-            <span class="credit">Made with <i class="fa-solid fa-heart"></i> by Ammar</span>
-            <span class="foot-brand">Musicy</span>
-        </div>
-    </footer>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            let savedLang = localStorage.getItem('musicy_lang') || 'en';
-            setLanguage(savedLang);
-        });
-        function handleLogin(e) {
-            e.preventDefault();
-            let email = document.getElementById('loginEmail').value;
-            let password = document.getElementById('loginPassword').value;
-            fetch('/api/login', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({email, password})
-            }).then(res => res.json()).then(data => {
-                if(data.success) {
-                    localStorage.setItem('songdb_user', data.username);
-                    localStorage.setItem('songdb_avatar', data.avatar);
-                    window.location.href = '/';
-                } else {
-                    alert(data.message);
-                }
-            });
-        }
-    </script>
-</body>
-</html>"""
-
-register_html = """<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#030712">
-    <title>Create Account - Musicy</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        theme: 'rgba(var(--theme-color), <alpha-value>)',
-                        themeDark: 'rgba(var(--theme-color-dark), <alpha-value>)',
-                    }
-                }
-            }
-        }
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=Hanken+Grotesk:wght@300..700&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     """ + background_styles + """
 </head>
@@ -1818,13 +1719,106 @@ register_html = """<!DOCTYPE html>
             </div>
         </div>
         <div class="auth-panel">
-            <a href="/" class="back"><i class="fa-solid fa-chevron-left"></i><span data-i18n="home">Home</span></a>
+            <a href="/" class="back"><i class="fa-solid fa-chevron-left"></i><span>Home</span></a>
+            <h1 class="display auth-title" data-i18n="welcomeBack">Welcome Back</h1>
+            <p class="lede" data-i18n="loginDesc">Sign in to rate songs and share your reviews on Musicy</p>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="field">
+                    <label data-i18n="emailLabel">Email Address</label>
+                    <input type="email" id="loginEmail" required class="input" placeholder="name@example.com">
+                </div>
+                <div class="field">
+                    <label data-i18n="passwordLabel">Password</label>
+                    <input type="password" id="loginPassword" required class="input" placeholder="••••••••">
+                </div>
+                <div id="loginError" class="text-red-400 text-xs mt-3 hidden"></div>
+                <button type="submit" class="btn btn-primary btn-block" data-i18n="signInBtn">Sign In</button>
+            </form>
+            <p class="switch"><span data-i18n="noAccount">Don't have an account?</span><a href="/register" data-i18n="createAccountLink">Create Account</a></p>
+        </div>
+    </main>
+    <footer class="foot">
+        <div class="foot-inner">
+            <span class="credit">Made with <i class="fa-solid fa-heart"></i> by Ammar</span>
+            <span class="foot-brand">Musicy</span>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let savedLang = localStorage.getItem('musicy_lang') || 'en';
+            setLanguage(savedLang);
+        });
+        function handleLogin(e) {
+            e.preventDefault();
+            let email = document.getElementById('loginEmail').value;
+            let password = document.getElementById('loginPassword').value;
+            let errEl = document.getElementById('loginError');
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email, password})
+            }).then(res => res.json()).then(data => {
+                if(data.success) {
+                    localStorage.setItem('songdb_user', data.username);
+                    localStorage.setItem('songdb_avatar', data.avatar);
+                    window.location.href = '/';
+                } else {
+                    errEl.innerText = data.message;
+                    errEl.classList.remove('hidden');
+                }
+            });
+        }
+    </script>
+</body>
+</html>"""
+
+register_html = """<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Musicy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        theme: 'rgba(var(--theme-color), <alpha-value>)',
+                        themeDark: 'rgba(var(--theme-color-dark), <alpha-value>)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    """ + background_styles + """
+</head>
+<body class="musicy auth-page">
+    """ + ambient_html + """
+    <div class="auth-top">
+        <a href="/" class="brand" aria-label="Musicy">
+            <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle class="ring-b" cx="16" cy="16" r="9.6" fill="none" stroke="currentColor" stroke-width="0.8"/><circle class="core" cx="16" cy="16" r="4.6"/><circle class="hole" cx="16" cy="16" r="1.1"/></svg>
+            <span class="brand-name" data-i18n="brandName">Musicy</span>
+        </a>
+        """ + lang_switcher_html + """
+    </div>
+    <main class="auth-main">
+        <div class="auth-art">
+            <div class="sleeve">
+                <div class="vinyl-wrap"><div class="vinyl"></div></div>
+                <img class="cover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=600" alt="">
+            </div>
+        </div>
+        <div class="auth-panel">
+            <a href="/" class="back"><i class="fa-solid fa-chevron-left"></i><span>Home</span></a>
             <h1 class="display auth-title" data-i18n="createAccountTitle">Create Account</h1>
             <p class="lede" data-i18n="createAccountDesc">Join Musicy community and start rating today</p>
             <form id="registerForm" onsubmit="handleRegister(event)">
                 <div class="field">
                     <label data-i18n="usernameLabel">Username</label>
-                    <input type="text" id="regUsername" required class="input" placeholder="Ammar">
+                    <input type="text" id="regUsername" required class="input" placeholder="Your name">
                 </div>
                 <div class="field">
                     <label data-i18n="emailLabel">Email Address</label>
@@ -1834,6 +1828,7 @@ register_html = """<!DOCTYPE html>
                     <label data-i18n="passwordLabel">Password</label>
                     <input type="password" id="regPassword" required class="input" placeholder="••••••••">
                 </div>
+                <div id="regError" class="text-red-400 text-xs mt-3 hidden"></div>
                 <button type="submit" class="btn btn-primary btn-block" data-i18n="createAccountLink">Create Account</button>
             </form>
             <p class="switch"><span data-i18n="alreadyAccount">Already have an account?</span><a href="/login" data-i18n="signInLink">Sign In</a></p>
@@ -1855,6 +1850,7 @@ register_html = """<!DOCTYPE html>
             let username = document.getElementById('regUsername').value;
             let email = document.getElementById('regEmail').value;
             let password = document.getElementById('regPassword').value;
+            let errEl = document.getElementById('regError');
             fetch('/api/register', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -1865,7 +1861,8 @@ register_html = """<!DOCTYPE html>
                     localStorage.setItem('songdb_avatar', data.avatar);
                     window.location.href = '/';
                 } else {
-                    alert(data.message);
+                    errEl.innerText = data.message;
+                    errEl.classList.remove('hidden');
                 }
             });
         }
@@ -1878,7 +1875,6 @@ profile_html = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#030712">
     <title>Profile - Musicy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -1894,9 +1890,6 @@ profile_html = """<!DOCTYPE html>
             }
         }
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=Hanken+Grotesk:wght@300..700&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     """ + background_styles + """
 </head>
@@ -1913,22 +1906,23 @@ profile_html = """<!DOCTYPE html>
         <div class="auth-art">
             <div class="sleeve">
                 <div class="vinyl-wrap"><div class="vinyl"></div></div>
-                <img id="profileArtPreview" class="cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600" alt="">
+                <img id="profileArtImg" class="cover" src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=600" alt="">
             </div>
         </div>
         <div class="auth-panel text-center flex flex-col items-center">
-            <a href="/" class="back self-start"><i class="fa-solid fa-chevron-left"></i><span data-i18n="home">Home</span></a>
-            <img id="profileAvatarImg" src="" class="avatar-lg" alt="Avatar">
-            <h2 id="profileUsernameDisplay" class="who-line">User</h2>
-            <p class="lede mb-6" data-i18n="profileTitle">Edit Profile &amp; Avatar</p>
-            <form id="avatarForm" onsubmit="handleAvatarUpload(event)" class="w-full text-start">
+            <a href="/" class="back self-start"><i class="fa-solid fa-chevron-left"></i><span>Home</span></a>
+            <img id="profileAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" class="avatar-lg" alt="">
+            <h2 id="profileUsername" class="who-line">User</h2>
+            <p class="lede" style="margin-top: 2px;" data-i18n="profileTitle">Edit Profile & Avatar</p>
+            
+            <form id="avatarFileForm" onsubmit="handleAvatarFileUpload(event)" class="w-full mt-6 text-start">
                 <div class="field">
                     <label data-i18n="avatarFileLabel">Choose image from device (PC or Phone):</label>
-                    <input type="file" id="avatarFileInput" accept="image/*" required class="file mt-2">
+                    <input type="file" id="avatarFileInput" accept="image/png, image/jpeg, image/webp" required class="file mt-2">
                 </div>
-                <button type="submit" class="btn btn-primary btn-block mt-6" data-i18n="saveAvatarBtn">Upload &amp; Save Avatar</button>
+                <div id="profileError" class="text-red-400 text-xs mt-3 hidden"></div>
+                <button type="submit" class="btn btn-primary btn-block mt-4" data-i18n="saveAvatarBtn">Upload & Save Avatar</button>
             </form>
-            <button onclick="handleLogout()" class="btn btn-ghost btn-block mt-4 text-red-400 border-red-500/40 hover:border-red-500" data-i18n="logoutTitle">Logout</button>
         </div>
     </main>
     <footer class="foot">
@@ -1943,41 +1937,39 @@ profile_html = """<!DOCTYPE html>
             setLanguage(savedLang);
             let user = localStorage.getItem('songdb_user');
             if(!user) { window.location.href = '/login'; return; }
-            let avatar = localStorage.getItem('songdb_avatar') || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200';
-            document.getElementById('profileUsernameDisplay').innerText = user;
-            document.getElementById('profileAvatarImg').src = avatar;
-            document.getElementById('profileArtPreview').src = avatar;
+            document.getElementById('profileUsername').innerText = user;
+            let av = localStorage.getItem('songdb_avatar');
+            if(av) { document.getElementById('profileAvatar').src = av; }
         });
-        function handleAvatarUpload(e) {
+        function handleAvatarFileUpload(e) {
             e.preventDefault();
             let fileInput = document.getElementById('avatarFileInput');
+            let user = localStorage.getItem('songdb_user');
+            let errEl = document.getElementById('profileError');
             if(fileInput.files.length === 0) return;
             let formData = new FormData();
-            formData.append('username', localStorage.getItem('songdb_user'));
+            formData.append('username', user);
             formData.append('avatar_file', fileInput.files[0]);
+
             fetch('/api/update_avatar_file', {
                 method: 'POST',
                 body: formData
             }).then(res => res.json()).then(data => {
                 if(data.success) {
                     localStorage.setItem('songdb_avatar', data.avatar);
+                    document.getElementById('profileAvatar').src = data.avatar;
                     alert('Avatar updated successfully!');
-                    location.reload();
+                    window.location.href = '/';
                 } else {
-                    alert(data.message);
+                    errEl.innerText = data.message;
+                    errEl.classList.remove('hidden');
                 }
             });
-        }
-        function handleLogout() {
-            localStorage.removeItem('songdb_user');
-            localStorage.removeItem('songdb_avatar');
-            window.location.href = '/';
         }
     </script>
 </body>
 </html>"""
 
-# ** التعديل الجوهري هنا: إضافة مستخرج الألوان الديناميكي للكفر في صفحة الأغنية لتحويل لون الموقع فوراً بناءً على صورة الأغنية (مثل أزرق لبيلي إيليش أو أحمر أو غيره) **
 song_detail_template = """<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -2003,67 +1995,11 @@ song_detail_template = """<!DOCTYPE html>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=Hanken+Grotesk:wght@300..700&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     """ + background_styles + """
 </head>
 <body class="musicy">
-    <!-- كود برمجي ذكي لاستخراج لون كفر الأغنية (مثل أزرق وايلد فلور أو أي لون آخر) وتطبيق لون الموقع ديناميكياً -->
-    <img id="coverImageSource" src="{{ song.img }}" crossorigin="anonymous" style="display:none;" />
-    <script>
-    window.addEventListener('DOMContentLoaded', () => {
-        const img = document.getElementById('coverImageSource');
-        if (!img) return;
-        
-        function extractColor() {
-            try {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = 50;
-                canvas.height = 50;
-                ctx.drawImage(img, 0, 0, 50, 50);
-                const data = ctx.getImageData(0, 0, 50, 50).data;
-                let r = 0, g = 0, b = 0, count = 0;
-                
-                for (let i = 0; i < data.length; i += 16) {
-                    let cr = data[i], cg = data[i+1], cb = data[i+2];
-                    // استبعاد الألوان الداكنة جداً أو الفاتحة جداً للحصول على لون رئيسي فاقع وواضح
-                    let brightness = (cr * 299 + cg * 587 + cb * 114) / 1000;
-                    if (brightness > 30 && brightness < 220) {
-                        r += cr;
-                        g += cg;
-                        b += cb;
-                        count++;
-                    }
-                }
-                
-                if (count > 0) {
-                    r = Math.floor(r / count);
-                    g = Math.floor(g / count);
-                    b = Math.floor(b / count);
-                } else {
-                    r = 30; g = 144; b = 255; // افتراضي أزرق في حال تعذر الحساب
-                }
-                
-                // حساب اللون الداكن بنسبة تباظي متناسقة
-                let dr = Math.max(0, r - 45);
-                let dg = Math.max(0, g - 45);
-                let db = Math.max(0, b - 45);
-                
-                // تطبيق متغيرات الألوان الجديدة على واجهة الموقع بالكامل فورياً
-                document.documentElement.style.setProperty('--theme-color', `${r}, ${g}, ${b}`);
-                document.documentElement.style.setProperty('--theme-color-dark', `${dr}, ${dg}, ${db}`);
-            } catch (e) {
-                console.error("Color extraction error:", e);
-            }
-        }
-        
-        if (img.complete) {
-            extractColor();
-        } else {
-            img.onload = extractColor;
-        }
-    });
-    </script>
-
     """ + ambient_html + """
     <header class="top">
         <div class="top-inner">
@@ -2091,96 +2027,99 @@ song_detail_template = """<!DOCTYPE html>
             <div class="track-art">
                 <div class="sleeve">
                     <div class="vinyl-wrap"><div class="vinyl"></div></div>
-                    <img class="cover" src="{{ song.img }}" alt="{{ song.title }}">
+                    <img id="songCover" class="cover" src="{{ song.img }}" crossorigin="anonymous" alt="{{ song.title }}">
                 </div>
             </div>
             <div class="track-info">
                 <h1 class="display track-title">{{ song.title }}</h1>
                 <div class="track-artist">{{ song.artist }}</div>
-                <div class="track-meta"><span>{{ song.genre }}</span><span class="sep"></span><span>{{ song.release_year }}</span></div>
+                <div class="track-meta"><span>{{ song.release_year }}</span><span class="sep"></span><span>{{ song.genre }}</span></div>
                 <div class="track-rating">
-                    <div class="big-score"><span>{{ song.rating }}</span><span class="of">/ 5</span></div>
-                    <div>
-                        <div class="stars lg" style="--r: {{ song.rating }}"></div>
-                        <div class="votes"><b id="totalVotesCount">{{ song.votes }}</b> <span data-i18n="votesText">votes</span></div>
-                    </div>
+                    <div class="big-score" id="bigScoreNum">{{ song.rating }}</div>
+                    <div><span class="stars lg" id="bigStars" style="--r: {{ song.rating }}"></span><div class="votes"><span id="votesCountNum">{{ song.votes }}</span> <span data-i18n="votesText">votes</span></div></div>
                 </div>
                 <div class="actions">
-                    {% if song.preview_url %}
-                    <a href="{{ song.preview_url }}" target="_blank" class="btn btn-ghost" data-i18n="listenSpotify"><i class="fa-brands fa-spotify"></i><span>Listen on Spotify</span></a>
+                    {% if song.spotify_id and not song.spotify_id.startswith('blinding_lights_') %}
+                    <a href="https://open.spotify.com/track/{{ song.spotify_id }}" target="_blank" class="btn btn-primary"><i class="fa-brands fa-spotify"></i><span data-i18n="listenSpotify">Listen on Spotify</span></a>
                     {% endif %}
-                    <button type="button" onclick="openRateModal()" class="btn btn-primary"><i class="fa-solid fa-star"></i><span id="rateButtonText" data-i18n="rateSongBtn">Rate This Song</span></button>
+                    <button type="button" onclick="openRateModal()" class="btn btn-ghost"><i class="fa-solid fa-star"></i><span id="rateBtnText" data-i18n="rateSongBtn">Rate This Song</span></button>
                 </div>
             </div>
         </section>
 
-        <section class="section cols">
-            <div>
-                <div class="section-head">
-                    <h2 class="h2"><span data-i18n="reviewsTitle">Reviews &amp; Ratings</span><span class="count">({{ reviews|length }})</span></h2>
-                </div>
-                <div id="reviewsList">
-                    {% if reviews %}
+        <section class="section">
+            <div class="cols">
+                <div class="reviews-pane">
+                    <div class="section-head">
+                        <h2 class="h2"><span data-i18n="reviewsTitle">Reviews &amp; Ratings</span><span class="count" id="reviewsCountBadge">({{ reviews|length }})</span></h2>
+                        <button type="button" onclick="openRateModal()" class="btn btn-ghost btn-sm"><i class="fa-solid fa-pen"></i><span data-i18n="writeReviewBtn">Write Review</span></button>
+                    </div>
+                    <div id="reviewsList">
+                        {% if reviews %}
                         {% for r in reviews %}
-                        <div class="review" id="review-{{ r.id }}">
+                        <div class="review" data-review-id="{{ r.id }}">
                             <div class="review-head">
                                 <img src="{{ r.avatar }}" alt="" class="avatar">
                                 <div class="who">
                                     <h4>{{ r.username }}</h4>
                                     <div class="when" data-timestamp="{{ r.timestamp }}">Just now</div>
                                 </div>
-                                <div class="review-score">
-                                    <span class="stars" style="--r: {{ r.rating }}"></span>
-                                    <b>{{ r.rating }}</b>
-                                </div>
+                                <div class="review-score"><span class="stars" style="--r: {{ r.rating }}"></span><b>{{ r.rating }}</b></div>
                             </div>
                             {% if r.comment %}
                             <div class="review-text">{{ r.comment }}</div>
                             {% endif %}
                             <div class="review-foot">
-                                <button type="button" onclick="likeReview({{ r.id }})" class="like-btn" id="like-btn-{{ r.id }}">
-                                    <i class="fa-solid fa-heart text-gray-400" id="like-icon-{{ r.id }}"></i>
-                                    <span id="likes-count-{{ r.id }}">{{ r.likes }}</span>
+                                <button type="button" onclick="likeReview('{{ r.id }}')" class="like-btn" id="likeBtn-{{ r.id }}">
+                                    <i class="fa-solid fa-heart text-gray-400" id="likeIcon-{{ r.id }}"></i>
+                                    <span id="likeText-{{ r.id }}"><b id="likeCount-{{ r.id }}">{{ r.likes }}</b></span>
                                 </button>
                             </div>
                         </div>
                         {% endfor %}
-                    {% else %}
+                        {% else %}
                         <div class="empty" data-i18n="noReviews">No reviews yet. Be the first to review this song!</div>
-                    {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="ledger">
+                    <h4 data-i18n="ratingDetails">Rating Details</h4>
+                    <dl>
+                        <div class="row"><dt data-i18n="overallRating">Overall Rating</dt><dd class="accent" id="ledgerScore">{{ song.rating }}</dd></div>
+                        <div class="row"><dt data-i18n="totalVotes">Total Votes</dt><dd id="ledgerVotes">{{ song.votes }}</dd></div>
+                    </dl>
                 </div>
             </div>
-            <aside class="ledger">
-                <h4 data-i18n="ratingDetails">Rating Details</h4>
-                <dl>
-                    <div class="row"><dt data-i18n="overallRating">Overall Rating</dt><dd class="accent">{{ song.rating }} / 5</dd></div>
-                    <div class="row"><dt data-i18n="totalVotes">Total Votes</dt><dd>{{ song.votes }}</dd></div>
-                    <div class="row"><dt>Release Year</dt><dd>{{ song.release_year }}</dd></div>
-                    <div class="row"><dt>Genre</dt><dd>{{ song.genre }}</dd></div>
-                </dl>
-            </aside>
         </section>
     </main>
 
-    <!-- Modal Rating -->
+    <footer class="foot">
+        <div class="foot-inner">
+            <span class="credit">Made with <i class="fa-solid fa-heart"></i> by Ammar</span>
+            <span class="foot-brand">Musicy</span>
+        </div>
+    </footer>
+
+    <!-- Rating Modal -->
     <div id="rateModal" class="modal hidden">
         <div class="dialog">
-            <h3 class="dialog-title"><span data-i18n="rateModalTitle">Rate</span> {{ song.title }}</h3>
+            <h3 class="dialog-title"><span data-i18n="rateModalTitle">Rate</span>: {{ song.title }}</h3>
             <div class="field">
                 <label data-i18n="ratingScoreLabel">Rating Stars (1 to 5):</label>
                 <div id="starContainer">
-                    <i class="fa-solid fa-star" onclick="selectStar(1)"></i>
-                    <i class="fa-solid fa-star" onclick="selectStar(2)"></i>
-                    <i class="fa-solid fa-star" onclick="selectStar(3)"></i>
-                    <i class="fa-solid fa-star" onclick="selectStar(4)"></i>
-                    <i class="fa-solid fa-star" onclick="selectStar(5)"></i>
+                    <i class="fa-solid fa-star" onclick="setStarRating(1)" onmouseover="hoverStar(1)" onmouseout="resetStarHover()"></i>
+                    <i class="fa-solid fa-star" onclick="setStarRating(2)" onmouseover="hoverStar(2)" onmouseout="resetStarHover()"></i>
+                    <i class="fa-solid fa-star" onclick="setStarRating(3)" onmouseover="hoverStar(3)" onmouseout="resetStarHover()"></i>
+                    <i class="fa-solid fa-star" onclick="setStarRating(4)" onmouseover="hoverStar(4)" onmouseout="resetStarHover()"></i>
+                    <i class="fa-solid fa-star" onclick="setStarRating(5)" onmouseover="hoverStar(5)" onmouseout="resetStarHover()"></i>
                     <span id="starValueText">5</span>
                 </div>
             </div>
             <div class="field">
                 <label data-i18n="commentLabel">Your Review / Comment:</label>
-                <textarea id="reviewComment" rows="4" class="textarea" placeholder="Write your thoughts about this song..."></textarea>
+                <textarea id="reviewCommentInput" rows="4" class="textarea" placeholder="Write your thoughts about this masterpiece..."></textarea>
             </div>
+            <div id="rateError" class="text-red-400 text-xs mt-3 hidden"></div>
             <div class="dialog-actions">
                 <button type="button" onclick="submitRating()" class="btn btn-primary" data-i18n="submitRatingBtn">Submit Rating &amp; Generate Story</button>
                 <button type="button" onclick="closeRateModal()" class="btn btn-ghost" data-i18n="cancelBtn">Cancel</button>
@@ -2188,7 +2127,7 @@ song_detail_template = """<!DOCTYPE html>
         </div>
     </div>
 
-    <!-- Modal Story Preview -->
+    <!-- Story Preview Modal -->
     <div id="storyModal" class="modal hidden">
         <div class="dialog story">
             <h3 class="dialog-title" data-i18n="storyModalTitle">Luxury Instagram Story Preview</h3>
@@ -2200,122 +2139,205 @@ song_detail_template = """<!DOCTYPE html>
         </div>
     </div>
 
-    <footer class="foot">
-        <div class="foot-inner">
-            <span class="credit">Made with <i class="fa-solid fa-heart"></i> by Ammar</span>
-            <span class="foot-brand">Musicy</span>
-        </div>
-    </footer>
-
     <script>
-        let currentRating = 5;
-        let spotifyId = "{{ song.spotify_id }}";
+        let currentSelectedStars = 5;
+        let activeSpotifyId = "{{ song.spotify_id }}";
 
         document.addEventListener('DOMContentLoaded', () => {
             updateUserNav();
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
             updateAllTimes();
-            checkUserLikes();
             
-            let currentUser = localStorage.getItem('songdb_user');
-            if (currentUser) {
-                // Check if user already reviewed
-                fetch('/api/get_user_info?username=' + encodeURIComponent(currentUser))
-                .then(res => res.json())
-                .then(data => {
-                    // Check existing reviews in DOM
-                    let reviewElements = document.querySelectorAll('.review');
-                    reviewElements.forEach(rev => {
-                        if(rev.innerHTML.includes(currentUser)) {
-                            let btnText = document.getElementById('rateButtonText');
-                            let lang = localStorage.getItem('musicy_lang') || 'en';
-                            if(btnText) btnText.innerText = (lang === 'ar') ? 'تعديل تقييمك ورأيك' : 'Edit Your Review';
-                        }
-                    });
-                });
+            // استرجاع وتطبيق حالات الإعجاب المخزنة في localStorage
+            restoreLikesFromLocalStorage();
+
+            // Dynamic color extraction from album cover using Color Thief
+            let imgEl = document.getElementById('songCover');
+            if(imgEl) {
+                if (imgEl.complete) {
+                    extractCoverColor(imgEl);
+                } else {
+                    imgEl.onload = () => { extractCoverColor(imgEl); };
+                }
             }
         });
 
+        function extractCoverColor(img) {
+            try {
+                const colorThief = new ColorThief();
+                let color = colorThief.getColor(img);
+                if(color && color.length === 3) {
+                    document.documentElement.style.setProperty('--theme-color', `${color[0]}, ${color[1]}, ${color[2]}`);
+                    // Calculate darker version
+                    let r = Math.max(0, color[0] - 40);
+                    let g = Math.max(0, color[1] - 40);
+                    let b = Math.max(0, color[2] - 40);
+                    document.documentElement.style.setProperty('--theme-color-dark', `${r}, ${g}, ${b}`);
+                }
+            } catch(e) {
+                console.log("Color Thief error or cross-origin restricted image", e);
+            }
+        }
+
+        function restoreLikesFromLocalStorage() {
+            let currentUser = localStorage.getItem('songdb_user');
+            if (!currentUser) return;
+            
+            document.querySelectorAll('.review').forEach(revEl => {
+                let reviewId = revEl.getAttribute('data-review-id');
+                let likeKey = `musicy_liked_${currentUser}_${reviewId}`;
+                let isLiked = localStorage.getItem(likeKey) === 'true';
+                
+                if (isLiked) {
+                    let icon = document.getElementById(`likeIcon-${reviewId}`);
+                    let btn = document.getElementById(`likeBtn-${reviewId}`);
+                    if (icon) {
+                        icon.classList.remove('text-gray-400');
+                        icon.classList.add('liked-red');
+                    }
+                    if (btn) {
+                        btn.classList.add('liked');
+                    }
+                }
+            });
+        }
+
         function updateAllTimes() {
+            let lang = localStorage.getItem('musicy_lang') || 'en';
             document.querySelectorAll('.when').forEach(el => {
                 let ts = parseFloat(el.getAttribute('data-timestamp'));
-                let diff = (Date.now() / 1000) - ts;
-                let lang = localStorage.getItem('musicy_lang') || 'en';
-                let text = '';
-                if (diff < 60) {
-                    text = (lang === 'ar') ? 'الآن عيناها' : 'Just now';
-                } else if (diff < 3600) {
-                    let m = Math.floor(diff / 60);
-                    text = (lang === 'ar') ? `منذ ${m} دقيقة` : `${m}m ago`;
-                } else if (diff < 86400) {
-                    let h = Math.floor(diff / 3600);
-                    text = (lang === 'ar') ? `منذ ${h} ساعة` : `${h}h ago`;
+                if(!ts) return;
+                let diff = Date.now()/1000 - ts;
+                let txt = '';
+                if(lang === 'ar') {
+                    if(diff < 60) txt = 'الآن مضاف حديثاً';
+                    else if(diff < 3600) txt = `منذ ${Math.floor(diff/60)} دقيقة`;
+                    else if(diff < 86400) txt = `منذ ${Math.floor(diff/3600)} ساعة`;
+                    else txt = `منذ ${Math.floor(diff/86400)} يوم`;
                 } else {
-                    let d = Math.floor(diff / 86400);
-                    text = (lang === 'ar') ? `منذ ${d} يوم` : `${d}d ago`;
+                    if(diff < 60) txt = 'Just now';
+                    else if(diff < 3600) txt = `${Math.floor(diff/60)}m ago`;
+                    else if(diff < 86400) txt = `${Math.floor(diff/3600)}h ago`;
+                    else txt = `${Math.floor(diff/86400)}d ago`;
                 }
-                el.innerText = text;
+                el.innerText = txt;
             });
         }
 
         function openRateModal() {
             let currentUser = localStorage.getItem('songdb_user');
-            if (!currentUser) {
+            if(!currentUser) {
                 window.location.href = '/login';
                 return;
             }
             document.getElementById('rateModal').classList.remove('hidden');
-            selectStar(5);
         }
-
         function closeRateModal() {
             document.getElementById('rateModal').classList.add('hidden');
         }
 
-        function selectStar(val) {
-            currentRating = val;
-            document.getElementById('starValueText.innerText = val;'); // fix format
+        function setStarRating(val) {
+            currentSelectedStars = val;
             document.getElementById('starValueText').innerText = val;
             let stars = document.querySelectorAll('#starContainer i');
             stars.forEach((s, idx) => {
-                if (idx < val) {
-                    s.classList.add('text-theme');
-                } else {
-                    s.classList.remove('text-theme');
-                }
+                if(idx < val) s.classList.add('text-theme');
+                else s.classList.remove('text-theme');
             });
+        }
+        function hoverStar(val) {
+            let stars = document.querySelectorAll('#starContainer i');
+            stars.forEach((s, idx) => {
+                if(idx < val) s.classList.add('text-theme');
+                else s.classList.remove('text-theme');
+            });
+        }
+        function resetStarHover() {
+            setStarRating(currentSelectedStars);
         }
 
         function submitRating() {
             let currentUser = localStorage.getItem('songdb_user');
-            let comment = document.getElementById('reviewComment').value;
+            let comment = document.getElementById('reviewCommentInput').value;
+            let errEl = document.getElementById('rateError');
+            
             fetch('/api/rate', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    spotify_id: spotifyId,
-                    rating: currentRating,
+                    spotify_id: activeSpotifyId,
+                    rating: currentSelectedStars,
                     comment: comment,
                     username: currentUser
                 })
             }).then(res => res.json()).then(data => {
                 if(data.success) {
                     closeRateModal();
-                    generateStoryCanvas(data);
+                    document.getElementById('bigScoreNum').innerText = data.new_rating;
+                    document.getElementById('ledgerScore').innerText = data.new_rating;
+                    document.getElementById('bigStars').style.setProperty('--r', data.new_rating);
+                    document.getElementById('votesCountNum').innerText = data.votes;
+                    document.getElementById('ledgerVotes').innerText = data.votes;
+                    
+                    // Render Story Preview
+                    generateStoryCanvas(data.song_title, data.artist, data.img, currentSelectedStars, currentUser);
                     document.getElementById('storyModal').classList.remove('hidden');
                 } else {
-                    alert(data.message);
+                    errEl.innerText = data.message;
+                    errEl.classList.remove('hidden');
                 }
             });
         }
 
-        function closeStoryModal() {
-            document.getElementById('storyModal').classList.add('hidden');
-            location.reload();
+        function likeReview(reviewId) {
+            let currentUser = localStorage.getItem('songdb_user');
+            if(!currentUser) {
+                window.location.href = '/login';
+                return;
+            }
+            
+            fetch('/api/like_review', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    review_id: reviewId,
+                    username: currentUser
+                })
+            }).then(res => res.json()).then(data => {
+                if(data.success) {
+                    let countEl = document.getElementById(`likeCount-${reviewId}`);
+                    let iconEl = document.getElementById(`likeIcon-${reviewId}`);
+                    let btnEl = document.getElementById(`likeBtn-${reviewId}`);
+                    
+                    if(countEl) countEl.innerText = data.likes;
+                    
+                    let likeKey = `musicy_liked_${currentUser}_${reviewId}`;
+                    if(data.liked) {
+                        localStorage.setItem(likeKey, 'true');
+                        if(iconEl) {
+                            iconEl.classList.remove('text-gray-400');
+                            iconEl.classList.add('liked-red');
+                        }
+                        if(btnEl) {
+                            btnEl.classList.add('liked', 'like-animate');
+                            setTimeout(() => btnEl.classList.remove('like-animate'), 400);
+                        }
+                    } else {
+                        localStorage.removeItem(likeKey);
+                        if(iconEl) {
+                            iconEl.classList.remove('liked-red');
+                            iconEl.classList.add('text-gray-400');
+                        }
+                        if(btnEl) {
+                            btnEl.classList.remove('liked');
+                        }
+                    }
+                }
+            });
         }
 
-        function generateStoryCanvas(data) {
+        function generateStoryCanvas(title, artist, imgUrl, rating, username) {
             let canvas = document.getElementById('storyCanvas');
             let ctx = canvas.getContext('2d');
             
@@ -2325,43 +2347,65 @@ song_detail_template = """<!DOCTYPE html>
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, 1080, 1920);
 
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
-            ctx.fillRect(80, 80, 920, 1760);
-            ctx.strokeStyle = 'rgba(16, 185, 129, 0.3)';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(80, 80, 920, 1760);
+            // Draw decorative vinyl ring
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.15)';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(540, 700, 380, 0, Math.PI * 2);
+            ctx.stroke();
 
+            // Load cover image
             let img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = function() {
+            img.crossOrigin = "anonymous";
+            img.src = imgUrl;
+            img.onload = () => {
                 ctx.save();
-                ctx.shadowColor = 'rgba(0,0,0,0.7)';
+                ctx.beginPath();
+                ctx.roundRect(240, 400, 600, 600, 30);
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
                 ctx.shadowBlur = 60;
-                ctx.drawImage(img, 140, 220, 800, 800);
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 30;
+                ctx.fillStyle = '#111827';
+                ctx.fill();
+                ctx.clip();
+                ctx.drawImage(img, 240, 400, 600, 600);
                 ctx.restore();
 
+                // Draw Text info
                 ctx.fillStyle = '#f9fafb';
                 ctx.font = 'bold 54px sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(data.song_title, 540, 1140, 900);
+                ctx.fillText(title, 540, 1120, 900);
 
                 ctx.fillStyle = '#9ca3af';
-                ctx.font = '36px sans-serif';
-                ctx.fillText(data.artist, 540, 1220, 900);
+                ctx.font = '38px sans-serif';
+                ctx.fillText(artist, 540, 1200, 900);
 
+                // Stars rating
                 ctx.fillStyle = '#10b981';
-                ctx.font = 'bold 80px sans-serif';
-                ctx.fillText(`★ ${data.new_rating} / 5`, 540, 1370);
+                ctx.font = 'bold 44px sans-serif';
+                let starsStr = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+                ctx.fillText(`${starsStr} (${rating}.0)`, 540, 1300);
 
+                // User badge
+                ctx.fillStyle = 'rgba(17, 24, 39, 0.8)';
+                ctx.beginPath();
+                ctx.roundRect(340, 1420, 400, 90, 45);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#f9fafb';
+                ctx.font = 'bold 32px sans-serif';
+                ctx.fillText(`Rated by @${username}`, 540, 1478);
+
+                // Footer branding
                 ctx.fillStyle = '#6b7280';
-                ctx.font = '28px sans-serif';
-                ctx.fillText(`Rated by @${localStorage.getItem('songdb_user')} on Musicy`, 540, 1500);
-
-                ctx.fillStyle = '#9ca3af';
-                ctx.font = '24px sans-serif';
-                ctx.fillText('MUSICY.APP', 540, 1720);
+                ctx.font = 'italic 28px sans-serif';
+                ctx.fillText('Musicy • Luxury Music Community', 540, 1780);
             };
-            img.src = data.img;
         }
 
         function downloadStory() {
@@ -2372,57 +2416,13 @@ song_detail_template = """<!DOCTYPE html>
             link.click();
         }
 
-        function likeReview(reviewId) {
-            let currentUser = localStorage.getItem('songdb_user');
-            if(!currentUser) {
-                window.location.href = '/login';
-                return;
-            }
-            fetch('/api/like_review', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({review_id: reviewId, username: currentUser})
-            }).then(res => res.json()).then(data => {
-                if(data.success) {
-                    document.getElementById(`likes-count-${reviewId}`).innerText = data.likes;
-                    let icon = document.getElementById(`like-icon-${reviewId}`);
-                    let btn = document.getElementById(`like-btn-${reviewId}`);
-                    if(data.liked) {
-                        icon.className = 'fa-solid fa-heart text-[#ff2255]';
-                        btn.classList.add('like-animate');
-                        setTimeout(() => btn.classList.remove('like-animate'), 400);
-                    } else {
-                        icon.className = 'fa-solid fa-heart text-gray-400';
-                    }
-                }
-            });
-        }
-
-        function checkUserLikes() {
-            let currentUser = localStorage.getItem('songdb_user');
-            if(!currentUser) return;
-            let reviewIds = [];
-            document.querySelectorAll('[id^="like-btn-"]').forEach(btn => {
-                let rid = btn.id.replace('like-btn-', '');
-                reviewIds.push(parseInt(rid));
-            });
-            if(reviewIds.length === 0) return;
-            fetch('/api/check_likes', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username: currentUser, review_ids: reviewIds})
-            }).then(res => res.json()).then(likedDict => {
-                for(let rid in likedDict) {
-                    if(likedDict[rid]) {
-                        let icon = document.getElementById(`like-icon-${rid}`);
-                        if(icon) icon.className = 'fa-solid fa-heart text-[#ff2255]';
-                    }
-                }
-            });
+        function closeStoryModal() {
+            document.getElementById('storyModal').classList.add('hidden');
+            location.reload();
         }
     </script>
 </body>
 </html>"""
 
 if __name__ == '__main__':
-  socketio.run(app, debug=True)
+  socketio.run(app, debug=True, host='0.0.0.0', port=5000)
