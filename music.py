@@ -743,6 +743,7 @@ background_styles = """
     }
     #userProfileArea button:hover { border-color: rgba(214, 84, 108, 0.7); color: #d6546c; }
 
+    /* search dropdown rows are built by the page script, so they're styled by structure */
     #searchResults > div { display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-bottom: 1px solid var(--line); cursor: pointer; background: transparent; transition: background-color 0.2s; }
     #searchResults > div:last-child { border-bottom: 0; }
     #searchResults > div:hover { background: var(--bg-3); }
@@ -769,7 +770,7 @@ background_styles = """
     .btn-sm { height: 38px; padding: 0 18px; font-size: 13px; }
     .btn-block { width: 100%; }
 
-    /* ---------- stars ---------- */
+    /* ---------- stars (fractional, driven by --r) ---------- */
     .stars {
         --r: 0;
         display: inline-block; flex-shrink: 0;
@@ -781,7 +782,7 @@ background_styles = """
     .stars.lg { font-size: 20px; }
     [dir="rtl"] .stars { background: linear-gradient(270deg, var(--accent-ink) calc(var(--r) / 5 * 100%), var(--track) 0); }
 
-    /* ---------- sleeve + vinyl ---------- */
+    /* ---------- sleeve + vinyl (the signature object) ---------- */
     .sleeve { position: relative; aspect-ratio: 1; }
     .sleeve .cover {
         position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; object-fit: cover; border-radius: 2px;
@@ -825,6 +826,7 @@ background_styles = """
     .section { margin-top: clamp(48px, 7vw, 96px); }
     .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 18px; margin-bottom: clamp(24px, 3vw, 40px); border-bottom: 1px solid var(--line); }
 
+    /* home hero */
     .hero {
         display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); align-items: center;
         gap: clamp(28px, 6vw, 96px);
@@ -849,6 +851,7 @@ background_styles = """
     .spot-rate { display: flex; align-items: center; gap: 10px; margin-top: 10px; color: var(--muted); font-size: 13px; }
     .spot-rate b { color: var(--accent-ink); font-weight: 600; }
 
+    /* album wall */
     .wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 176px), 1fr)); gap: clamp(26px, 3vw, 44px) clamp(16px, 2vw, 28px); }
     .tile { display: block; min-width: 0; }
     .tile-cover { aspect-ratio: 1; overflow: hidden; border-radius: 2px; background: var(--bg-3); box-shadow: 0 0 0 1px rgba(var(--theme-color), 0.15); }
@@ -863,6 +866,7 @@ background_styles = """
     .tile-foot b { color: var(--accent-ink); font-weight: 600; }
     .tile-foot .votes-note { flex-basis: 100%; white-space: nowrap; }
 
+    /* ranked list */
     .page-head { padding-block: clamp(36px, 6vw, 80px) clamp(22px, 3vw, 36px); }
     .h1 { margin: 0; font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1.02; letter-spacing: -0.025em; }
     .rank { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-strong); }
@@ -885,6 +889,7 @@ background_styles = """
     .rank-row:hover .chev { transform: translateX(calc(var(--dir) * 4px)); color: var(--accent-ink); }
     .empty { padding: 56px 20px; text-align: center; color: var(--muted); border: 1px dashed var(--line-strong); border-radius: 2px; }
 
+    /* song page */
     .track { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); align-items: center; gap: clamp(32px, 6vw, 88px); padding-block: clamp(32px, 6vw, 72px) 0; }
     .track-art { padding-inline-end: 18%; }
     .track-art .cover { box-shadow: 0 50px 90px -42px rgba(var(--theme-color), 0.65), 0 24px 48px -24px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(var(--theme-color), 0.2); transition: box-shadow 1.2s ease; }
@@ -932,6 +937,7 @@ background_styles = """
     .like-animate { animation: luxuryLikePop 0.4s ease-in-out; }
     @keyframes luxuryLikePop { 0% { transform: scale(1); } 50% { transform: scale(1.4) rotate(10deg); } 100% { transform: scale(1); } }
 
+    /* ---------- forms + auth ---------- */
     .field { margin-top: 22px; }
     .field label { display: block; margin-bottom: 4px; font-size: 13px; font-weight: 500; color: var(--muted); }
     .input {
@@ -978,6 +984,7 @@ background_styles = """
     .auth-panel .who-line { margin: 0 0 6px; font-family: var(--display); font-size: 1.7rem; font-weight: 500; line-height: 1.15; overflow-wrap: anywhere; }
     .auth-art .vinyl-wrap { position: relative; inset: auto; top: auto; width: 100%; transform: none; animation: none; transition: none; }
 
+    /* ---------- modals ---------- */
     .modal {
         position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px;
         background: var(--scrim); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
@@ -1003,12 +1010,14 @@ background_styles = """
     #starContainer i:hover { transform: scale(1.14); }
     #starValueText { margin-inline-start: 12px; font-family: var(--display); font-size: 1.4rem; color: var(--accent-ink); }
 
+    /* ---------- footer ---------- */
     .foot { margin-top: clamp(64px, 9vw, 120px); }
     .auth-page .foot { margin-top: 0; }
     .foot-inner { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; padding: 26px 0 34px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 13px; color: var(--faint); }
     .foot .fa-heart { margin-inline: 4px; color: rgb(var(--theme-color)); font-size: 11px; }
     .foot-brand { font-family: var(--display); font-style: italic; font-size: 16px; }
 
+    /* ---------- responsive ---------- */
     @media (min-width: 640px) {
         .top-nav { display: flex; }
         .dialog-actions { flex-direction: row-reverse; }
@@ -1057,6 +1066,7 @@ background_styles = """
         .hero-title .line:nth-child(2) { padding-inline-start: 0.6em; }
     }
 
+    /* ---------- motion preferences ---------- */
     @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
         .vinyl { animation: none; }
@@ -1682,14 +1692,6 @@ top_rated_html = (
             updateUserNav();
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
-            let savedTheme = localStorage.getItem('musicy_theme');
-            if(savedTheme === 'light') {
-                document.body.classList.add('light-mode');
-                let icon = document.getElementById('darkModeIcon');
-                let text = document.getElementById('darkModeText');
-                if(icon) icon.className = 'fa-solid fa-sun w-4 text-emerald-600';
-                if(text) text.innerText = (savedLang === 'ar') ? 'الوضع الساطع' : 'Light Mode';
-            }
         });
         function updateUserNav() {
             let currentUser = localStorage.getItem('songdb_user');
@@ -1788,7 +1790,7 @@ login_html = (
     """
     + ambient_html
     + """
-    <header class="auth-top">
+    <div class="auth-top">
         <a href="/" class="brand" aria-label="Musicy">
             <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle class="ring-b" cx="16" cy="16" r="9.6" fill="none" stroke="currentColor" stroke-width="0.8"/><circle class="core" cx="16" cy="16" r="4.6"/><circle class="hole" cx="16" cy="16" r="1.1"/></svg>
             <span class="brand-name" data-i18n="brandName">Musicy</span>
@@ -1796,29 +1798,30 @@ login_html = (
         """
     + lang_switcher_html
     + """
-    </header>
+    </div>
 
     <main class="auth-main">
         <div class="auth-art">
             <div class="sleeve">
                 <div class="vinyl-wrap"><div class="vinyl"></div></div>
-                <img class="cover" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=600" alt="">
+                <img class="cover" src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=500" alt="Album Art">
             </div>
         </div>
         <div class="auth-panel">
-            <a href="/" class="back"><i class="fa-solid fa-arrow-left"></i><span>Home</span></a>
+            <a href="/" class="back"><i class="fa-solid fa-chevron-left"></i><span data-i18n="home">Home</span></a>
             <h1 class="display auth-title" data-i18n="welcomeBack">Welcome Back</h1>
             <p class="lede" data-i18n="loginDesc">Sign in to rate songs and share your reviews on Musicy</p>
+            
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="field">
                     <label data-i18n="emailLabel">Email Address</label>
-                    <input type="email" id="loginEmail" required class="input" placeholder="name@example.com">
+                    <input type="email" id="email" required class="input" placeholder="name@example.com">
                 </div>
                 <div class="field">
                     <label data-i18n="passwordLabel">Password</label>
-                    <input type="password" id="loginPassword" required class="input" placeholder="••••••••">
+                    <input type="password" id="password" required class="input" placeholder="••••••••">
                 </div>
-                <div id="loginError" class="text-red-500 text-xs mt-3 hidden"></div>
+                <div id="loginError" class="text-red-400 text-sm mt-3 hidden"></div>
                 <button type="submit" class="btn btn-primary btn-block" data-i18n="signInBtn">Sign In</button>
             </form>
             <p class="switch"><span data-i18n="noAccount">Don't have an account?</span><a href="/register" data-i18n="createAccountLink">Create Account</a></p>
@@ -1833,15 +1836,16 @@ login_html = (
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => { 
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
         });
+
         function handleLogin(e) {
             e.preventDefault();
-            let email = document.getElementById('loginEmail').value.trim();
-            let password = document.getElementById('loginPassword').value;
-            let errEl = document.getElementById('loginError');
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const errDiv = document.getElementById('loginError');
 
             fetch('/api/login', {
                 method: 'POST',
@@ -1855,9 +1859,13 @@ login_html = (
                     localStorage.setItem('songdb_avatar', data.avatar);
                     window.location.href = '/';
                 } else {
-                    errEl.innerText = data.message;
-                    errEl.classList.remove('hidden');
+                    errDiv.innerText = data.message;
+                    errDiv.classList.remove('hidden');
                 }
+            })
+            .catch(err => {
+                errDiv.innerText = "حدث خطأ أثناء الاتصال بالخادم";
+                errDiv.classList.remove('hidden');
             });
         }
     </script>
@@ -1884,7 +1892,7 @@ register_html = (
     """
     + ambient_html
     + """
-    <header class="auth-top">
+    <div class="auth-top">
         <a href="/" class="brand" aria-label="Musicy">
             <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle class="ring-b" cx="16" cy="16" r="9.6" fill="none" stroke="currentColor" stroke-width="0.8"/><circle class="core" cx="16" cy="16" r="4.6"/><circle class="hole" cx="16" cy="16" r="1.1"/></svg>
             <span class="brand-name" data-i18n="brandName">Musicy</span>
@@ -1892,34 +1900,35 @@ register_html = (
         """
     + lang_switcher_html
     + """
-    </header>
+    </div>
 
     <main class="auth-main">
         <div class="auth-art">
             <div class="sleeve">
                 <div class="vinyl-wrap"><div class="vinyl"></div></div>
-                <img class="cover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=600" alt="">
+                <img class="cover" src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=500" alt="Album Art">
             </div>
         </div>
         <div class="auth-panel">
-            <a href="/" class="back"><i class="fa-solid fa-arrow-left"></i><span>Home</span></a>
+            <a href="/" class="back"><i class="fa-solid fa-chevron-left"></i><span data-i18n="home">Home</span></a>
             <h1 class="display auth-title" data-i18n="createAccountTitle">Create Account</h1>
             <p class="lede" data-i18n="createAccountDesc">Join Musicy community and start rating today</p>
+            
             <form id="registerForm" onsubmit="handleRegister(event)">
                 <div class="field">
                     <label data-i18n="usernameLabel">Username</label>
-                    <input type="text" id="regUsername" required class="input" placeholder="Your name">
+                    <input type="text" id="username" required class="input" placeholder="Your Name">
                 </div>
                 <div class="field">
                     <label data-i18n="emailLabel">Email Address</label>
-                    <input type="email" id="regEmail" required class="input" placeholder="name@example.com">
+                    <input type="email" id="email" required class="input" placeholder="name@example.com">
                 </div>
                 <div class="field">
                     <label data-i18n="passwordLabel">Password</label>
-                    <input type="password" id="regPassword" required class="input" placeholder="••••••••">
+                    <input type="password" id="password" required class="input" placeholder="••••••••">
                 </div>
-                <div id="regError" class="text-red-500 text-xs mt-3 hidden"></div>
-                <button type="submit" class="btn btn-primary btn-block" data-i18n="createAccountTitle">Create Account</button>
+                <div id="registerError" class="text-red-400 text-sm mt-3 hidden"></div>
+                <button type="submit" class="btn btn-primary btn-block" data-i18n="createAccountLink">Create Account</button>
             </form>
             <p class="switch"><span data-i18n="alreadyAccount">Already have an account?</span><a href="/login" data-i18n="signInLink">Sign In</a></p>
         </div>
@@ -1933,16 +1942,17 @@ register_html = (
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => { 
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
         });
+
         function handleRegister(e) {
             e.preventDefault();
-            let username = document.getElementById('regUsername').value.trim();
-            let email = document.getElementById('regEmail').value.trim();
-            let password = document.getElementById('regPassword').value;
-            let errEl = document.getElementById('regError');
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const errDiv = document.getElementById('registerError');
 
             fetch('/api/register', {
                 method: 'POST',
@@ -1956,9 +1966,13 @@ register_html = (
                     localStorage.setItem('songdb_avatar', data.avatar);
                     window.location.href = '/';
                 } else {
-                    errEl.innerText = data.message;
-                    errEl.classList.remove('hidden');
+                    errDiv.innerText = data.message;
+                    errDiv.classList.remove('hidden');
                 }
+            })
+            .catch(err => {
+                errDiv.innerText = "حدث خطأ أثناء الاتصال بالخادم";
+                errDiv.classList.remove('hidden');
             });
         }
     </script>
@@ -1985,7 +1999,7 @@ profile_html = (
     """
     + ambient_html
     + """
-    <header class="auth-top">
+    <div class="auth-top">
         <a href="/" class="brand" aria-label="Musicy">
             <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle class="ring-b" cx="16" cy="16" r="9.6" fill="none" stroke="currentColor" stroke-width="0.8"/><circle class="core" cx="16" cy="16" r="4.6"/><circle class="hole" cx="16" cy="16" r="1.1"/></svg>
             <span class="brand-name" data-i18n="brandName">Musicy</span>
@@ -1993,29 +2007,23 @@ profile_html = (
         """
     + lang_switcher_html
     + """
-    </header>
+    </div>
 
-    <main class="auth-main">
-        <div class="auth-art">
-            <div class="sleeve">
-                <div class="vinyl-wrap"><div class="vinyl"></div></div>
-                <img id="profilePreviewCover" class="cover" src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=600" alt="">
+    <main class="auth-main" style="grid-template-columns: 1fr;">
+        <div class="auth-panel" style="width: min(100%, 520px);">
+            <a href="/" class="back"><i class="fa-solid fa-chevron-left"></i><span data-i18n="home">Home</span></a>
+            <div class="text-center flex flex-col items-center">
+                <img id="profileAvatarImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" alt="Avatar" class="avatar-lg">
+                <h2 id="profileUsernameText" class="who-line">User</h2>
             </div>
-        </div>
-        <div class="auth-panel text-center">
-            <a href="/" class="back text-start"><i class="fa-solid fa-arrow-left"></i><span>Home</span></a>
-            <div class="flex flex-col items-center">
-                <img id="currentAvatarImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" class="avatar-lg">
-                <h2 id="profileUsername" class="who-line">User</h2>
-            </div>
-            <p class="lede mb-6" data-i18n="profileTitle">Edit Profile &amp; Avatar</p>
-            <form id="avatarFileForm" onsubmit="handleAvatarUpload(event)">
-                <div class="field text-start">
+
+            <form id="avatarForm" onsubmit="handleAvatarUpload(event)" class="mt-6">
+                <div class="field">
                     <label data-i18n="avatarFileLabel">Choose image from device (PC or Phone):</label>
-                    <input type="file" id="avatarFileInput" accept="image/*" required class="file mt-2">
+                    <input type="file" id="avatarFileInput" accept="image/png, image/jpeg, image/webp" required class="file mt-2">
                 </div>
-                <div id="profileError" class="text-red-500 text-xs mt-3 hidden"></div>
-                <button type="submit" class="btn btn-primary btn-block" data-i18n="saveAvatarBtn">Upload &amp; Save Avatar</button>
+                <div id="profileError" class="text-red-400 text-sm mt-3 hidden"></div>
+                <button type="submit" class="btn btn-primary btn-block mt-4" data-i18n="saveAvatarBtn">Upload &amp; Save Avatar</button>
             </form>
         </div>
     </main>
@@ -2028,31 +2036,41 @@ profile_html = (
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => { 
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
 
-            let user = localStorage.getItem('songdb_user');
-            if(!user) {
+            let currentUser = localStorage.getItem('songdb_user');
+            if(!currentUser) {
                 window.location.href = '/login';
                 return;
             }
-            document.getElementById('profileUsername').innerText = user;
-            let avatar = localStorage.getItem('songdb_avatar');
-            if(avatar) {
-                document.getElementById('currentAvatarImg').src = avatar;
+            document.getElementById('profileUsernameText').innerText = currentUser;
+            let currentAvatar = localStorage.getItem('songdb_avatar');
+            if(currentAvatar) {
+                document.getElementById('profileAvatarImg').src = currentAvatar;
             }
+
+            fetch(`/api/get_user_info?username=${encodeURIComponent(currentUser)}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    document.getElementById('profileAvatarImg').src = data.avatar;
+                    localStorage.setItem('songdb_avatar', data.avatar);
+                }
+            });
         });
 
         function handleAvatarUpload(e) {
             e.preventDefault();
-            let user = localStorage.getItem('songdb_user');
-            let fileInput = document.getElementById('avatarFileInput');
-            let errEl = document.getElementById('profileError');
+            const fileInput = document.getElementById('avatarFileInput');
+            const errDiv = document.getElementById('profileError');
+            const currentUser = localStorage.getItem('songdb_user');
+
             if(!fileInput.files[0]) return;
 
-            let formData = new FormData();
-            formData.append('username', user);
+            const formData = new FormData();
+            formData.append('username', currentUser);
             formData.append('avatar_file', fileInput.files[0]);
 
             fetch('/api/update_avatar_file', {
@@ -2062,14 +2080,18 @@ profile_html = (
             .then(res => res.json())
             .then(data => {
                 if(data.success) {
+                    document.getElementById('profileAvatarImg').src = data.avatar;
                     localStorage.setItem('songdb_avatar', data.avatar);
-                    document.getElementById('currentAvatarImg').src = data.avatar;
-                    alert('Avatar updated successfully!');
+                    alert("تم تحديث الصورة الشخصية بنجاح!");
                     window.location.href = '/';
                 } else {
-                    errEl.innerText = data.message;
-                    errEl.classList.remove('hidden');
+                    errDiv.innerText = data.message;
+                    errDiv.classList.remove('hidden');
                 }
+            })
+            .catch(err => {
+                errDiv.innerText = "حدث خطأ أثناء رفع الصورة";
+                errDiv.classList.remove('hidden');
             });
         }
     </script>
@@ -2135,20 +2157,20 @@ song_detail_template = (
             </div>
             <div class="track-info">
                 <h1 class="display track-title">{{ song.title }}</h1>
-                <div class="track-artist">{{ song.artist }}</div>
+                <p class="track-artist">{{ song.artist }}</p>
                 <div class="track-meta"><span>{{ song.release_year }}</span><span class="sep"></span><span>{{ song.genre }}</span></div>
+                
                 <div class="track-rating">
-                    <span id="bigScore" class="big-score">{{ song.rating }}</span>
+                    <div class="big-score" id="songRatingNum">{{ song.rating }}</div>
                     <div>
-                        <div id="songStars" class="stars lg" style="--r: {{ song.rating }}"></div>
-                        <div class="votes"><span id="totalVotesNum">{{ song.votes }}</span> <span data-i18n="votesText">votes</span></div>
+                        <span class="stars lg" id="songStarsEl" style="--r: {{ song.rating }}"></span>
+                        <div class="votes"><b id="songVotesCount">{{ song.votes }}</b> <span data-i18n="votesText">votes</span></div>
                     </div>
                 </div>
+
                 <div class="actions">
-                    {% if song.spotify_id and not song.spotify_id.startswith('blinding_lights_') %}
-                    <a href="https://open.spotify.com/track/{{ song.spotify_id }}" target="_blank" class="btn btn-primary"><i class="fa-brands fa-spotify"></i><span data-i18n="listenSpotify">Listen on Spotify</span></a>
-                    {% endif %}
-                    <button type="button" onclick="openRateModal()" class="btn btn-ghost"><i class="fa-solid fa-star"></i><span id="rateBtnText" data-i18n="rateSongBtn">Rate This Song</span></button>
+                    <a href="https://open.spotify.com/track/{{ song.spotify_id }}" target="_blank" class="btn btn-primary" data-i18n="listenSpotify"><i class="fa-brands fa-spotify"></i><span>Listen on Spotify</span></a>
+                    <button type="button" onclick="openRateModal()" class="btn btn-ghost" id="rateModalBtnText"><i class="fa-solid fa-star"></i><span data-i18n="rateSongBtn">Rate This Song</span></button>
                 </div>
             </div>
         </section>
@@ -2159,85 +2181,84 @@ song_detail_template = (
                     <div class="section-head">
                         <h2 class="h2" data-i18n="reviewsTitle">Reviews &amp; Ratings</h2>
                     </div>
-                    <div id="reviewsList">
+                    <div id="reviewsContainer">
                         {% if reviews %}
-                        {% for r in reviews %}
-                        <div class="review" data-review-id="{{ r.id }}">
-                            <div class="review-head">
-                                <img src="{{ r.avatar }}" class="avatar">
-                                <div class="who">
-                                    <h4>{{ r.username }}</h4>
-                                    <div class="when" data-timestamp="{{ r.timestamp }}">Just now</div>
+                            {% for r in reviews %}
+                            <div class="review" data-review-id="{{ r.id }}">
+                                <div class="review-head">
+                                    <img class="avatar" src="{{ r.avatar }}" alt="{{ r.username }}">
+                                    <div class="who">
+                                        <h4>{{ r.username }}</h4>
+                                        <div class="when" data-timestamp="{{ r.timestamp }}">Just now</div>
+                                    </div>
+                                    <div class="review-score">
+                                        <span class="stars" style="--r: {{ r.rating }}"></span>
+                                        <b>{{ r.rating }}</b>
+                                    </div>
                                 </div>
-                                <div class="review-score">
-                                    <span class="stars" style="--r: {{ r.rating }}"></span>
-                                    <b>{{ r.rating }}</b>
+                                {% if r.comment %}
+                                <div class="review-text">{{ r.comment }}</div>
+                                {% endif %}
+                                <div class="review-foot">
+                                    <button type="button" onclick="likeReview({{ r.id }})" class="like-btn" id="like-btn-{{ r.id }}">
+                                        <i class="fa-solid fa-heart text-gray-400" id="like-icon-{{ r.id }}"></i>
+                                        <span id="like-count-{{ r.id }}">{{ r.likes }}</span>
+                                    </button>
                                 </div>
                             </div>
-                            {% if r.comment %}
-                            <div class="review-text">{{ r.comment }}</div>
-                            {% endif %}
-                            <div class="review-foot">
-                                <button type="button" onclick="likeReview({{ r.id }})" class="like-btn" id="likeBtn-{{ r.id }}">
-                                    <i class="fa-solid fa-heart text-gray-400" id="likeIcon-{{ r.id }}"></i>
-                                    <span id="likeCount-{{ r.id }}"><b>{{ r.likes }}</b></span>
-                                </button>
-                            </div>
-                        </div>
-                        {% endfor %}
+                            {% endfor %}
                         {% else %}
-                        <div id="noReviewsMsg" class="empty" data-i18n="noReviews">No reviews yet. Be the first to review this song!</div>
+                            <div class="empty" id="noReviewsMsg" data-i18n="noReviews">No reviews yet. Be the first to review this song!</div>
                         {% endif %}
                     </div>
                 </div>
 
-                <aside class="ledger">
+                <div class="ledger">
                     <h4 data-i18n="ratingDetails">Rating Details</h4>
                     <dl>
-                        <div class="row"><dt data-i18n="overallRating">Overall Rating</dt><dd class="accent"><span id="ledgerScore">{{ song.rating }}</span><span class="of">/5</span></dd></div>
+                        <div class="row"><dt data-i18n="overallRating">Overall Rating</dt><dd class="accent" id="ledgerRating">{{ song.rating }}</dd></div>
                         <div class="row"><dt data-i18n="totalVotes">Total Votes</dt><dd id="ledgerVotes">{{ song.votes }}</dd></div>
                     </dl>
-                </aside>
+                </div>
             </div>
         </section>
     </main>
 
-    <!-- Rating Modal -->
-    <div id="rateModal" class="modal hidden">
+    <!-- Rate Modal -->
+    <div id="rateModal" class="modal hidden" role="dialog" aria-hidden="true">
         <div class="dialog">
-            <h3 class="dialog-title" data-i18n="rateModalTitle">Rate</h3>
-            <p class="lede" style="margin-top: 4px;">{{ song.title }} — {{ song.artist }}</p>
+            <h3 class="dialog-title"><span data-i18n="rateModalTitle">Rate</span>: {{ song.title }}</h3>
             <div class="field">
-                <label data-i18n="ratingScoreLabel">اختر النجوم (من 1 إلى 5):</label>
+                <label data-i18n="ratingScoreLabel">Rating Stars (1 to 5):</label>
                 <div id="starContainer">
-                    <i class="fa-solid fa-star" onclick="setRatingScore(1)"></i>
-                    <i class="fa-solid fa-star" onclick="setRatingScore(2)"></i>
-                    <i class="fa-solid fa-star" onclick="setRatingScore(3)"></i>
-                    <i class="fa-solid fa-star" onclick="setRatingScore(4)"></i>
-                    <i class="fa-solid fa-star" onclick="setRatingScore(5)"></i>
+                    <i class="fa-solid fa-star" onclick="setModalRating(1)" onmouseover="hoverModalRating(1)" onmouseout="resetModalRatingHover()"></i>
+                    <i class="fa-solid fa-star" onclick="setModalRating(2)" onmouseover="hoverModalRating(2)" onmouseout="resetModalRatingHover()"></i>
+                    <i class="fa-solid fa-star" onclick="setModalRating(3)" onmouseover="hoverModalRating(3)" onmouseout="resetModalRatingHover()"></i>
+                    <i class="fa-solid fa-star" onclick="setModalRating(4)" onmouseover="hoverModalRating(4)" onmouseout="resetModalRatingHover()"></i>
+                    <i class="fa-solid fa-star" onclick="setModalRating(5)" onmouseover="hoverModalRating(5)" onmouseout="resetModalRatingHover()"></i>
                     <span id="starValueText">5</span>
                 </div>
             </div>
             <div class="field">
-                <label data-i18n="commentLabel">رأيك أو تعليقك:</label>
-                <textarea id="reviewCommentInput" rows="3" class="textarea" placeholder="اكتب انطباعك عن الأغنية..."></textarea>
+                <label data-i18n="commentLabel">Your Review / Comment:</label>
+                <textarea id="modalCommentInput" rows="4" class="textarea" placeholder="Write your thoughts..."></textarea>
             </div>
-            <div id="rateError" class="text-red-500 text-xs mt-3 hidden"></div>
+            <div id="rateModalError" class="text-red-400 text-sm mt-3 hidden"></div>
             <div class="dialog-actions">
-                <button type="button" onclick="submitRating()" class="btn btn-primary" data-i18n="submitRatingBtn">إرسال التقييم وإنشاء الستوري</button>
-                <button type="button" onclick="closeRateModal()" class="btn btn-ghost" data-i18n="cancelBtn">إلغاء</button>
+                <button type="button" onclick="submitReview()" class="btn btn-primary" data-i18n="submitRatingBtn">Submit Rating &amp; Generate Story</button>
+                <button type="button" onclick="closeRateModal()" class="btn btn-ghost" data-i18n="cancelBtn">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Story Preview Modal -->
-    <div id="storyModal" class="modal hidden">
+    <!-- Luxury Instagram Story Modal -->
+    <div id="storyModal" class="modal hidden" role="dialog" aria-hidden="true">
         <div class="dialog story">
-            <h3 class="dialog-title" data-i18n="storyModalTitle">معاينة ستوري انستقرام الخارقة الفخامة</h3>
+            <h3 class="dialog-title" data-i18n="storyModalTitle">Luxury Instagram Story Preview</h3>
             <canvas id="storyCanvas" width="1080" height="1920"></canvas>
             <div class="dialog-actions">
-                <button type="button" onclick="downloadStory()" class="btn btn-primary" data-i18n="downloadStoryBtn">تحميل ستوري الفخامة</button>
-                <button type="button" onclick="closeStoryModal()" class="btn btn-ghost" data-i18n="closeStoryBtn">إغلاق ومتابعة</button>
+                <button type="button" onclick="downloadStory()" class="btn btn-primary" data-i18n="downloadStoryBtn">Download Luxury Story</button>
+                <button type="button" onclick="closeStoryModal()" class="btn btn-ghost" data-i18n="closeStoryBtn">Close &amp; Continue</button>
             </div>
         </div>
     </div>
@@ -2250,237 +2271,220 @@ song_detail_template = (
     </footer>
 
     <script>
-        let currentSelectedScore = 5;
-        let songSpotifyId = "{{ song.spotify_id }}";
-        let songTitle = "{{ song.title }}";
-        let songArtist = "{{ song.artist }}";
-        let songImgUrl = "{{ song.img }}";
+        let currentModalRatingScore = 5;
+        const spotifyId = "{{ song.spotify_id }}";
 
         document.addEventListener('DOMContentLoaded', () => {
             updateUserNav();
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
             updateAllTimes();
-            checkUserLikes();
+            checkUserLikesOnLoad();
+            
+            // Extract dominant color from cover art for luxury dynamic theme
+            const img = document.getElementById('songCoverImg');
+            if(img) {
+                if(img.complete) {
+                    extractColor(img);
+                } else {
+                    img.onload = () => extractColor(img);
+                }
+            }
         });
 
-        function updateAllTimes() {
-            document.querySelectorAll('.when').forEach(el => {
-                let ts = parseFloat(el.getAttribute('data-timestamp'));
-                if(!ts) return;
-                let diff = Math.floor((Date.now()/1000) - ts);
-                let lang = localStorage.getItem('musicy_lang') || 'en';
-                if(diff < 60) {
-                    el.innerText = (lang === 'ar') ? 'قبل قليل' : 'Just now';
-                } else if(diff < 3600) {
-                    let m = Math.floor(diff/60);
-                    el.innerText = (lang === 'ar') ? `قبل ${m} دقيقة` : `${m}m ago`;
-                } else if(diff < 86400) {
-                    let h = Math.floor(diff/3600);
-                    el.innerText = (lang === 'ar') ? `قبل ${h} ساعة` : `${h}h ago`;
-                } else {
-                    let d = Math.floor(diff/86400);
-                    el.innerText = (lang === 'ar') ? `قبل ${d} يوم` : `${d}d ago`;
+        function extractColor(img) {
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 50;
+                canvas.height = 50;
+                ctx.drawImage(img, 0, 0, 50, 50);
+                const data = ctx.getImageData(0, 0, 50, 50).data;
+                let r = 0, g = 0, b = 0, count = 0;
+                for(let i = 0; i < data.length; i += 16) {
+                    r += data[i];
+                    g += data[i+1];
+                    b += data[i+2];
+                    count++;
+                }
+                r = Math.floor(r / count);
+                g = Math.floor(g / count);
+                b = Math.floor(b / count);
+                
+                // Ensure sufficient brightness for contrast
+                const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                if(brightness < 50) {
+                    r = Math.min(255, r + 80);
+                    g = Math.min(255, g + 80);
+                    b = Math.min(255, b + 80);
+                }
+                
+                document.documentElement.style.setProperty('--theme-color', `${r}, ${g}, ${b}`);
+                document.documentElement.style.setProperty('--theme-color-dark', `${Math.max(0, r-40)}, ${Math.max(0, g-40)}, ${Math.max(0, b-40)}`);
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function checkUserLikesOnLoad() {
+            let currentUser = localStorage.getItem('songdb_user');
+            if(!currentUser) return;
+            
+            let reviewCards = document.querySelectorAll('.review');
+            let reviewIds = [];
+            reviewCards.forEach(card => {
+                reviewIds.push(parseInt(card.getAttribute('data-review-id')));
+            });
+
+            if(reviewIds.length === 0) return;
+
+            fetch('/api/check_likes', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: currentUser, review_ids: reviewIds})
+            })
+            .then(res => res.json())
+            .then(likedDict => {
+                for(let rid in likedDict) {
+                    if(likedDict[rid]) {
+                        let icon = document.getElementById(`like-icon-${rid}`);
+                        if(icon) {
+                            icon.classList.remove('text-gray-400');
+                            icon.classList.add('liked-red');
+                        }
+                    }
                 }
             });
         }
 
+        function updateUserNav() {
+            let currentUser = localStorage.getItem('songdb_user');
+            let currentAvatar = localStorage.getItem('songdb_avatar') || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200';
+            let area = document.getElementById('userProfileArea');
+            if (currentUser) {
+                let logoutText = (localStorage.getItem('musicy_lang') === 'ar') ? 'تسجيل الخروج' : 'Logout';
+                area.innerHTML = `
+                    <div class="flex items-center space-x-1.5 sm:space-x-3">
+                        <a href="/profile" class="flex items-center space-x-1.5 bg-[#030712] px-2 sm:px-3 py-1.5 rounded-full border border-theme/60 shadow-[0_0_20px_rgba(var(--theme-color),0.15)] hover:border-theme transition">
+                            <img src="${currentAvatar}" class="w-7 h-7 rounded-full object-cover">
+                            <span class="text-xs sm:text-sm font-medium text-white max-w-[100px] truncate">${currentUser}</span>
+                        </a>
+                        <button onclick="logout()" title="${logoutText}" class="w-9 h-9 flex items-center justify-center rounded-full border border-theme/40 text-gray-400 hover:text-red-500 hover:border-red-500/50 transition">
+                            <i class="fa-solid fa-right-from-bracket text-sm"></i>
+                        </button>
+                    </div>
+                `;
+            } else {
+                area.innerHTML = `<a href="/login" class="w-9 h-9 flex items-center justify-center rounded-full border border-theme/40 text-white hover:border-theme transition"><i class="fa-solid fa-user text-sm"></i></a>`;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('songdb_user');
+            localStorage.removeItem('songdb_avatar');
+            window.location.href = '/';
+        }
+
+        function updateAllTimes() {
+            document.querySelectorAll('.when').forEach(el => {
+                const ts = parseFloat(el.getAttribute('data-timestamp'));
+                if(!ts) return;
+                const diff = (Date.now() / 1000) - ts;
+                let lang = localStorage.getItem('musicy_lang') || 'en';
+                let txt = "Just now";
+                if(lang === 'ar') {
+                    if(diff < 60) txt = "الآن عيوني";
+                    else if(diff < 3600) txt = `منذ ${Math.floor(diff/60)} دقيقة`;
+                    else if(diff < 86400) txt = `منذ ${Math.floor(diff/3600)} ساعة`;
+                    else txt = `منذ ${Math.floor(diff/86400)} يوم`;
+                } else {
+                    if(diff < 60) txt = "Just now";
+                    else if(diff < 3600) txt = `${Math.floor(diff/60)}m ago`;
+                    else if(diff < 86400) txt = `${Math.floor(diff/3600)}h ago`;
+                    else txt = `${Math.floor(diff/86400)}d ago`;
+                }
+                el.innerText = txt;
+            });
+        }
+
         function openRateModal() {
-            let user = localStorage.getItem('songdb_user');
-            if(!user) {
+            let currentUser = localStorage.getItem('songdb_user');
+            if(!currentUser) {
                 window.location.href = '/login';
                 return;
             }
             document.getElementById('rateModal').classList.remove('hidden');
-            setRatingScore(5);
         }
 
         function closeRateModal() {
             document.getElementById('rateModal').classList.add('hidden');
         }
 
-        function setRatingScore(score) {
-            currentSelectedScore = score;
-            document.getElementById('starValueText').innerText = score;
+        function setModalRating(val) {
+            currentModalRatingScore = val;
+            document.getElementById('starValueText').innerText = val;
             let stars = document.querySelectorAll('#starContainer i');
             stars.forEach((s, idx) => {
-                if(idx < score) {
-                    s.classList.add('text-theme');
-                } else {
-                    s.classList.remove('text-theme');
-                }
+                if(idx < val) s.classList.add('text-theme');
+                else s.classList.remove('text-theme');
             });
         }
 
-        function submitRating() {
-            let user = localStorage.getItem('songdb_user');
-            if(!user) {
-                window.location.href = '/login';
-                return;
-            }
-            let comment = document.getElementById('reviewCommentInput').value;
-            let errEl = document.getElementById('rateError');
+        function hoverModalRating(val) {
+            let stars = document.querySelectorAll('#starContainer i');
+            stars.forEach((s, idx) => {
+                if(idx < val) s.classList.add('text-theme');
+                else s.classList.remove('text-theme');
+            });
+        }
+
+        function resetModalRatingHover() {
+            setModalRating(currentModalRatingScore);
+        }
+
+        function submitReview() {
+            let currentUser = localStorage.getItem('songdb_user');
+            let comment = document.getElementById('modalCommentInput').value.trim();
+            let errDiv = document.getElementById('rateModalError');
 
             fetch('/api/rate', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    spotify_id: songSpotifyId,
-                    rating: currentSelectedScore,
+                    spotify_id: spotifyId,
+                    rating: currentModalRatingScore,
                     comment: comment,
-                    username: user
+                    username: currentUser
                 })
             })
             .then(res => res.json())
             .then(data => {
                 if(data.success) {
                     closeRateModal();
-                    document.getElementById('bigScore').innerText = data.new_rating;
-                    document.getElementById('ledgerScore').innerText = data.new_rating;
-                    document.getElementById('totalVotesNum').innerText = data.votes;
+                    document.getElementById('songRatingNum').innerText = data.new_rating;
+                    document.getElementById('songStarsEl').style.setProperty('--r', data.new_rating);
+                    document.getElementById('songVotesCount').innerText = data.votes;
+                    document.getElementById('ledgerRating').innerText = data.new_rating;
                     document.getElementById('ledgerVotes').innerText = data.votes;
-                    document.getElementById('songStars').style.setProperty('--r', data.new_rating);
 
-                    // تحديث قائمة المراجعات فورياً مع الـ Avatar الخاص بالمستخدم
-                    let listEl = document.getElementById('reviewsList');
-                    let noRevMsg = document.getElementById('noReviewsMsg');
-                    if(noRevMsg) noRevMsg.remove();
-
-                    let userAvatar = data.avatar || localStorage.getItem('songdb_avatar') || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200';
-                    
-                    let newReviewHtml = `
-                        <div class="review">
-                            <div class="review-head">
-                                <img src="${userAvatar}" class="avatar">
-                                <div class="who">
-                                    <h4>${user}</h4>
-                                    <div class="when" data-timestamp="${data.timestamp}">Just now</div>
-                                </div>
-                                <div class="review-score">
-                                    <span class="stars" style="--r: ${currentSelectedScore}"></span>
-                                    <b>${currentSelectedScore}</b>
-                                </div>
-                            </div>
-                            ${comment ? `<div class="review-text">${comment}</div>` : ''}
-                            <div class="review-foot">
-                                <button type="button" class="like-btn">
-                                    <i class="fa-solid fa-heart text-gray-400"></i>
-                                    <span><b>0</b></span>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    listEl.insertAdjacentHTML('afterbegin', newReviewHtml);
-                    updateAllTimes();
-
-                    // توليد وعرض ستوري الانستقرام الفاخر مع صورة الـ Avatar وتفاصيل المستخدم
-                    generateStoryCanvas(songTitle, songArtist, songImgUrl, currentSelectedScore, user, userAvatar);
+                    // Generate Luxury Instagram Story
+                    openStoryModal(data);
                 } else {
-                    errEl.innerText = data.message;
-                    errEl.classList.remove('hidden');
+                    errDiv.innerText = data.message;
+                    errDiv.classList.remove('hidden');
                 }
+            })
+            .catch(err => {
+                errDiv.innerText = "حدث خطأ أثناء إرسال التقييم";
+                errDiv.classList.remove('hidden');
             });
         }
 
-        function generateStoryCanvas(title, artist, coverUrl, score, username, avatarUrl) {
-            let canvas = document.getElementById('storyCanvas');
-            let ctx = canvas.getContext('2d');
-
-            let bgImg = new Image();
-            bgImg.crossOrigin = 'anonymous';
-            bgImg.src = coverUrl || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=600';
-
-            bgImg.onload = () => {
-                // رسم خلفية فخمة ضبابية داكنة
-                ctx.save();
-                ctx.filter = 'blur(40px) brightness(0.35)';
-                ctx.drawImage(bgImg, -100, -100, canvas.width + 200, canvas.height + 200);
-                ctx.restore();
-
-                let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-                grad.addColorStop(0, 'rgba(3, 7, 18, 0.7)');
-                grad.addColorStop(0.5, 'rgba(3, 7, 18, 0.85)');
-                grad.addColorStop(1, 'rgba(3, 7, 18, 0.95)');
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // رسم غلاف الأغنية المربع في المنتصف بإطار أنيق
-                let coverSize = 650;
-                let coverX = (canvas.width - coverSize) / 2;
-                let coverY = 320;
-
-                ctx.save();
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-                ctx.shadowBlur = 60;
-                ctx.shadowOffsetY = 30;
-                ctx.fillStyle = '#111827';
-                ctx.fillRect(coverX, coverY, coverSize, coverSize);
-                ctx.drawImage(bgImg, coverX, coverY, coverSize, coverSize);
-                ctx.restore();
-
-                // اسم الأغنية والفنان
-                ctx.textAlign = 'center';
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 54px "Bodoni Moda", serif';
-                ctx.fillText(title, canvas.width / 2, coverY + coverSize + 110, 900);
-
-                ctx.fillStyle = '#9ca3af';
-                ctx.font = '36px sans-serif';
-                ctx.fillText(artist, canvas.width / 2, coverY + coverSize + 175, 900);
-
-                // تقييم النجوم الرقمي
-                ctx.fillStyle = '#10b981';
-                ctx.font = 'bold 70px "Bodoni Moda", serif';
-                ctx.fillText(`${score}.0 / 5.0`, canvas.width / 2, coverY + coverSize + 270);
-
-                // رسم صورة المستخدم الـ Avatar مع دائرية فخمة واسمه في أسفل الستوري
-                let avatarImg = new Image();
-                avatarImg.crossOrigin = 'anonymous';
-                avatarImg.src = avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200';
-
-                avatarImg.onload = () => {
-                    let avSize = 100;
-                    let avX = (canvas.width - avSize) / 2;
-                    let avY = canvas.height - 320;
-
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.arc(avX + avSize / 2, avY + avSize / 2, avSize / 2, 0, Math.PI * 2);
-                    ctx.closePath();
-                    ctx.clip();
-                    ctx.drawImage(avatarImg, avX, avY, avSize, avSize);
-                    ctx.restore();
-
-                    // إطار دائري حول الـ Avatar
-                    ctx.save();
-                    ctx.strokeStyle = '#10b981';
-                    ctx.lineWidth = 5;
-                    ctx.beginPath();
-                    ctx.arc(avX + avSize / 2, avY + avSize / 2, avSize / 2, 0, Math.PI * 2);
-                    ctx.stroke();
-                    ctx.restore();
-
-                    // اسم المستخدم تحت الـ Avatar
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 34px sans-serif';
-                    ctx.fillText(`@${username}`, canvas.width / 2, avY + avSize + 60);
-
-                    // شعار الموقع في الأسفل
-                    ctx.fillStyle = '#6b7280';
-                    ctx.font = 'italic 26px "Bodoni Moda", serif';
-                    ctx.fillText('Musicy - Discover & Share', canvas.width / 2, canvas.height - 90);
-
-                    document.getElementById('storyModal').classList.remove('hidden');
-                };
-            };
-        }
-
-        function downloadStory() {
-            let canvas = document.getElementById('storyCanvas');
-            let link = document.createElement('a');
-            link.download = `musicy_story_${Date.now()}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+        let latestStoryData = null;
+        function openStoryModal(data) {
+            latestStoryData = data;
+            document.getElementById('storyModal').classList.remove('hidden');
+            drawStoryCanvas(data);
         }
 
         function closeStoryModal() {
@@ -2488,62 +2492,177 @@ song_detail_template = (
             location.reload();
         }
 
+        function drawStoryCanvas(data) {
+            const canvas = document.getElementById('storyCanvas');
+            const ctx = canvas.getContext('2d');
+            const width = 1080;
+            const height = 1920;
+
+            // Background Gradient
+            let grad = ctx.createLinearGradient(0, 0, 0, height);
+            grad.addColorStop(0, '#030712');
+            grad.addColorStop(0.5, '#0b0f19');
+            grad.addColorStop(1, '#020408');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, width, height);
+
+            // Glowing circle ambient
+            let radial = ctx.createRadialGradient(width/2, 650, 50, width/2, 650, 600);
+            radial.addColorStop(0, 'rgba(16, 185, 129, 0.35)');
+            radial.addColorStop(1, 'transparent');
+            ctx.fillStyle = radial;
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw Album Art Cover with Shadow & Rounded corners
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.src = data.img;
+            img.onload = () => {
+                ctx.save();
+                ctx.shadowColor = 'rgba(0,0,0,0.85)';
+                ctx.shadowBlur = 80;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 40;
+                
+                const coverSize = 640;
+                const coverX = (width - coverSize) / 2;
+                const coverY = 320;
+                
+                ctx.fillStyle = '#111827';
+                ctx.beginPath();
+                ctx.roundRect(coverX, coverY, coverSize, coverSize, 24);
+                ctx.fill();
+                ctx.clip();
+                ctx.drawImage(img, coverX, coverY, coverSize, coverSize);
+                ctx.restore();
+
+                // Draw Song Title
+                ctx.fillStyle = '#f9fafb';
+                ctx.font = '700 56px "Bodoni Moda", serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(truncateText(ctx, data.song_title, 900), width / 2, 1080);
+
+                // Draw Artist
+                ctx.fillStyle = '#9ca3af';
+                ctx.font = '400 36px sans-serif';
+                ctx.fillText(truncateText(ctx, data.artist, 900), width / 2, 1146);
+
+                // Draw Rating Badge Box
+                ctx.fillStyle = 'rgba(17, 24, 39, 0.85)';
+                ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.roundRect(width/2 - 200, 1220, 400, 110, 55);
+                ctx.fill();
+                ctx.stroke();
+
+                // Stars & Score inside badge
+                ctx.fillStyle = '#10b981';
+                ctx.font = '700 45px sans-serif';
+                ctx.fillText(`★ ${data.new_rating} / 5.0`, width / 2, 1290);
+
+                // Footer branding
+                ctx.fillStyle = '#6b7280';
+                ctx.font = '500 28px sans-serif';
+                ctx.fillText("MUSICY — Rated & Shared by Real Fans", width / 2, 1780);
+            };
+        }
+
+        function truncateText(ctx, text, maxWidth) {
+            let width = ctx.measureText(text).width;
+            if(width <= maxWidth) return text;
+            let sub = text;
+            while(width > maxWidth && sub.length > 0) {
+                sub = sub.substring(0, sub.length - 1);
+                width = ctx.measureText(sub + '...').width;
+            }
+            return sub + '...';
+        }
+
+        function downloadStory() {
+            const canvas = document.getElementById('storyCanvas');
+            const link = document.createElement('a');
+            link.download = 'musicy-story.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
         function likeReview(reviewId) {
-            let user = localStorage.getItem('songdb_user');
-            if(!user) {
+            let currentUser = localStorage.getItem('songdb_user');
+            if(!currentUser) {
                 window.location.href = '/login';
                 return;
             }
+
             fetch('/api/like_review', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ review_id: reviewId, username: user })
+                body: JSON.stringify({review_id: reviewId, username: currentUser})
             })
             .then(res => res.json())
             .then(data => {
                 if(data.success) {
-                    let countEl = document.getElementById(`likeCount-${reviewId}`);
-                    let iconEl = document.getElementById(`likeIcon-${reviewId}`);
-                    let btnEl = document.getElementById(`likeBtn-${reviewId}`);
-
-                    countEl.innerHTML = `<b>${data.likes}</b>`;
+                    document.getElementById(`like-count-${reviewId}`).innerText = data.likes;
+                    let icon = document.getElementById(`like-icon-${reviewId}`);
+                    let btn = document.getElementById(`like-btn-${reviewId}`);
+                    
                     if(data.liked) {
-                        iconEl.classList.remove('text-gray-400');
-                        iconEl.classList.add('liked-red', 'fa-solid');
-                        btnEl.classList.add('like-animate');
-                        setTimeout(() => btnEl.classList.remove('like-animate'), 400);
+                        icon.classList.remove('text-gray-400');
+                        icon.classList.add('liked-red');
                     } else {
-                        iconEl.classList.remove('liked-red');
-                        iconEl.classList.add('text-gray-400');
+                        icon.classList.remove('liked-red');
+                        icon.classList.add('text-gray-400');
                     }
+                    
+                    btn.classList.add('like-animate');
+                    setTimeout(() => btn.classList.remove('like-animate'), 400);
                 }
             });
         }
 
-        function checkUserLikes() {
-            let user = localStorage.getItem('songdb_user');
-            let reviewIds = [];
-            document.querySelectorAll('.review').forEach(el => {
-                let rid = el.getAttribute('data-review-id');
-                if(rid) reviewIds.push(parseInt(rid));
-            });
-            if(!user || reviewIds.length === 0) return;
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        let searchTimeout = null;
 
-            fetch('/api/check_likes', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ username: user, review_ids: reviewIds })
-            })
-            .then(res => res.json())
-            .then(likedDict => {
-                for(let rid in likedDict) {
-                    if(likedDict[rid]) {
-                        let iconEl = document.getElementById(`likeIcon-${rid}`);
-                        if(iconEl) {
-                            iconEl.classList.remove('text-gray-400');
-                            iconEl.classList.add('liked-red');
+        if(searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                let q = e.target.value.trim();
+                if(!q) {
+                    searchResults.classList.add('hidden');
+                    searchResults.innerHTML = '';
+                    return;
+                }
+                searchTimeout = setTimeout(() => {
+                    fetch(`/api/search?q=${encodeURIComponent(q)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.length === 0) {
+                            searchResults.innerHTML = `<div class="p-3 text-sm text-gray-400 text-center">No tracks found</div>`;
+                            searchResults.classList.remove('hidden');
+                            return;
                         }
-                    }
+                        let html = '';
+                        data.forEach(item => {
+                            html += `
+                                <div onclick="location.href='/song/${item.spotify_id}'">
+                                    <img src="${item.img}" class="w-10 h-10 object-cover rounded">
+                                    <div>
+                                        <p class="font-bold">${item.title}</p>
+                                        <p class="text-xs text-gray-400">${item.artist}</p>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        searchResults.innerHTML = html;
+                        searchResults.classList.remove('hidden');
+                    });
+                }, 300);
+            });
+
+            document.addEventListener('click', (e) => {
+                if(!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.classList.add('hidden');
                 }
             });
         }
@@ -2554,4 +2673,5 @@ song_detail_template = (
 )
 
 if __name__ == '__main__':
-  socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+  port = int(os.environ.get('PORT', 5000))
+  socketio.run(app, host='0.0.0.0', port=port, debug=False)
