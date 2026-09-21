@@ -1383,7 +1383,7 @@ lang_switcher_html = """
         <span data-i18n="darkMode" id="darkModeText">Dark Mode</span>
     </button>
 </div>""",
-    )
+)
 html_template = (
     """<!DOCTYPE html>
 <html lang="en" class="dark">
