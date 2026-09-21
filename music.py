@@ -2302,7 +2302,6 @@ song_detail_template = (
                     document.getElementById('totalVotesNum').innerText = data.votes;
                     closeRateModal();
                     generateStoryCanvas(data);
-                    setTimeout(() => { location.reload(); }, 1500);
                 } else {
                     errDiv.innerText = data.message;
                     errDiv.classList.remove('hidden');
