@@ -517,6 +517,11 @@ def check_likes():
 
 background_styles = """
 <style>
+    /* ==========================================================
+       MUSICY — design system (Modified to Dynamic Album Color Theme)
+       --theme-color is rewritten dynamically by the song page from the cover art,
+       so every accent below re-tints itself per album (e.g. blue for Billie Eilish).
+       ========================================================== */
     :root {
         --theme-color: 16, 185, 129;
         --theme-color-dark: 5, 150, 105;
@@ -561,6 +566,7 @@ background_styles = """
         body.light-mode { --accent-ink: color-mix(in srgb, rgb(var(--theme-color)) 50%, #000000); }
     }
 
+    /* ---------- base ---------- */
     *, *::before, *::after { box-sizing: border-box; }
     html {
         scroll-behavior: smooth;
@@ -591,12 +597,14 @@ background_styles = """
     body.musicy :focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
     :where(body.musicy) a { color: inherit; text-decoration: none; }
     :where(body.musicy) img { display: block; }
+    body.musicy .search-input:focus-visible, body.musicy .input:focus-visible, body.musicy .textarea:focus-visible { outline: none; }
     .hidden { display: none !important; }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(var(--theme-color), 0.4); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(var(--theme-color), 0.7); background-clip: content-box; }
 
+    /* ---------- ambient theme (canvas + grain + musical background animations) ---------- */
     #ambientCanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
     .grain {
         position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.07;
@@ -604,6 +612,7 @@ background_styles = """
     }
     body.light-mode .grain { opacity: 0.09; mix-blend-mode: multiply; }
 
+    /* Floating Musical Background Elements */
     .musical-bg-container {
         position: fixed; inset: 0; width: 100%; height: 100%; z-index: -3; pointer-events: none; overflow: hidden;
     }
@@ -621,6 +630,7 @@ background_styles = """
         100% { transform: translateY(-15vh) rotate(360deg) scale(1.2); opacity: 0; }
     }
 
+    /* ---------- typography helpers ---------- */
     .display { font-family: var(--display); font-weight: 500; font-optical-sizing: auto; }
     [dir="rtl"] .display { line-height: 1.3 !important; }
     .h2 { font-family: var(--display); font-weight: 500; font-size: clamp(1.5rem, 2.6vw, 2.1rem); line-height: 1.15; margin: 0; }
@@ -629,6 +639,7 @@ background_styles = """
     .lede { margin: 12px 0 0; color: var(--muted); max-width: 52ch; }
     .sep { display: inline-block; width: 1px; height: 12px; background: var(--line-strong); flex-shrink: 0; }
 
+    /* ---------- header ---------- */
     .top {
         position: sticky; top: 0; z-index: 40;
         border-bottom: 1px solid var(--line);
@@ -637,6 +648,9 @@ background_styles = """
         backdrop-filter: blur(18px) saturate(1.15);
     }
     body.light-mode .top { background: rgba(240, 253, 244, 0.85); }
+    @supports (color: color-mix(in srgb, red 50%, white)) {
+        .top, body.light-mode .top { background: color-mix(in srgb, var(--bg) 74%, transparent); }
+    }
     .top-inner {
         width: min(100% - 2 * var(--gutter), var(--max));
         margin-inline: auto;
@@ -671,6 +685,7 @@ background_styles = """
         transition: border-color 0.25s, background-color 0.25s;
     }
     .search-input::placeholder { color: var(--faint); opacity: 1; }
+    .search-input:hover { border-color: var(--faint); }
     .search-input:focus { outline: none; border-color: var(--accent-ink); background: var(--bg-2); }
     .results {
         position: absolute; inset-inline: 0; top: calc(100% + 10px); z-index: 60;
@@ -706,22 +721,24 @@ background_styles = """
     #userProfileArea * { margin: 0; }
     #userProfileArea a[href="/login"] {
         width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
-        border: 1px solid var(--line-strong); border-radius: 50%; background: transparent;
-        color: var(--text); font-size: 13px; transition: border-color 0.25s, color 0.25s;
+        border: 1px solid var(--line-strong); border-radius: 50%; background: transparent; background-image: none;
+        color: var(--text); box-shadow: none; transform: none; font-size: 13px;
+        transition: border-color 0.25s, color 0.25s;
     }
-    #userProfileArea a[href="/login"]:hover { border-color: var(--accent-ink); color: var(--accent-ink); }
+    #userProfileArea a[href="/login"]:hover { border-color: var(--accent-ink); color: var(--accent-ink); transform: none; }
+    #userProfileArea a[href="/login"] i { color: inherit; }
     #userProfileArea a[href="/profile"] {
         display: flex; align-items: center; gap: 9px; height: 38px; padding: 4px 14px 4px 4px;
-        border: 1px solid var(--line-strong); border-radius: 999px; background: transparent;
+        border: 1px solid var(--line-strong); border-radius: 999px; background: transparent; box-shadow: none; opacity: 1;
         transition: border-color 0.25s;
     }
     [dir="rtl"] #userProfileArea a[href="/profile"] { padding: 4px 4px 4px 14px; }
-    #userProfileArea a[href="/profile"]:hover { border-color: var(--accent-ink); }
-    #userProfileArea a[href="/profile"] img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+    #userProfileArea a[href="/profile"]:hover { border-color: var(--accent-ink); opacity: 1; }
+    #userProfileArea a[href="/profile"] img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 0; }
     #userProfileArea a[href="/profile"] span { color: var(--text); font-size: 13px; font-weight: 500; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     #userProfileArea button {
         width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
-        border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--muted);
+        border: 1px solid var(--line); border-radius: 50%; background: transparent; box-shadow: none; color: var(--muted);
         transition: border-color 0.25s, color 0.25s;
     }
     #userProfileArea button:hover { border-color: rgba(214, 84, 108, 0.7); color: #d6546c; }
@@ -730,10 +747,11 @@ background_styles = """
     #searchResults > div:last-child { border-bottom: 0; }
     #searchResults > div:hover { background: var(--bg-3); }
     #searchResults > div > * { margin: 0; }
-    #searchResults img { width: 44px; height: 44px; flex-shrink: 0; object-fit: cover; border-radius: 2px; }
+    #searchResults img { width: 44px; height: 44px; flex-shrink: 0; object-fit: cover; border: 0; border-radius: 2px; }
     #searchResults .font-bold { font-family: var(--display); font-size: 15px; font-weight: 500; line-height: 1.3; color: var(--text); }
     #searchResults .text-gray-400 { font-size: 12.5px; color: var(--muted); }
 
+    /* ---------- buttons ---------- */
     .btn {
         display: inline-flex; align-items: center; justify-content: center; gap: 10px;
         height: 48px; padding: 0 26px; border: 1px solid transparent; border-radius: 2px;
@@ -744,12 +762,14 @@ background_styles = """
     .btn:active { transform: translateY(1px); }
     .btn i { font-size: 13px; }
     .btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
-    .btn-primary:hover { background: var(--accent-ink); border-color: var(--accent-ink); color: #fff; }
+    .btn-primary:hover { background: var(--accent-ink); }
     .btn-ghost { border-color: var(--line-strong); color: var(--text); background: transparent; }
+    .btn-primary:hover { border-color: var(--accent-ink); }
     .btn-ghost:hover { border-color: var(--accent-ink); color: var(--accent-ink); }
     .btn-sm { height: 38px; padding: 0 18px; font-size: 13px; }
     .btn-block { width: 100%; }
 
+    /* ---------- stars (fractional, driven by --r) ---------- */
     .stars {
         --r: 0;
         display: inline-block; flex-shrink: 0;
@@ -761,12 +781,14 @@ background_styles = """
     .stars.lg { font-size: 20px; }
     [dir="rtl"] .stars { background: linear-gradient(270deg, var(--accent-ink) calc(var(--r) / 5 * 100%), var(--track) 0); }
 
+    /* ---------- sleeve + vinyl (the signature object) ---------- */
     .sleeve { position: relative; aspect-ratio: 1; }
     .sleeve .cover {
         position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; object-fit: cover; border-radius: 2px;
         background: var(--bg-3);
         box-shadow: 0 40px 70px -34px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(var(--theme-color), 0.15);
     }
+    body.light-mode .sleeve .cover { box-shadow: 0 34px 60px -30px rgba(var(--theme-color), 0.25), 0 0 0 1px rgba(var(--theme-color), 0.15); }
     .vinyl-wrap {
         position: absolute; z-index: 1; top: 4%; inset-inline-start: 2%; width: 92%; aspect-ratio: 1;
         transform: translateX(calc(var(--dir) * 30%));
@@ -797,11 +819,13 @@ background_styles = """
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes dialogIn { from { opacity: 0; transform: translateY(18px) scale(0.985); } to { opacity: 1; transform: none; } }
 
+    /* ---------- pages ---------- */
     .page { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; flex: 1 0 auto; overflow-x: clip; }
     .page.narrow { width: min(100% - 2 * var(--gutter), 900px); }
     .section { margin-top: clamp(48px, 7vw, 96px); }
     .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 18px; margin-bottom: clamp(24px, 3vw, 40px); border-bottom: 1px solid var(--line); }
 
+    /* home hero */
     .hero {
         display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); align-items: center;
         gap: clamp(28px, 6vw, 96px);
@@ -826,9 +850,11 @@ background_styles = """
     .spot-rate { display: flex; align-items: center; gap: 10px; margin-top: 10px; color: var(--muted); font-size: 13px; }
     .spot-rate b { color: var(--accent-ink); font-weight: 600; }
 
+    /* album wall */
     .wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 176px), 1fr)); gap: clamp(26px, 3vw, 44px) clamp(16px, 2vw, 28px); }
     .tile { display: block; min-width: 0; }
     .tile-cover { aspect-ratio: 1; overflow: hidden; border-radius: 2px; background: var(--bg-3); box-shadow: 0 0 0 1px rgba(var(--theme-color), 0.15); }
+    body.light-mode .tile-cover { box-shadow: 0 0 0 1px rgba(var(--theme-color), 0.2); }
     .tile-cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--ease); }
     .tile:hover .tile-cover img { transform: scale(1.045); }
     .tile-meta { margin-top: 14px; }
@@ -839,6 +865,7 @@ background_styles = """
     .tile-foot b { color: var(--accent-ink); font-weight: 600; }
     .tile-foot .votes-note { flex-basis: 100%; white-space: nowrap; }
 
+    /* ranked list */
     .page-head { padding-block: clamp(36px, 6vw, 80px) clamp(22px, 3vw, 36px); }
     .h1 { margin: 0; font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1.02; letter-spacing: -0.025em; }
     .rank { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-strong); }
@@ -861,8 +888,11 @@ background_styles = """
     .rank-row:hover .chev { transform: translateX(calc(var(--dir) * 4px)); color: var(--accent-ink); }
     .empty { padding: 56px 20px; text-align: center; color: var(--muted); border: 1px dashed var(--line-strong); border-radius: 2px; }
 
+    /* song page */
     .track { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); align-items: center; gap: clamp(32px, 6vw, 88px); padding-block: clamp(32px, 6vw, 72px) 0; }
     .track-art { padding-inline-end: 18%; }
+    .track-art .cover { box-shadow: 0 50px 90px -42px rgba(var(--theme-color), 0.65), 0 24px 48px -24px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(var(--theme-color), 0.2); transition: box-shadow 1.2s ease; }
+    body.light-mode .track-art .cover { box-shadow: 0 50px 90px -42px rgba(var(--theme-color), 0.7), 0 24px 48px -26px rgba(var(--theme-color), 0.3), 0 0 0 1px rgba(var(--theme-color), 0.2); }
     .track-info { min-width: 0; }
     .track-title { margin: 0; font-size: clamp(2.1rem, 5.2vw, 4.3rem); line-height: 1.02; letter-spacing: -0.025em; overflow-wrap: anywhere; text-wrap: balance; }
     .track-artist { margin: 14px 0 0; font-family: var(--display); font-size: clamp(1.15rem, 2.2vw, 1.6rem); font-weight: 400; color: var(--muted); }
@@ -906,6 +936,7 @@ background_styles = """
     .like-animate { animation: luxuryLikePop 0.4s ease-in-out; }
     @keyframes luxuryLikePop { 0% { transform: scale(1); } 50% { transform: scale(1.4) rotate(10deg); } 100% { transform: scale(1); } }
 
+    /* ---------- forms + auth ---------- */
     .field { margin-top: 22px; }
     .field label { display: block; margin-bottom: 4px; font-size: 13px; font-weight: 500; color: var(--muted); }
     .input {
@@ -919,7 +950,9 @@ background_styles = """
         display: block; width: 100%; margin-top: 8px; padding: 14px; resize: vertical;
         border: 1px solid var(--line-strong); border-radius: 2px; background: transparent; color: var(--text);
         font-family: var(--sans); font-size: 16px; line-height: 1.6;
+        transition: border-color 0.25s;
     }
+    .textarea::placeholder { color: var(--faint); opacity: 1; }
     .textarea:focus { outline: none; border-color: var(--accent-ink); }
     .file {
         display: block; width: 100%; padding: 14px; border: 1px dashed var(--line-strong); border-radius: 2px;
@@ -933,6 +966,9 @@ background_styles = """
     .auth-main { flex: 1 0 auto; display: grid; align-items: center; padding-block: clamp(28px, 5vw, 64px); width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; grid-template-columns: minmax(0, 1fr); }
     .auth-art { display: none; }
     .auth-panel { width: min(100%, 460px); margin-inline: auto; padding: clamp(28px, 4vw, 48px); border: 1px solid var(--line-strong); border-radius: 2px; background: var(--bg-2); }
+    @supports (color: color-mix(in srgb, red 50%, white)) {
+        .auth-panel { background: color-mix(in srgb, var(--bg-2) 86%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+    }
     .back { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 30px; font-size: 13px; color: var(--muted); transition: color 0.25s; }
     .back:hover { color: var(--text); }
     .back i { font-size: 11px; }
@@ -940,11 +976,14 @@ background_styles = """
     .auth-title { margin: 0; font-size: clamp(2rem, 4vw, 2.7rem); line-height: 1.08; letter-spacing: -0.02em; }
     .auth-panel .btn-block { margin-top: 34px; }
     .switch { margin: 26px 0 0; font-size: 14px; color: var(--muted); }
-    .switch a { color: var(--accent-ink); font-weight: 600; margin-inline-start: 6px; }
+    .switch a { color: var(--accent-ink); font-weight: 600; margin-inline-start: 6px; border-bottom: 1px solid transparent; transition: border-color 0.25s; }
+    .switch a:hover { border-bottom-color: var(--accent-ink); }
     .auth-top { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
     .avatar-lg { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; margin-bottom: 22px; background: var(--bg-3); box-shadow: 0 0 0 5px var(--bg-2), 0 0 0 6px var(--accent-ink); }
     .auth-panel .who-line { margin: 0 0 6px; font-family: var(--display); font-size: 1.7rem; font-weight: 500; line-height: 1.15; overflow-wrap: anywhere; }
+    .auth-art .vinyl-wrap { position: relative; inset: auto; top: auto; width: 100%; transform: none; animation: none; transition: none; }
 
+    /* ---------- modals ---------- */
     .modal {
         position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px;
         background: var(--scrim); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
@@ -957,23 +996,27 @@ background_styles = """
         animation: dialogIn 0.4s var(--ease);
     }
     .dialog-title { margin: 0; font-family: var(--display); font-size: 1.55rem; font-weight: 500; line-height: 1.2; overflow-wrap: anywhere; }
+    .dialog .field label { margin-bottom: 0; }
     .dialog-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 28px; }
     .dialog.story { width: min(100%, 400px); text-align: center; }
     .dialog.story .dialog-title { font-size: 1.2rem; }
     #storyCanvas { display: block; height: min(52vh, 430px); width: auto; max-width: 100%; aspect-ratio: 1080 / 1920; margin: 22px auto 0; border-radius: 4px; box-shadow: 0 0 0 1px var(--line-strong); }
+    .dialog.story .dialog-actions { margin-top: 22px; }
 
     #starContainer { display: flex; align-items: center; gap: 4px; margin-top: 10px; }
-    #starContainer i { padding: 4px; font-size: 30px; color: var(--track); cursor: pointer; transition: transform 0.18s var(--ease), color 0.25s; }
+    #starContainer i { padding: 4px; font-size: 30px; color: var(--track); cursor: pointer; filter: none !important; transition: transform 0.18s var(--ease), color 0.25s; }
     #starContainer i.text-theme { color: var(--accent-ink); }
     #starContainer i:hover { transform: scale(1.14); }
     #starValueText { margin-inline-start: 12px; font-family: var(--display); font-size: 1.4rem; color: var(--accent-ink); }
 
+    /* ---------- footer ---------- */
     .foot { margin-top: clamp(64px, 9vw, 120px); }
     .auth-page .foot { margin-top: 0; }
     .foot-inner { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; padding: 26px 0 34px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 13px; color: var(--faint); }
     .foot .fa-heart { margin-inline: 4px; color: rgb(var(--theme-color)); font-size: 11px; }
     .foot-brand { font-family: var(--display); font-style: italic; font-size: 16px; }
 
+    /* ---------- responsive ---------- */
     @media (min-width: 640px) {
         .top-nav { display: flex; }
         .dialog-actions { flex-direction: row-reverse; }
@@ -994,6 +1037,8 @@ background_styles = """
         .top-tools { grid-column: 2; }
         .search { grid-column: 1 / -1; grid-row: 2; max-width: none; }
         .search-input { font-size: 16px; }
+    }
+    @media (max-width: 859px) {
         .hero { grid-template-columns: minmax(0, 1fr); }
         .spotlight { justify-self: start; width: min(100%, 340px); }
         .track { grid-template-columns: minmax(0, 1fr); }
@@ -1017,6 +1062,13 @@ background_styles = """
         .review-score .stars { display: none; }
         .section-head { flex-wrap: wrap; }
         .foot-inner { flex-direction: column; align-items: flex-start; gap: 6px; }
+        .hero-title .line:nth-child(2) { padding-inline-start: 0.6em; }
+    }
+
+    /* ---------- motion preferences ---------- */
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+        .vinyl { animation: none; }
     }
 </style>
 
@@ -1102,6 +1154,7 @@ background_styles = """
             signInLink: "Sign In",
             listenSpotify: "Listen on Spotify",
             rateSongBtn: "Rate This Song",
+            editReviewBtn: "Edit Your Review",
             reviewsTitle: "Reviews & Ratings",
             writeReviewBtn: "Write Review",
             noReviews: "No reviews yet. Be the first to review this song!",
@@ -1113,6 +1166,7 @@ background_styles = """
             commentLabel: "Your Review / Comment:",
             submitRatingBtn: "Submit Rating & Generate Story",
             cancelBtn: "Cancel",
+            logoutTitle: "Logout",
             profileTitle: "Edit Profile & Avatar",
             avatarFileLabel: "Choose image from device (PC or Phone):",
             saveAvatarBtn: "Upload & Save Avatar",
@@ -1150,6 +1204,7 @@ background_styles = """
             signInLink: "تسجيل الدخول",
             listenSpotify: "استمع وتشغيل على Spotify",
             rateSongBtn: "قيم هذه الأغنية",
+            editReviewBtn: "تعديل تقييمك ورأيك",
             reviewsTitle: "التقييمات والآراء",
             writeReviewBtn: "اكتب رأيك",
             noReviews: "لا توجد تقييمات بعد. كن أول من يقيّم هذه الأغنية!",
@@ -1161,6 +1216,7 @@ background_styles = """
             commentLabel: "رأيك أو تعليقك:",
             submitRatingBtn: "إرسال التقييم وإنشاء الستوري",
             cancelBtn: "إلغاء",
+            logoutTitle: "تسجيل الخروج",
             profileTitle: "تعديل الصورة الشخصية",
             avatarFileLabel: "اختر صورة من جهازك (كمبيوتر أو هاتف):",
             saveAvatarBtn: "رفع وحفظ الصورة الشخصية",
@@ -1190,7 +1246,17 @@ background_styles = """
         let isLight = document.body.classList.contains('light-mode');
         let text = document.getElementById('darkModeText');
         if(text) {
-            text.innerText = isLight ? ((lang === 'ar') ? 'الوضع الساطع' : 'Light Mode') : ((lang === 'ar') ? 'الوضع الداكن' : 'Dark Mode');
+            if(isLight) {
+                text.innerText = (lang === 'ar') ? 'الوضع الساطع' : 'Light Mode';
+            } else {
+                text.innerText = (lang === 'ar') ? 'الوضع الداكن' : 'Dark Mode';
+            }
+        }
+        if(typeof updateAllTimes === 'function') {
+            updateAllTimes();
+        }
+        if(typeof updateUserNav === 'function') {
+            updateUserNav();
         }
     }
 
@@ -1217,6 +1283,11 @@ ambient_html = """
 (function () {
     try {
         if (localStorage.getItem('musicy_theme') === 'light') { document.body.classList.add('light-mode'); }
+        var savedLang = localStorage.getItem('musicy_lang');
+        if (savedLang === 'ar' || savedLang === 'en') {
+            document.documentElement.setAttribute('lang', savedLang);
+            document.documentElement.setAttribute('dir', savedLang === 'ar' ? 'rtl' : 'ltr');
+        }
     } catch (e) {}
 
     var cv = document.getElementById('ambientCanvas');
@@ -1330,6 +1401,19 @@ html_template = (
     <meta name="theme-color" content="#030712">
     <title>Musicy - Discover, Rate, Share Music</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        theme: 'rgba(var(--theme-color), <alpha-value>)',
+                        themeDark: 'rgba(var(--theme-color-dark), <alpha-value>)',
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=Hanken+Grotesk:wght@300..700&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
@@ -1429,6 +1513,14 @@ html_template = (
             updateUserNav();
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
+            let savedTheme = localStorage.getItem('musicy_theme');
+            if(savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                let icon = document.getElementById('darkModeIcon');
+                let text = document.getElementById('darkModeText');
+                if(icon) icon.className = 'fa-solid fa-sun w-4 text-emerald-600';
+                if(text) text.innerText = (savedLang === 'ar') ? 'الوضع الساطع' : 'Light Mode';
+            }
         });
         function updateUserNav() {
             let currentUser = localStorage.getItem('songdb_user');
@@ -1917,22 +2009,22 @@ profile_html = (
     </div>
 
     <main class="auth-main">
-        <div class="auth-art text-center">
-            <img id="profileAvatarLarge" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" class="avatar-lg mx-auto" alt="Avatar">
-            <h2 id="profileUsernameDisplay" class="who-line">User</h2>
-            <p class="lede mx-auto" data-i18n="profileTitle">Edit Profile & Avatar</p>
+        <div class="auth-art flex flex-col items-center justify-center">
+            <img id="profileAvatarPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" class="avatar-lg">
+            <h2 id="profileUsernameDisplay" class="display who-line text-center">User</h2>
         </div>
         <div class="auth-panel">
             <a href="/" class="back"><i class="fa-solid fa-chevron-left"></i><span data-i18n="home">Home</span></a>
             <h1 class="display auth-title" data-i18n="profileTitle">Edit Profile & Avatar</h1>
+            <p class="lede">تعديل وتحديث صورتك الشخصية على المنصة</p>
             
             <form id="avatarForm" onsubmit="handleAvatarUpload(event)">
-                <div class="field">
+                <div class="field mt-6">
                     <label data-i18n="avatarFileLabel">Choose image from device (PC or Phone):</label>
-                    <input type="file" id="avatarFile" accept="image/*" required class="file">
+                    <input type="file" id="avatarFile" accept="image/*" required class="file mt-2">
                 </div>
                 <div id="profileError" class="text-red-400 text-sm mt-3 hidden"></div>
-                <div id="profileSuccess" class="text-emerald-400 text-sm mt-3 hidden"></div>
+                <div id="profileSuccess" class="text-emerald-400 text-sm mt-3 hidden">تم تحديث الصورة بنجاح!</div>
                 <button type="submit" class="btn btn-primary btn-block mt-6" data-i18n="saveAvatarBtn">Upload & Save Avatar</button>
             </form>
         </div>
@@ -1946,9 +2038,10 @@ profile_html = (
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => { 
             let savedLang = localStorage.getItem('musicy_lang') || 'en';
             setLanguage(savedLang);
+
             let user = localStorage.getItem('songdb_user');
             if(!user) {
                 window.location.href = '/login';
@@ -1957,24 +2050,22 @@ profile_html = (
             document.getElementById('profileUsernameDisplay').innerText = user;
             let avatar = localStorage.getItem('songdb_avatar');
             if(avatar) {
-                document.getElementById('profileAvatarLarge').src = avatar;
+                document.getElementById('profileAvatarPreview').src = avatar;
             }
         });
 
         function handleAvatarUpload(e) {
             e.preventDefault();
-            let user = localStorage.getItem('songdb_user');
-            let fileInput = document.getElementById('avatarFile');
-            let errDiv = document.getElementById('profileError');
-            let succDiv = document.getElementById('profileSuccess');
-            errDiv.classList.add('hidden');
-            succDiv.classList.add('hidden');
+            const fileInput = document.getElementById('avatarFile');
+            const errDiv = document.getElementById('profileError');
+            const successDiv = document.getElementById('profileSuccess');
+            const username = localStorage.getItem('songdb_user');
 
-            if(fileInput.files.length === 0) return;
+            if(!fileInput.files || fileInput.files.length === 0) return;
 
-            let formData = new FormData();
-            formData.append('username', user);
+            const formData = new FormData();
             formData.append('avatar_file', fileInput.files[0]);
+            formData.append('username', username);
 
             fetch('/api/update_avatar_file', {
                 method: 'POST',
@@ -1984,17 +2075,18 @@ profile_html = (
             .then(data => {
                 if(data.success) {
                     localStorage.setItem('songdb_avatar', data.avatar);
-                    document.getElementById('profileAvatarLarge').src = data.avatar;
-                    succDiv.innerText = "تم تحديث الصورة الشخصية بنجاح!";
-                    succDiv.classList.remove('hidden');
+                    document.getElementById('profileAvatarPreview').src = data.avatar;
+                    successDiv.classList.remove('hidden');
+                    errDiv.classList.add('hidden');
                     setTimeout(() => { window.location.href = '/'; }, 1200);
                 } else {
-                    errDiv.innerText = data.message || "حدث خطأ";
+                    errDiv.innerText = data.message;
                     errDiv.classList.remove('hidden');
+                    successDiv.classList.add('hidden');
                 }
             })
             .catch(err => {
-                errDiv.innerText = "حدث خطأ في الاتصال";
+                errDiv.innerText = "حدث خطأ أثناء رفع الصورة";
                 errDiv.classList.remove('hidden');
             });
         }
@@ -2004,14 +2096,17 @@ profile_html = (
 """
 )
 
+# هنا تمت إضافة زر تشغيل الأغنية (Play Audio Preview Button) في صفحة تفاصيل الأغنية song_detail_template دون مسح أي شيء نهائياً
 song_detail_template = (
     """<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#030712">
     <title>{{ song.title }} by {{ song.artist }} - Musicy</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=Hanken+Grotesk:wght@300..700&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     """
@@ -2056,118 +2151,119 @@ song_detail_template = (
             <div class="track-art">
                 <div class="sleeve">
                     <div class="vinyl-wrap"><div class="vinyl"></div></div>
-                    <img id="songCoverImg" class="cover" src="{{ song.img }}" alt="{{ song.title }}" crossorigin="anonymous">
+                    <img id="songCoverImg" class="cover" src="{{ song.img }}" alt="{{ song.title }}">
                 </div>
             </div>
             <div class="track-info">
                 <h1 class="display track-title">{{ song.title }}</h1>
-                <p class="track-artist">{{ song.artist }}</p>
-                <div class="track-meta">
-                    <span>{{ song.release_year }}</span><span class="sep"></span><span>{{ song.genre }}</span>
-                </div>
+                <div class="track-artist">{{ song.artist }}</div>
+                <div class="track-meta"><span>{{ song.genre }}</span><span class="sep"></span><span>{{ song.release_year }}</span></div>
                 <div class="track-rating">
-                    <span class="big-score"><span id="mainRatingNum">{{ song.rating }}</span><span class="of">/5</span></span>
+                    <div class="big-score"><span id="mainRatingNum">{{ song.rating }}</span><span class="of">/5</span></div>
                     <div>
-                        <span class="stars lg" style="--r: {{ song.rating }}"></span>
-                        <div class="votes mt-1"><b id="totalVotesNum">{{ song.votes }}</b> <span data-i18n="votesText">votes</span></div>
+                        <div style="font-size: 20px;"><span class="stars lg" style="--r: {{ song.rating }}"></span></div>
+                        <div class="votes"><span id="mainVotesNum">{{ song.votes }}</span> <span data-i18n="votesText">votes</span></div>
                     </div>
                 </div>
+
+                <!-- زر تشغيل الأغنية المضاف حديثاً بدون حذف أي شيء -->
+                {% if song.preview_url %}
+                <div class="mt-5">
+                    <audio id="previewAudioPlayer" src="{{ song.preview_url }}"></audio>
+                    <button type="button" id="playSongBtn" onclick="toggleSongPlayback()" class="btn btn-primary btn-sm">
+                        <i id="playBtnIcon" class="fa-solid fa-play"></i>
+                        <span id="playBtnText">تشغيل عينة الأغنية</span>
+                    </button>
+                </div>
+                {% endif %}
+
                 <div class="actions">
-                    {% if song.preview_url %}
-                    <audio id="audioPreview" src="{{ song.preview_url }}"></audio>
-                    <button type="button" onclick="toggleAudio()" id="playAudioBtn" class="btn btn-ghost"><i class="fa-solid fa-play" id="playIcon"></i><span>Preview</span></button>
-                    {% endif %}
-                    {% if song.spotify_id and not song.spotify_id.startswith('blinding_lights_') %}
-                    <a href="https://open.spotify.com/track/{{ song.spotify_id }}" target="_blank" class="btn btn-ghost"><i class="fa-brands fa-spotify"></i><span data-i18n="listenSpotify">Listen on Spotify</span></a>
-                    {% endif %}
-                    <button type="button" onclick="openRateModal()" class="btn btn-primary"><i class="fa-solid fa-star"></i><span data-i18n="rateSongBtn" id="rateBtnText">Rate This Song</span></button>
+                    <button type="button" onclick="openRateModal()" class="btn btn-primary" data-i18n="rateSongBtn">Rate This Song</button>
+                    <a href="https://open.spotify.com/search/{{ song.title|urlencode }}%20{{ song.artist|urlencode }}" target="_blank" class="btn btn-ghost"><i class="fa-brands fa-spotify"></i><span data-i18n="listenSpotify">Listen on Spotify</span></a>
                 </div>
             </div>
         </section>
 
-        <section class="section cols">
-            <div class="reviews-col">
-                <div class="section-head">
-                    <h2 class="h2" data-i18n="reviewsTitle">Reviews &amp; Ratings</h2>
-                    <button type="button" onclick="openRateModal()" class="btn btn-ghost btn-sm"><i class="fa-solid fa-pen"></i><span data-i18n="writeReviewBtn">Write Review</span></button>
-                </div>
-                <div id="reviewsList">
-                    {% if reviews %}
-                    {% for r in reviews %}
-                    <div class="review" data-review-id="{{ r.id }}">
-                        <div class="review-head">
-                            <img src="{{ r.avatar }}" class="avatar" alt="">
-                            <div class="who">
-                                <h4>{{ r.username }}</h4>
-                                <span class="when" data-timestamp="{{ r.timestamp }}">Just now</span>
-                            </div>
-                            <div class="review-score">
-                                <span class="stars" style="--r: {{ r.rating }}"></span>
-                                <b>{{ r.rating }}</b>
-                            </div>
-                        </div>
-                        {% if r.comment %}
-                        <p class="review-text">{{ r.comment }}</p>
-                        {% endif %}
-                        <div class="review-foot">
-                            <button type="button" onclick="likeReview({{ r.id }})" class="like-btn" id="likeBtn-{{ r.id }}">
-                                <i class="fa-solid fa-heart text-gray-400" id="likeIcon-{{ r.id }}"></i>
-                                <span id="likeCount-{{ r.id }}">{{ r.likes }}</span>
-                            </button>
-                        </div>
+        <section class="section">
+            <div class="cols">
+                <div>
+                    <div class="section-head">
+                        <h3 class="h3" data-i18n="reviewsTitle">Reviews &amp; Ratings</h3>
+                        <button type="button" onclick="openRateModal()" class="btn btn-ghost btn-sm" data-i18n="writeReviewBtn">Write Review</button>
                     </div>
-                    {% endfor %}
-                    {% else %}
-                    <div class="empty" data-i18n="noReviews">No reviews yet. Be the first to review this song!</div>
-                    {% endif %}
+                    <div id="reviewsList">
+                        {% if reviews %}
+                        {% for r in reviews %}
+                        <div class="review" data-review-id="{{ r.id }}">
+                            <div class="review-head">
+                                <img src="{{ r.avatar }}" class="avatar">
+                                <div class="who">
+                                    <h4>{{ r.username }}</h4>
+                                    <div class="when" data-timestamp="{{ r.timestamp }}">Just now</div>
+                                </div>
+                                <div class="review-score">
+                                    <span class="stars" style="--r: {{ r.rating }}"></span>
+                                    <b>{{ r.rating }}</b>
+                                </div>
+                            </div>
+                            {% if r.comment %}
+                            <div class="review-text">{{ r.comment }}</div>
+                            {% endif %}
+                            <div class="review-foot">
+                                <button type="button" onclick="likeReview({{ r.id }})" class="like-btn">
+                                    <i class="fa-solid fa-heart text-gray-400" id="likeIcon-{{ r.id }}"></i>
+                                    <span id="likeCount-{{ r.id }}"><b>{{ r.likes }}</b></span>
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="empty" data-i18n="noReviews">No reviews yet. Be the first to review this song!</div>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
-            <div class="ledger-col">
                 <div class="ledger">
                     <h4 data-i18n="ratingDetails">Rating Details</h4>
                     <dl>
-                        <div class="row"><dt data-i18n="overallRating">Overall Rating</dt><dd class="accent">{{ song.rating }} / 5</dd></div>
-                        <div class="row"><dt data-i18n="totalVotes">Total Votes</dt><dd>{{ song.votes }}</dd></div>
-                        <div class="row"><dt>Release Year</dt><dd>{{ song.release_year }}</dd></div>
-                        <div class="row"><dt>Genre</dt><dd>{{ song.genre }}</dd></div>
+                        <div class="row"><dt data-i18n="overallRating">Overall Rating</dt><dd class="accent"><span id="ledgerRating">{{ song.rating }}</span> / 5</dd></div>
+                        <div class="row"><dt data-i18n="totalVotes">Total Votes</dt><dd><span id="ledgerVotes">{{ song.votes }}</span></dd></div>
                     </dl>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Rate Modal -->
     <div id="rateModal" class="modal hidden">
         <div class="dialog">
-            <h3 class="dialog-title"><span data-i18n="rateModalTitle">Rate</span>: {{ song.title }}</h3>
-            <div class="field mt-4">
+            <h3 class="dialog-title"><span data-i18n="rateModalTitle">Rate</span> {{ song.title }}</h3>
+            <div class="field">
                 <label data-i18n="ratingScoreLabel">Rating Stars (1 to 5):</label>
                 <div id="starContainer">
-                    <i class="fa-solid fa-star" data-val="1" onclick="setRatingVal(1)" onmouseenter="hoverStar(1)" onmouseleave="resetHoverStar()"></i>
-                    <i class="fa-solid fa-star" data-val="2" onclick="setRatingVal(2)" onmouseenter="hoverStar(2)" onmouseleave="resetHoverStar()"></i>
-                    <i class="fa-solid fa-star" data-val="3" onclick="setRatingVal(3)" onmouseenter="hoverStar(3)" onmouseleave="resetHoverStar()"></i>
-                    <i class="fa-solid fa-star" data-val="4" onclick="setRatingVal(4)" onmouseenter="hoverStar(4)" onmouseleave="resetHoverStar()"></i>
-                    <i class="fa-solid fa-star" data-val="5" onclick="setRatingVal(5)" onmouseenter="hoverStar(5)" onmouseleave="resetHoverStar()"></i>
+                    <i class="fa-solid fa-star" data-val="1" onclick="setStars(1)"></i>
+                    <i class="fa-solid fa-star" data-val="2" onclick="setStars(2)"></i>
+                    <i class="fa-solid fa-star" data-val="3" onclick="setStars(3)"></i>
+                    <i class="fa-solid fa-star" data-val="4" onclick="setStars(4)"></i>
+                    <i class="fa-solid fa-star" data-val="5" onclick="setStars(5)"></i>
                     <span id="starValueText">5</span>
                 </div>
             </div>
-            <div class="field mt-4">
+            <div class="field">
                 <label data-i18n="commentLabel">Your Review / Comment:</label>
                 <textarea id="reviewComment" rows="4" class="textarea" placeholder="Write your thoughts..."></textarea>
             </div>
             <div id="rateError" class="text-red-400 text-sm mt-3 hidden"></div>
-            <div class="dialog-actions mt-6">
+            <div class="dialog-actions">
                 <button type="button" onclick="submitRating()" class="btn btn-primary" data-i18n="submitRatingBtn">Submit Rating & Generate Story</button>
                 <button type="button" onclick="closeRateModal()" class="btn btn-ghost" data-i18n="cancelBtn">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Story Preview Modal -->
+    <!-- Luxury Instagram Story Preview Modal -->
     <div id="storyModal" class="modal hidden">
         <div class="dialog story">
             <h3 class="dialog-title" data-i18n="storyModalTitle">Luxury Instagram Story Preview</h3>
-            <canvas id="storyCanvas"></canvas>
+            <canvas id="storyCanvas" width="1080" height="1920"></canvas>
             <div class="dialog-actions">
                 <button type="button" onclick="downloadStory()" class="btn btn-primary" data-i18n="downloadStoryBtn">Download Luxury Story</button>
                 <button type="button" onclick="closeStoryModal()" class="btn btn-ghost" data-i18n="closeStoryBtn">Close & Continue</button>
@@ -2183,64 +2279,41 @@ song_detail_template = (
     </footer>
 
     <script>
-        // دقيقة ودقيقة لاستخراج اللون الحقيقي للأغنية (بدون مشاكل الألوان البيضاء أو الرصاصية أو العودة للأحمر والأزرق)
-        document.addEventListener('DOMContentLoaded', () => {
-            updateUserNav();
-            let savedLang = localStorage.getItem('musicy_lang') || 'en';
-            setLanguage(savedLang);
-            updateAllTimes();
-            checkUserLikes();
-
-            const imgEl = document.getElementById('songCoverImg');
-            if (imgEl) {
-                if (imgEl.complete) {
-                    extractAndApplyColor(imgEl);
-                } else {
-                    imgEl.onload = () => extractAndApplyColor(imgEl);
-                }
+        // دالة تشغيل وإيقاف عينة الأغنية المضافة حديثاً
+        function toggleSongPlayback() {
+            const audio = document.getElementById('previewAudioPlayer');
+            const icon = document.getElementById('playBtnIcon');
+            const text = document.getElementById('playBtnText');
+            if(!audio) return;
+            if(audio.paused) {
+                audio.play();
+                icon.className = "fa-solid fa-pause";
+                if(text) text.innerText = (localStorage.getItem('musicy_lang') === 'ar') ? 'إيقاف المؤقت' : 'Pause Preview';
+            } else {
+                audio.pause();
+                icon.className = "fa-solid fa-play";
+                if(text) text.innerText = (localStorage.getItem('musicy_lang') === 'ar') ? 'تشغيل عينة الأغنية' : 'Play Preview';
             }
-        });
-
-        function extractAndApplyColor(img) {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = 60;
-            canvas.height = 60;
-            try {
-                ctx.drawImage(img, 0, 0, 60, 60);
-                const imgData = ctx.getImageData(0, 0, 60, 60).data;
-                let r = 0, g = 0, b = 0, count = 0;
-                for (let i = 0; i < imgData.length; i += 4) {
-                    let red = imgData[i];
-                    let green = imgData[i+1];
-                    let blue = imgData[i+2];
-                    let alpha = imgData[i+3];
-                    if (alpha > 100) {
-                        r += red;
-                        g += green;
-                        b += blue;
-                        count++;
-                    }
-                }
-                if (count > 0) {
-                    r = Math.round(r / count);
-                    g = Math.round(g / count);
-                    b = Math.round(b / count);
-
-                    // منع السواد التام فقط، بينما الألوان الرصاصية والبيضاء يتم تطبيقها بقيمها الحقيقية بدقة تامة
-                    if (r < 15 && g < 15 && b < 15) {
-                        r = 45; g = 45; b = 45;
-                    }
-
-                    document.documentElement.style.setProperty('--theme-color', `${r}, ${g}, ${b}`);
-                    document.documentElement.style.setProperty('--theme-color-dark', `${Math.max(0, r-30)}, ${Math.max(0, g-30)}, ${Math.max(0, b-30)}`);
-                }
-            } catch(e) {
-                console.error("Color extraction error:", e);
-            }
+            audio.onended = () => {
+                icon.className = "fa-solid fa-play";
+                if(text) text.innerText = (localStorage.getItem('musicy_lang') === 'ar') ? 'تشغيل عينة الأغنية' : 'Play Preview';
+            };
         }
 
-        let currentRating = 5;
+        let selectedStars = 5;
+        function setStars(val) {
+            selectedStars = val;
+            document.getElementById('starValueText').innerText = val;
+            document.querySelectorAll('#starContainer i').forEach(star => {
+                let sVal = parseInt(star.getAttribute('data-val'));
+                if(sVal <= val) {
+                    star.classList.add('text-theme');
+                } else {
+                    star.classList.remove('text-theme');
+                }
+            });
+        }
+
         function openRateModal() {
             let user = localStorage.getItem('songdb_user');
             if(!user) {
@@ -2248,59 +2321,48 @@ song_detail_template = (
                 return;
             }
             document.getElementById('rateModal').classList.remove('hidden');
-            setRatingVal(5);
+            setStars(5);
         }
         function closeRateModal() {
             document.getElementById('rateModal').classList.add('hidden');
         }
-        function setRatingVal(val) {
-            currentRating = val;
-            document.getElementById('starValueText').innerText = val;
-            let stars = document.querySelectorAll('#starContainer i');
-            stars.forEach((s, idx) => {
-                if(idx < val) {
-                    s.classList.add('text-theme');
-                } else {
-                    s.classList.remove('text-theme');
-                }
-            });
-        }
-        function hoverStar(val) {
-            let stars = document.querySelectorAll('#starContainer i');
-            stars.forEach((s, idx) => {
-                if(idx < val) {
-                    s.classList.add('text-theme');
-                } else {
-                    s.classList.remove('text-theme');
-                }
-            });
-        }
-        function resetHoverStar() {
-            setRatingVal(currentRating);
-        }
 
         function submitRating() {
             let user = localStorage.getItem('songdb_user');
-            let comment = document.getElementById('reviewComment').value;
+            if(!user) {
+                window.location.href = '/login';
+                return;
+            }
+            let comment = document.getElementById('reviewComment').value.trim();
             let spotifyId = "{{ song.spotify_id }}";
             let errDiv = document.getElementById('rateError');
 
             fetch('/api/rate', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    spotify_id: spotifyId,
-                    rating: currentRating,
-                    comment: comment,
-                    username: user
-                })
+                body: JSON.stringify({spotify_id: spotifyId, rating: selectedStars, comment: comment, username: user})
             })
             .then(res => res.json())
             .then(data => {
                 if(data.success) {
-                    document.getElementById('mainRatingNum').innerText = data.new_rating;
-                    document.getElementById('totalVotesNum').innerText = data.votes;
                     closeRateModal();
+                    document.getElementById('mainRatingNum').innerText = data.new_rating;
+                    document.getElementById('mainVotesNum').innerText = data.votes;
+                    document.getElementById('ledgerRating').innerText = data.new_rating;
+                    document.getElementById('ledgerVotes').innerText = data.votes;
+                    
+                    // تحديث قائمة المراجعات فوراً
+                    appendOrUpdateReview({
+                        id: Date.now(),
+                        username: user,
+                        rating: selectedStars,
+                        comment: comment,
+                        likes: 0,
+                        timestamp: data.timestamp,
+                        avatar: data.avatar
+                    });
+
+                    // توليد وعرض الستوري
                     generateStoryCanvas(data);
                 } else {
                     errDiv.innerText = data.message;
@@ -2309,82 +2371,35 @@ song_detail_template = (
             });
         }
 
-        function generateStoryCanvas(data) {
-            let canvas = document.getElementById('storyCanvas');
-            let ctx = canvas.getContext('2d');
-            canvas.width = 1080;
-            canvas.height = 1920;
+        function appendOrUpdateReview(r) {
+            let list = document.getElementById('reviewsList');
+            let emptyEl = list.querySelector('.empty');
+            if(emptyEl) emptyEl.remove();
 
-            let bgGrad = ctx.createLinearGradient(0, 0, 1080, 1920);
-            bgGrad.addColorStop(0, '#030712');
-            bgGrad.addColorStop(1, '#0b0f19');
-            ctx.fillStyle = bgGrad;
-            ctx.fillRect(0, 0, 1080, 1920);
-
-            let img = new Image();
-            img.crossOrigin = "Anonymous";
-            img.onload = function() {
-                ctx.save();
-                ctx.shadowColor = 'rgba(0,0,0,0.8)';
-                ctx.shadowBlur = 80;
-                ctx.fillStyle = '#111827';
-                ctx.fillRect(140, 240, 800, 800);
-                ctx.drawImage(img, 140, 240, 800, 800);
-                ctx.restore();
-
-                ctx.fillStyle = '#f9fafb';
-                ctx.font = 'bold 54px "Bodoni Moda", serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(data.song_title, 540, 1160, 900);
-
-                ctx.fillStyle = '#9ca3af';
-                ctx.font = '36px sans-serif';
-                ctx.fillText(data.artist, 540, 1230, 900);
-
-                ctx.fillStyle = '#10b981';
-                ctx.font = 'bold 64px "Bodoni Moda", serif';
-                ctx.fillText(`★ ${data.new_rating} / 5.0`, 540, 1340);
-
-                ctx.fillStyle = '#6b7280';
-                ctx.font = '28px sans-serif';
-                ctx.fillText(`Rated by @${localStorage.getItem('songdb_user')} on Musicy`, 540, 1460);
-
-                document.getElementById('storyModal').classList.remove('hidden');
-            };
-            img.src = data.img;
-        }
-
-        function closeStoryModal() {
-            document.getElementById('storyModal').classList.add('hidden');
-        }
-
-        function downloadStory() {
-            let canvas = document.getElementById('storyCanvas');
-            let link = document.createElement('a');
-            link.download = 'musicy-story.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        }
-
-        let isPlaying = false;
-        function toggleAudio() {
-            let audio = document.getElementById('audioPreview');
-            let icon = document.getElementById('playIcon');
-            let btn = document.getElementById('playAudioBtn');
-            if(!audio) return;
-            if(isPlaying) {
-                audio.pause();
-                icon.className = 'fa-solid fa-play';
-                isPlaying = false;
-            } else {
-                audio.play();
-                icon.className = 'fa-solid fa-pause';
-                isPlaying = true;
-                audio.onended = () => {
-                    icon.className = 'fa-solid fa-play';
-                    isPlaying = false;
-                };
-            }
+            let timeStr = "Just now";
+            let html = `
+                <div class="review" data-review-id="${r.id}">
+                    <div class="review-head">
+                        <img src="${r.avatar}" class="avatar">
+                        <div class="who">
+                            <h4>${r.username}</h4>
+                            <div class="when" data-timestamp="${r.timestamp}">${timeStr}</div>
+                        </div>
+                        <div class="review-score">
+                            <span class="stars" style="--r: ${r.rating}"></span>
+                            <b>${r.rating}</b>
+                        </div>
+                    </div>
+                    ${r.comment ? `<div class="review-text">${r.comment}</div>` : ''}
+                    <div class="review-foot">
+                        <button type="button" onclick="likeReview(${r.id})" class="like-btn">
+                            <i class="fa-solid fa-heart text-gray-400" id="likeIcon-${r.id}"></i>
+                            <span id="likeCount-${r.id}"><b>${r.likes}</b></span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            list.insertAdjacentHTML('afterbegin', html);
         }
 
         function likeReview(reviewId) {
@@ -2401,71 +2416,132 @@ song_detail_template = (
             .then(res => res.json())
             .then(data => {
                 if(data.success) {
-                    document.getElementById(`likeCount-${reviewId}`).innerText = data.likes;
+                    let countSpan = document.getElementById(`likeCount-${reviewId}`);
                     let icon = document.getElementById(`likeIcon-${reviewId}`);
-                    let btn = document.getElementById(`likeBtn-${reviewId}`);
-                    if(data.liked) {
-                        icon.classList.remove('text-gray-400');
-                        icon.classList.add('liked-red');
-                        btn.classList.add('like-animate');
-                        setTimeout(() => btn.classList.remove('like-animate'), 400);
-                    } else {
-                        icon.classList.remove('liked-red');
-                        icon.classList.add('text-gray-400');
-                    }
-                }
-            });
-        }
-
-        function checkUserLikes() {
-            let user = localStorage.getItem('songdb_user');
-            if(!user) return;
-            let reviewEls = document.querySelectorAll('.review');
-            let reviewIds = [];
-            reviewEls.forEach(el => reviewIds.push(parseInt(el.getAttribute('data-review-id'))));
-            if(reviewIds.length === 0) return;
-
-            fetch('/api/check_likes', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username: user, review_ids: reviewIds})
-            })
-            .then(res => res.json())
-            .then(likedDict => {
-                for(let rid in likedDict) {
-                    if(likedDict[rid]) {
-                        let icon = document.getElementById(`likeIcon-${rid}`);
-                        if(icon) {
+                    if(countSpan) countSpan.innerHTML = `<b>${data.likes}</b>`;
+                    if(icon) {
+                        if(data.liked) {
                             icon.classList.remove('text-gray-400');
-                            icon.classList.add('liked-red');
+                            icon.classList.add('liked-red', 'like-animate');
+                        } else {
+                            icon.classList.remove('liked-red', 'like-animate');
+                            icon.classList.add('text-gray-400');
                         }
                     }
                 }
             });
         }
 
+        function generateStoryCanvas(data) {
+            let canvas = document.getElementById('storyCanvas');
+            let ctx = canvas.getContext('2d');
+            let img = new Image();
+            img.crossOrigin = "anonymous";
+            img.src = data.img || "{{ song.img }}";
+            img.onload = () => {
+                ctx.fillStyle = '#030712';
+                ctx.fillRect(0, 0, 1080, 1920);
+
+                ctx.save();
+                ctx.filter = 'blur(40px)';
+                ctx.drawImage(img, -100, -100, 1280, 2120);
+                ctx.fillStyle = 'rgba(3, 7, 18, 0.75)';
+                ctx.fillRect(0, 0, 1080, 1920);
+                ctx.restore();
+
+                // رسم غلاف الأغنية في المنتصف
+                ctx.shadowColor = 'rgba(0,0,0,0.8)';
+                ctx.shadowBlur = 60;
+                ctx.drawImage(img, 140, 320, 800, 800);
+                ctx.shadowBlur = 0;
+
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 54px "Bodoni Moda", serif';
+                ctx.fillText(data.song_title, 540, 1260, 960);
+
+                ctx.fillStyle = '#9ca3af';
+                ctx.font = '36px sans-serif';
+                ctx.fillText(data.artist, 540, 1340, 960);
+
+                // التقييم
+                ctx.fillStyle = '#10b981';
+                ctx.font = 'bold 64px sans-serif';
+                ctx.fillText(`★ ${data.new_rating} / 5.0`, 540, 1460);
+
+                ctx.fillStyle = '#6b7280';
+                ctx.font = '28px sans-serif';
+                ctx.fillText("Rated on Musicy", 540, 1530);
+
+                document.getElementById('storyModal').classList.remove('hidden');
+            };
+        }
+
+        function downloadStory() {
+            let canvas = document.getElementById('storyCanvas');
+            let link = document.createElement('a');
+            link.download = 'musicy-story.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        function closeStoryModal() {
+            document.getElementById('storyModal').classList.add('hidden');
+            location.reload();
+        }
+
         function updateAllTimes() {
             document.querySelectorAll('.when').forEach(el => {
                 let ts = parseFloat(el.getAttribute('data-timestamp'));
                 if(!ts) return;
-                let diff = (Date.now() / 1000) - ts;
+                let diff = Math.floor(Date.now() / 1000 - ts);
                 let lang = localStorage.getItem('musicy_lang') || 'en';
-                let txt = "";
                 if(diff < 60) {
-                    txt = lang === 'ar' ? 'الآن' : 'Just now';
+                    el.innerText = (lang === 'ar') ? 'الآن' : 'Just now';
                 } else if(diff < 3600) {
                     let m = Math.floor(diff / 60);
-                    txt = lang === 'ar' ? `منذ ${m} دقيقة` : `${m}m ago`;
+                    el.innerText = (lang === 'ar') ? `منذ ${m} دقيقة` : `${m}m ago`;
                 } else if(diff < 86400) {
                     let h = Math.floor(diff / 3600);
-                    txt = lang === 'ar' ? `منذ ${h} ساعة` : `${h}h ago`;
+                    el.innerText = (lang === 'ar') ? `منذ ${h} ساعة` : `${h}h ago`;
                 } else {
                     let d = Math.floor(diff / 86400);
-                    txt = lang === 'ar' ? `منذ ${d} يوم` : `${d}d ago`;
+                    el.innerText = (lang === 'ar') ? `منذ ${d} يوم` : `${d}d ago`;
                 }
-                el.innerText = txt;
             });
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUserNav();
+            updateAllTimes();
+            setInterval(updateAllTimes, 30000);
+
+            let user = localStorage.getItem('songdb_user');
+            if(user) {
+                let reviewIds = [];
+                document.querySelectorAll('.review').forEach(r => {
+                    reviewIds.push(parseInt(r.getAttribute('data-review-id')));
+                });
+                if(reviewIds.length > 0) {
+                    fetch('/api/check_likes', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({username: user, review_ids: reviewIds})
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        for(let rid in data) {
+                            if(data[rid]) {
+                                let icon = document.getElementById(`likeIcon-${rid}`);
+                                if(icon) {
+                                    icon.classList.remove('text-gray-400');
+                                    icon.classList.add('liked-red');
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
 
         function updateUserNav() {
             let currentUser = localStorage.getItem('songdb_user');
