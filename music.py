@@ -863,25 +863,6 @@ background_styles = """
 
     .track { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); align-items: center; gap: clamp(32px, 6vw, 88px); padding-block: clamp(32px, 6vw, 72px) 0; }
     .track-art { padding-inline-end: 18%; }
-    
-    /* تأثير الـ Glow الفاخر جداً لغلاف الأغنية والمتفاعل مع لون الأغنية الحقيقي */
-    .track-art .cover {
-        box-shadow: 
-            0 0 50px rgba(var(--theme-color), 0.85),
-            0 0 110px rgba(var(--theme-color), 0.45),
-            0 30px 60px -20px rgba(0, 0, 0, 0.95),
-            0 0 0 2px rgba(var(--theme-color), 0.7);
-        transition: box-shadow 0.6s ease, transform 0.6s ease;
-    }
-    .track-art:hover .cover {
-        box-shadow: 
-            0 0 80px rgba(var(--theme-color), 1),
-            0 0 160px rgba(var(--theme-color), 0.65),
-            0 35px 75px -20px rgba(0, 0, 0, 0.99),
-            0 0 0 2.5px rgba(var(--theme-color), 1);
-        transform: scale(1.03);
-    }
-
     .track-info { min-width: 0; }
     .track-title { margin: 0; font-size: clamp(2.1rem, 5.2vw, 4.3rem); line-height: 1.02; letter-spacing: -0.025em; overflow-wrap: anywhere; text-wrap: balance; }
     .track-artist { margin: 14px 0 0; font-family: var(--display); font-size: clamp(1.15rem, 2.2vw, 1.6rem); font-weight: 400; color: var(--muted); }
