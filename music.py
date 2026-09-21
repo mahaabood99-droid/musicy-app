@@ -1382,13 +1382,13 @@ lang_switcher_html = """
         <i id="darkModeIcon" class="fa-solid fa-moon w-4 text-theme"></i>
         <span data-i18n="darkMode" id="darkModeText">Dark Mode</span>
     </button>
-</div>
-"""
-
+</div>""",
+    )
 html_template = (
     """<!DOCTYPE html>
 <html lang="en" class="dark">
-<head>
+<head>"""
+)
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#030712">
