@@ -466,37 +466,6 @@ def add_review():
   })
 
 
-@app.route('/api/delete_review', methods=['POST'])
-def delete_review():
-  data = request.json
-  if not data:
-    return jsonify({'success': False, 'message': 'بيانات غير صالحة'})
-
-  spotify_id = data.get('spotify_id')
-  username = str(data.get('username', '')).strip()
-
-  if not spotify_id or not username:
-    return jsonify({'success': False, 'message': 'بيانات الحذف غير مكتملة'})
-
-  song = Song.query.filter_by(spotify_id=spotify_id).first()
-  if not song:
-    return jsonify({'success': False, 'message': 'الأغنية غير موجودة'}), 404
-
-  review = Review.query.filter_by(song_id=song.id, username=username).first()
-  if not review:
-    return jsonify({'success': False, 'message': 'لا يوجد تقييم خاص بك لهذه الأغنية'}), 404
-
-  ReviewLike.query.filter_by(review_id=review.id).delete(synchronize_session=False)
-  db.session.delete(review)
-  db.session.flush()
-
-  all_reviews = Review.query.filter_by(song_id=song.id).all()
-  song.votes = len(all_reviews)
-  song.rating = round(sum(r.rating for r in all_reviews) / song.votes, 1) if song.votes else 0.0
-  db.session.commit()
-
-  return jsonify({'success': True, 'new_rating': song.rating, 'votes': song.votes})
-
 @app.route('/api/like_review', methods=['POST'])
 def like_review():
   data = request.json
@@ -934,9 +903,6 @@ background_styles = """
     .of { margin-inline-start: 4px; font-size: 15px; color: var(--faint); }
     .votes { font-size: 14px; color: var(--muted); }
     .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(24px, 3vw, 36px); }
-    .review-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(24px, 3vw, 36px); }
-    .delete-review-btn { border-color: rgba(239, 68, 68, 0.55) !important; color: #f87171 !important; background: linear-gradient(135deg, rgba(127, 29, 29, 0.22), rgba(239, 68, 68, 0.06)) !important; box-shadow: 0 8px 28px rgba(239, 68, 68, 0.10), inset 0 1px 0 rgba(255,255,255,0.04); }
-    .delete-review-btn:hover { border-color: #ef4444 !important; color: #fecaca !important; background: linear-gradient(135deg, rgba(153, 27, 27, 0.42), rgba(239, 68, 68, 0.12)) !important; box-shadow: 0 10px 34px rgba(239, 68, 68, 0.22); transform: translateY(-1px); }
 
     .cols { display: grid; grid-template-columns: minmax(0, 1fr) 320px; align-items: start; gap: clamp(32px, 6vw, 88px); }
     .ledger { position: sticky; top: 104px; padding-top: 22px; border-top: 1px solid var(--line-strong); }
@@ -1190,7 +1156,6 @@ background_styles = """
             listenSpotify: "Listen on Spotify",
             rateSongBtn: "Rate This Song",
             editReviewBtn: "Edit Your Review",
-            deleteReviewBtn: "Delete Your Review",
             reviewsTitle: "Reviews & Ratings",
             writeReviewBtn: "Write Review",
             noReviews: "No reviews yet. Be the first to review this song!",
@@ -1241,7 +1206,6 @@ background_styles = """
             listenSpotify: "استمع وتشغيل على Spotify",
             rateSongBtn: "قيم هذه الأغنية",
             editReviewBtn: "تعديل تقييمك ورأيك",
-            deleteReviewBtn: "مسح تقييمك",
             reviewsTitle: "التقييمات والآراء",
             writeReviewBtn: "اكتب رأيك",
             noReviews: "لا توجد تقييمات بعد. كن أول من يقيّم هذه الأغنية!",
@@ -2206,10 +2170,7 @@ song_detail_template = (
 
                 <div class="actions">
                     <a href="https://open.spotify.com/track/{{ song.spotify_id }}" target="_blank" class="btn btn-primary" data-i18n="listenSpotify"><i class="fa-brands fa-spotify"></i><span>Listen on Spotify</span></a>
-                    <div class="review-actions">
-                        <button type="button" onclick="openRateModal()" class="btn btn-ghost" id="rateModalBtnText"><i class="fa-solid fa-star"></i><span id="rateModalBtnLabel" data-i18n="rateSongBtn">Rate This Song</span></button>
-                        <button type="button" onclick="deleteMyReview()" class="btn btn-ghost delete-review-btn hidden" id="deleteReviewBtn"><i class="fa-solid fa-trash-can"></i><span data-i18n="deleteReviewBtn">Delete Your Review</span></button>
-                    </div>
+                    <button type="button" onclick="openRateModal()" class="btn btn-ghost" id="rateModalBtnText"><i class="fa-solid fa-star"></i><span data-i18n="rateSongBtn">Rate This Song</span></button>
                 </div>
             </div>
         </section>
@@ -2446,76 +2407,6 @@ song_detail_template = (
             });
         }
 
-        let myReviewExists = false;
-
-        function refreshMyReviewState() {
-            const currentUser = localStorage.getItem('songdb_user');
-            const button = document.getElementById('rateModalBtnText');
-            const label = document.getElementById('rateModalBtnLabel');
-            const deleteButton = document.getElementById('deleteReviewBtn');
-            if (!button || !label || !deleteButton) return;
-
-            let hasReview = myReviewExists;
-            document.querySelectorAll('.review').forEach(card => {
-                const username = card.querySelector('.who h4');
-                if (username && currentUser && username.textContent.trim() === currentUser) {
-                    hasReview = true;
-                }
-            });
-
-            label.textContent = hasReview
-                ? (localStorage.getItem('musicy_lang') === 'ar' ? 'تعديل تقييمك ورأيك' : 'Edit Your Review')
-                : (localStorage.getItem('musicy_lang') === 'ar' ? 'قيم هذه الأغنية' : 'Rate This Song');
-            deleteButton.classList.toggle('hidden', !hasReview);
-        }
-
-        function deleteMyReview() {
-            const currentUser = localStorage.getItem('songdb_user');
-            if (!currentUser) {
-                window.location.href = '/login';
-                return;
-            }
-            const message = localStorage.getItem('musicy_lang') === 'ar'
-                ? 'هل أنت متأكد من مسح تقييمك لهذه الأغنية؟'
-                : 'Are you sure you want to delete your review for this song?';
-            if (!window.confirm(message)) return;
-
-            fetch('/api/delete_review', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({spotify_id: spotifyId, username: currentUser})
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (!data.success) {
-                    alert(data.message || 'تعذر مسح التقييم');
-                    return;
-                }
-                document.querySelectorAll('.review').forEach(card => {
-                    const username = card.querySelector('.who h4');
-                    if (username && username.textContent.trim() === currentUser) card.remove();
-                });
-                const container = document.getElementById('reviewsContainer');
-                if (container && !container.querySelector('.review')) {
-                    const empty = document.createElement('div');
-                    empty.className = 'empty';
-                    empty.id = 'noReviewsMsg';
-                    empty.textContent = localStorage.getItem('musicy_lang') === 'ar'
-                        ? 'لا توجد تقييمات بعد. كن أول من يقيّم هذه الأغنية!'
-                        : 'No reviews yet. Be the first to review this song!';
-                    container.appendChild(empty);
-                }
-                document.getElementById('songRatingNum').innerText = data.new_rating;
-                document.getElementById('songStarsEl').style.setProperty('--r', data.new_rating);
-                document.getElementById('songVotesCount').innerText = data.votes;
-                document.getElementById('ledgerRating').innerText = data.new_rating;
-                document.getElementById('ledgerVotes').innerText = data.votes;
-                myReviewExists = false;
-                refreshMyReviewState();
-            })
-            .catch(() => alert('حدث خطأ أثناء مسح التقييم'));
-        }
-
         function openRateModal() {
             let currentUser = localStorage.getItem('songdb_user');
             if(!currentUser) {
@@ -2576,8 +2467,6 @@ song_detail_template = (
                     document.getElementById('ledgerRating').innerText = data.new_rating;
                     document.getElementById('ledgerVotes').innerText = data.votes;
 
-                    myReviewExists = true;
-                    refreshMyReviewState();
                     // Generate Luxury Instagram Story
                     openStoryModal(data);
                 } else {
@@ -2777,8 +2666,7 @@ song_detail_template = (
                 }
             });
         }
-            refreshMyReviewState();
-</script>
+    </script>
 </body>
 </html>
 """
